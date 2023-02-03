@@ -1,0 +1,127 @@
+Author: Alex
+
+Foo: global variable test
+
+[main]
+StoryAssembler ?frag:
+    [AvailableFragment ?frag]
+    [PrintFragment ?frag]
+    [Effects ?frag]
+[end]
+
+[predicate]
+PrintFragment ?frag:
+    ---a*&$**@7$*&#@---
+    [Paragraph]
+    [Fragment ?frag]
+    [PrintContent ?frag]
+    [Paragraph]
+    [PrintChoices ?frag]
+    [Paragraph]
+    [PrintConditions ?frag]
+    [PrintEffects ?frag]
+    [PrintChoiceLabel ?frag]
+[end]
+
+[predicate]
+PrintContent ?frag:
+    ?frag/Speaker/Write Speaking: [Content ?frag]
+[end]
+PrintContent ?frag:
+    [Content ?frag]
+[end]
+PrintContent ?frag:
+    ?frag # If there is no content, just print the fragment name
+[end]
+
+PrintChoices ?frag:
+    [Choices ?frag]
+[end]
+PrintChoices ?frag.
+
+PrintChoiceLabel ?frag:
+    [ChoiceLabel ?frag]
+[end]
+PrintChoiceLabel ?frag.
+
+# PrintConditions ?frag:
+#     Conditions: [Conditions ?frag]
+# [end]
+PrintConditions ?frag.
+
+# PrintEffects ?frag:
+#     Effects: [Effects ?frag]
+# [end]
+PrintEffects ?frag.
+
+
+# Define the Fragment attributes as predicates
+predicate Fragment ?frag.
+predicate Conditions ?frag.
+predicate Effects ?frag.
+# predicate Content ?frag ?content.
+predicate Content ?frag.
+predicate Speaker ?frag ?speaker.
+predicate Choices ?frag. 
+predicate ChoiceLabel ?frag.
+
+[predicate]
+AvailableFragment ?fragment: [Fragment ?fragment] [Conditions ?fragment]
+
+# Scene stuff
+predicate Scene ?scene.
+predicate StartState ?scene.
+
+# A Want is an element in a story spec 
+# A Want is attached to a scene, and can be fulfilled
+# or unfullfilled
+predicate Want ?scene ?want_id.
+predicate Fulfilled ?want_id.
+
+# Functions for retreiving wants
+predicate FulfilledWant ?scene ?want_id.
+predicate UnfulfilledWant ?scene ?want_id.
+
+# Is a story spec finished? (all wants fulfilled)
+predicate CompleteStorySpec ?scene.
+# Or is it incomplete?
+predicate IncompleteStorySpec ?scene.
+
+[predicate]
+PrintFinishState ?scene:
+    [CompleteStorySpec ?scene]
+    Congrats you're done.
+[end]
+PrintFinishState ?scene:
+    You are not done.
+[end]
+
+[predicate]
+InitScene ?scene ?item:
+    [StartState ?scene]
+[end]
+
+[predicate]
+UnfulfilledWant ?scene ?want:
+    [Want ?scene ?want]
+    [Not [Fulfilled ?want]]
+[end]
+
+[predicate]
+FulfilledWant ?scene ?want:
+    [Want ?scene ?want]
+    [Fulfilled ?want]
+[end]
+
+[predicate]
+IncompleteStorySpec ?scene:
+    [UnfulfilledWant ?scene ?want]
+[end]
+
+[predicate]
+CompleteStorySpec ?scene:
+    [Scene ?scene] # find a scene with at least one attached want (ask michael about why this line is necessary, although it is intuitive)
+    [Not [IncompleteStorySpec ?scene]]
+[end]
+
+initially: [InitScene ?scene ?item]

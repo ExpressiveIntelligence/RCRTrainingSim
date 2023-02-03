@@ -1,0 +1,14 @@
+Run ?frag:
+    [StoryAssembler ?]
+    [Paragraph]
+    [StoryAssembler ?]
+    [Paragraph]
+    [StoryAssembler ?]
+    [Paragraph]
+    [StoryAssembler ?]
+    [Paragraph]
+    [StoryAssembler ?]
+    [Paragraph]
+    
+    [Test [StoryAssembler ?] 500]
+[end]

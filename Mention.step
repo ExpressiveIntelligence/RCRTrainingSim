@@ -1,0 +1,99 @@
+###
+### This configures Step to be able to generate pronouns
+### You don't need to touch this code.
+###
+
+###
+### Stuff you can call from your code (you would use these in PrintPlotPoint):
+###
+### Mention ?x      (or just ?x)
+### Prints ?x.  If it uses a pronoun, it will be he/she/they rather than him/her/them
+###
+### Obj ?x          (or just ?x/Obj)
+### Prints ?x, but if it uses a pronoun, uses him/her/them rather than he/she/they
+###
+### Possessive ?x   (or just ?x/Possessive)
+### Prints ?x's or his/her/their, as appropriate
+###
+### Plural ?x       (or just ?x/Plural)
+### Tries to guess the plural of ?x and prints it.
+###
+
+### Using gendered pronouns (optional)
+###
+### By default the system will use they/their for all students.  If you want it to
+### use gendered pronouns, add facts saying:
+###
+###     PreferredPronoun <student> <pronoun>
+###
+### where <student> is the student student you're specifying the pronoun for and
+### <pronoun> is either he, she, or they.
+###
+### If you want to specify gendered pronouns, I would recommend you add these to
+### Student.step.
+
+ClearContext:
+  [set Him = nothing]
+  [set Her = nobody]
+  [set Them = nobody]
+  [set It = nothing]
+  [set ThirdPersonSingular = true]
+  [set MentionedPlural = false]
+[end]
+
+initially: [ClearContext]
+
+# Mention ?x
+# Print ?x however is appropriate, and keeping track of pronouns.
+Mention Him: he [set ThirdPersonSingular = true] [set MentionedPlural = false]
+Mention Her: she [set ThirdPersonSingular = true] [set MentionedPlural = false]
+Mention Them: they [set ThirdPersonSingular = false] [set MentionedPlural = true] 
+Mention It: it [set ThirdPersonSingular = true] [set MentionedPlural = false]
+Mention ?x: ?x/Print [NotePronouns ?x] [set ThirdPersonSingular = true] [set MentionedPlural = false]
+
+# Update Him/Her/Them/It based on the argument.
+# NotePronouns ?who: [Character ?who] [NotePersonalPronouns ?who]
+NotePronouns ?what: [set It = ?what]
+
+# Update Him/Her/Them based on the preferred pronouns of the character.
+NotePersonalPronouns ?who: [PreferredPronoun ?who he] [set Him = ?who]
+NotePersonalPronouns ?who: [PreferredPronoun ?who she] [set Her = ?who]
+NotePersonalPronouns ?who: [set Them = ?who] 
+
+# Obj ?x
+# Like Mention, but prints in object case (substitutes him for he, etc.)
+Obj Him: him [set MentionedPlural = false] [set ThirdPersonSingular = truee]
+Obj Her: her [set MentionedPlural = false] [set ThirdPersonSingular = true]
+Obj Them: them [set MentionedPlural = true] [set ThirdPersonSingular = false]
+Obj It: it [set MentionedPlural = false] [set ThirdPersonSingular = true]
+Obj ?x: [Mention ?x]
+
+fluent Mentioned ?what.
+# Print ?x: [Possible lovedOne ?x] [Protagonist ?p] ?p/Possessive ?x/Write
+# Print ?x: [Possible artifact ?x] [Protagonist ?p] ?p/Possessive ?x/Write
+Print ?x: [Mentioned ?x] the ?x/Write
+Print ?x: a ?x/Write [now [Mentioned ?x]]
+
+# Possessive ?x
+# Generates the possessive case of x - either "x's" or a possessive pronoun.
+[main]
+Possessive Him: his
+Possessive Her: her
+Possessive Them: their
+Possessive It: its
+Possessive ?x: ?x's
+
+[main]
+Plural werewolf: werewolves
+Plural ?x: ?x/NounSingularPlural/Write
+
+[main]
+Has: [MentionedPlural] have
+Has: has
+
+[main]
+Is: [MentionedPlural] are
+Is: is
+
+[main]
+predicate PreferredPronoun ?who ?heshethey.

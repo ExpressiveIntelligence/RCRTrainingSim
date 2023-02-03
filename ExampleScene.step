@@ -1,0 +1,73 @@
+# Ported from ClimateChange/StoryAssembler/js/examples-main.js
+
+# Declare the fragments here #
+[randomly]
+Fragment eat_food.
+Fragment disastrous_date.
+Fragment another_one.
+Fragment bad.
+
+# Define the fragments #
+Content eat_food: "come on This stew is not going to eat itself"
+Conditions eat_food. # No conditions are default
+Effects eat_food:
+    [set Foo = bar]
+[end]
+Speaker eat_food ?speaker: [= ?speaker "Ally"]
+Choices eat_food: [Write ["choice_1" "choice_2" "choice_3"]]
+
+Content disastrous_date: "a very bad date"
+Conditions disastrous_date: 
+    [= ^Foo bar]
+[end]
+Effects disastrous_date.
+Speaker disastrous_date ?speaker: [= ?speaker "Audrey"]
+ChoiceLabel disastrous_date: "a choicy label"
+
+Content another_one: "another one"
+Effects another_one.
+Conditions another_one.
+
+Content bad: "bad"
+Effects bad.
+
+# Define Scenes #
+[randomly]
+Scene dinner.
+Scene lunch.
+Scene happy.
+
+StartState dinner:
+    [set Initialized = true]
+    [set FriendName = "Emma"]
+    [set Career = 0]
+    [set Confidence = 0]
+    [set IntroMechanics = false]
+    [set EstablishSpecialtyInfo = false]
+    [set EstablishDinnerWithFriend = false]
+    [set EstablishFriendBackstory = false]
+    [set EstablishEmmaRegrets = false]
+    [set EstablishEmmaBackstory = false]
+    [set ProvokeConfidenceChoice = false]
+    [set FriendReassuresEmma = false]
+[end]
+
+[randomly]
+Want dinner full.
+Want dinner not.
+Want lunch another_not.
+Want happy another_full.
+
+[randomly]
+Fulfilled full:
+    [= ^Initialized true]
+[end]
+Fulfilled another_full: 
+    [= ^Initialized true]
+[end]
+Fulfilled not: 
+    [= ^Initialized false]
+[end]
+Fulfilled another_not: 
+    [= ^FriendReassuresEmma true]
+[end]
