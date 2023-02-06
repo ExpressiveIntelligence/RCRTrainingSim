@@ -1,6 +1,10 @@
 Author: Alex
 
-Foo: global variable test
+# Foo: global variable test
+
+Button "Assemble Story" [StoryAssembler ?].
+
+# Button 
 
 [main]
 StoryAssembler ?frag:
@@ -11,7 +15,7 @@ StoryAssembler ?frag:
 
 [predicate]
 PrintFragment ?frag:
-    ---a*&$**@7$*&#@---
+    --Fragment--
     [Paragraph]
     [Fragment ?frag]
     [PrintContent ?frag]
@@ -59,14 +63,36 @@ PrintEffects ?frag.
 predicate Fragment ?frag.
 predicate Conditions ?frag.
 predicate Effects ?frag.
-# predicate Content ?frag ?content.
 predicate Content ?frag.
 predicate Speaker ?frag ?speaker.
 predicate Choices ?frag. 
 predicate ChoiceLabel ?frag.
+predicate Choice ?frag ?speaker ?n.
 
 [predicate]
 AvailableFragment ?fragment: [Fragment ?fragment] [Conditions ?fragment]
+
+GetRandChoice ?fragment ?n:
+    [MakeChoice ?fragment ?n]
+[end]
+
+MakeChoice ?fragment ?n:
+    [RandInt ?n]
+    [Choice ?fragment ?speaker ?n]
+[end]
+
+[randomly]
+RandInt 0.
+RandInt 1.
+RandInt 2.
+RandInt 3.
+RandInt 4.
+RandInt 5.
+RandInt 6.
+RandInt 7.
+RandInt 8.
+RandInt 9.
+
 
 # Scene stuff
 predicate Scene ?scene.
@@ -124,4 +150,18 @@ CompleteStorySpec ?scene:
     [Not [IncompleteStorySpec ?scene]]
 [end]
 
-initially: [InitScene ?scene ?item]
+# predicate Score ?score.
+
+# InitScore ?scene:
+#     [set CurrentScore = 0]
+    
+# [end]
+
+# Score ?scene:
+#     [Want ?scene ?want]
+# [end]
+
+initially: 
+    [InitScene ?scene ?item]
+    # [InitScore ?scene]
+[end]

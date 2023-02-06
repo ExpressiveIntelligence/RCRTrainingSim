@@ -1,0 +1,379 @@
+# # Ported from ClimateChange/StoryAssembler/data/dinner.json
+
+
+# Declare the fragments here #
+[randomly]
+Fragment eat_food.
+Fragment eat_food3.
+Fragment whatscalled.
+Fragment whatscalled2.
+Fragment stuffed.
+Fragment stuffed2.
+Fragment stomach_nerves.
+Fragment too_much_trouble.
+Fragment iguess.
+Fragment iknowright.
+Fragment in_spain.
+Fragment quals.
+Fragment stilljealous.
+Fragment wishcouldgo.
+Fragment regrets.
+Fragment loveocean.
+
+StartState dinner:
+    [set Protagonist = "Emma"]
+    [set Initialized = true]
+    [set FriendName = "Emma"]
+    [set Career = 0]
+    [set Confidence = 0]
+    [set EstablishProtagRegrets = false]
+    [set EstablishAllyBackstory = false]
+    [set EstablishSetting = false]
+[end]
+
+# Define the fragments #
+
+# Interstitial
+Content eat_food: ^Protagonist Seriously, girl. This stew is not going to eat itself.
+Conditions eat_food. # No conditions are default
+Effects eat_food.
+Speaker eat_food ?speaker: [= ?speaker "Ally"]
+Choice eat_food ?speaker 1: [= ?speaker "Protagonist"] [set ^EstablishSetting = true]
+Choice eat_food ?speaker 2: [= ?speaker "Protagonist"] [set ^ProvokeConfidenceChoice = true]
+Choice eat_food ?speaker 3: [= ?speaker "Protagonist"] [set ^EstablishSetting = true]
+
+Content eat_food3: Sorry for peppering you with questions, ha ha. I'm not giving you much chance to eat!
+Conditions eat_food3.
+Effects eat_food3.
+Speaker eat_food3 ?speaker: [= ?speaker "Ally"]
+Choice eat_food3 ?speaker 1: [= ?speaker "Protagonist"] [set ^EstablishSetting = true]
+Choice eat_food3 ?speaker 2: [= ?speaker "Protagonist"] [set ^ProvokeConfidenceChoice = true]
+Choice eat_food3 ?speaker 3: [= ?speaker "Protagonist"] [set ^EstablishSetting = true]
+
+# Backstory
+Content whatscalled: <i>Cocido</i>, chica. Figured comfort food would be good the night before my best friend's dissertation defense.
+ChoiceLabel whatscalled: Thanks. What's it called again?
+Speaker whatscalled ?speaker: [= ?speaker "Ally"]
+Conditions whatscalled.
+Effects whatscalled: [set ^EstablishSetting = true]
+
+Content whatscalled2: Well, after I came back from Spain it only took a couple weeks before I was craving it. It's just the thing before you start some big project.
+ChoiceLabel whatscalled2: Yeah. Where'd you learn to cook this?
+Speaker whatscalled2 ?speaker: [= ?speaker "Ally"]
+Conditions whatscalled2: [< ^Confidence 2]
+Effects whatscalled2: [set ^EstablishSetting = true]
+
+Content stuffed: Are you kidding me? You've hardly had anything. Nervous about your dissertation defense tomorrow, huh?
+ChoiceLabel stuffed: No thanks, Z. I'm stuffed.
+Speaker stuffed ?speaker: [= ?speaker "Ally"]
+Conditions stuffed.
+Effects stuffed: [set ^ProvokeConfidenceChoice = true] # TODO ["decr confidence 1", "set provokeConfidenceChoice true"]
+
+Content stuffed2: What? C'mon, Em. You know I love any chance to cook. Hey...what's really going on, huh? You're usually not this quiet.
+ChoiceLabel stuffed2: No, I'm good. This is too much! You shouldn't have gone through the trouble.
+Speaker stuffed2 ?speaker: [= ?speaker "Ally"]
+Conditions stuffed2: [= ^Confidence 4]
+Effects stuffed2: [set ^ProvokeConfidenceChoice = true] # TODO ["decr confidence 1", "set provokeConfidenceChoice true"]
+
+# # 	{
+# # 		"id": "stomachNerves",
+# # 		"choiceLabel": "Sorry, no appetite. Guess it must be my nerves.",
+# # 		//"speaker" : "ally",
+# # 		"content": "C'mon. Don't let your intellectual pursuits interfere with enjoying some of my famous <i>cocido</i>.",
+# # 		"effects": ["decr confidence 1", "set provokeConfidenceChoice true", "set establishSetting true"]
+# # 	},
+
+Content stomach_nerves: C'mon. Don't let your intellectual pursuits interfere with enjoying some of my famous <i>cocido</i>.
+ChoiceLabel stomach_nerves: Sorry, no appetite. Guess it must be my nerves.
+Effects stomach_nerves: [set ^ProvokeConfidenceChoice = true] [set EstablishSetting = true] # TODO ["decr confidence 1", "set provokeConfidenceChoice true", "set establishSetting true"]
+Conditions stomach_nerves.
+
+# # 	{
+# # 		"id": "tooMuchTrouble",
+# # 		"choiceLabel": "I can't believe this spread. You went to too much trouble for me.",
+# # 		//"speaker" : "ally",
+# # 		"content": "Are you kidding me? What are friends for? <br><br>Sounds like something else is going on here.",
+# # 		"effects": ["decr confidence 1", "set provokeConfidenceChoice true"]
+# # 	},
+
+Content too_much_trouble: Are you kidding me? What are friends for? <br><br>Sounds like something else is going on here.
+ChoiceLabel too_much_trouble: I can't believe this spread. You went to too much trouble for me.
+Effects too_much_trouble: [set ^ProvokeConfidenceChoice = true] # TODO ["decr confidence 1", "set provokeConfidenceChoice true"]
+Conditions too_much_trouble.
+
+# # 	{
+# # 		"id": "iguess",
+# # 		"choiceLabel": "I guess.",
+# # 		"request": {"condition": "establishAllyBackstory eq true"}
+# # 	},
+
+ChoiceLabel iguess: I guess.
+Request iguess: [= EstablishAllyBackstory true]
+
+
+# # 	{
+# # 		"id": "iknowright",
+# # 		"choiceLabel": "I know, right?",
+# # 		"request": {"gotoId": "inSpain"}
+# # 	},
+
+ChoiceLabel iknowright: I know, right?
+Request iknowright. # TODO request go to's
+
+
+
+# # 	{
+# # 		"id": "inSpain",
+# # 		//"speaker" : "ally",
+# # 		"content": "You would not believe how much of this stuff I ate in Spain. This recipe's okay, if I do say so myself, but only half as good as when you get it there.",
+# # 		"choices" : [
+# # 			//{"condition": "establishProtagRegrets eq true"},
+# # 			{"gotoId": "stilljealous", "speaker" : "protagonist"},
+# # 			{"gotoId": "quals", "speaker" : "protagonist"},
+# # 			{"gotoId": "wishcouldgo", "speaker" : "protagonist"}
+# # 		],
+# # 		"conditions": ["establishSetting eq true"],
+# # 		"effects": ["set establishAllyBackstory true"]
+# # 	},
+
+Content in_spain: You would not believe how much of this stuff I ate in Spain. This recipe's okay, if I do say so myself, but only half as good as when you get it there.
+Speaker in_spain ?speaker: [= ?speaker "Ally"]
+Conditions in_spain: [= ^EstablishSetting true]
+Effects in_spain: [set ^EstablishAllyBackstory = true]
+# Choice in_spain ?speaker 1: [= ?speaker "Protagonist"] [set ^StillJealous = true] # TODO need go tos in choices
+# Choice in_spain ?speaker 2: [= ?speaker "Protagonist"] [set ^Quals = true]
+# Choice in_spain ?speaker 3: [= ?speaker "Protagonist"] [set ^WishCouldGo = true]
+
+# TODO figue out how to add numbers and check gt / lt / gte
+
+
+# # 		{
+# # 		"id": "quals",
+# # 		"choiceLabel": "I was busy that year taking quals, if I recall.",
+# # 		"speaker" : "ally",
+# # 		"content": "And now you're reaping the sweet rewards of that wise decision. Tomorrow you'll be Dr. Emma Richards, marine biologist. I'll just be some chick who ate too much <i>cocido</i>. Speaking of which, could you, uh, pass that back...?"
+# # 	},
+
+Content quals: And now you're reaping the sweet rewards of that wise decision. Tomorrow you'll be Dr. Emma Richards, marine biologist. I'll just be some chick who ate too much <i>cocido</i>. Speaking of which, could you, uh, pass that back...?
+ChoiceLabel quals: I was busy that year taking quals, if I recall.
+Speaker quals ?speaker: [= ?speaker "Ally"]
+Conditions quals.
+
+# # 	{
+# # 		"id": "stilljealous",
+# # 		"choiceLabel": "Still jealous you got to spend six months there.",
+# # 		"request": {"condition": "establishProtagRegrets eq true"}
+# # 	},
+
+ChoiceLabel stilljealous: Still jealous you got to spend six months there.
+Request stilljealous: [= EstablishProtagRegrets true]
+
+# # 	{
+# # 		"id": "wishcouldgo",
+# # 		"choiceLabel": "Wish I could have come with you.",
+# # 		"request": {"condition": "establishProtagRegrets eq true"}
+# # 	},
+
+ChoiceLabel wishcouldgo: Wish I could have come with you.
+Request wishcouldgo: [= EstablishProtagRegrets true]
+
+# # 	{
+# # 		"id": "regrets",
+# # 		"speaker" : "ally",
+# # 		"content": "Oh, come on. Don't beat yourself up. I'm pretty sure you made the right decision. Tomorrow you'll be Dr. Emma Richards, marine biologist. And I'll just be some chick who ate too much <i>cocido</i>.",
+# # //		"choices" : [
+# # //			{"gotoId": "wellmaybe"}
+# # //		],
+# # 		"conditions" : ["establishAllyBackstory eq true"],
+# # 		"effects": ["decr confidence 1", "set establishProtagRegrets true"]
+# # 	},
+Content regrets: Oh, come on. Don't beat yourself up. I'm pretty sure you made the right decision. Tomorrow you'll be Dr. Emma Richards, marine biologist. And I'll just be some chick who ate too much <i>cocido</i>.
+Speaker regrets ?speaker: [= ?speaker "Ally"]
+Conditions regrets: [= ^EstablishAllyBackstory true]
+Effects regrets:  [set ^EstablishProtagRegrets = true] # TODO [decr ^Confidence 1]
+
+# # 	{
+# # 		"id": "loveocean",
+# # 		"speaker" : "ally",
+# # 		"content": "Look, Em. I've known you as long as anyone. And you've <i>always</i> wanted this. You've been in love with the oceans since we were kids. Remember 4th grade? Mrs. Anderson? Oh my god, that diorama. You spent <i>ages</i> on that.",
+# # 		"choices" : [
+# # 			{"gotoId": "whatspecialty", "speaker" : "protagonist"}
+# # 		],
+# # 		"conditions": ["establishProtagRegrets eq true"],
+# # 		"effects" : ["set establishProtagBackstory true"]
+# # 	},
+
+Content loveocean: Look, Em. I've known you as long as anyone. And you've <i>always</i> wanted this. You've been in love with the oceans since we were kids. Remember 4th grade? Mrs. Anderson? Oh my god, that diorama. You spent <i>ages</i> on that.
+Speaker loveocean ?speaker: [= ?speaker "Ally"]
+Conditions loveocean: [= ^EstablishProtagRegrets true]
+Effects loveocean: [set ^EstablishProtagBackstory = true]
+# Choice loveocean ?speaker 1: [= ?speaker "Protagonist"] [set ^WhatSpecialty = true] # TODO need go tos in choices
+
+
+# # 	//---------------------------KNOWLEDGE---------------------------------------
+
+# # 	{
+# # 		"id": 	"whatspecialty",
+# # 		"choiceLabel": "I wanted it to be... perfect.",
+# # 		"speaker" : "ally",
+# # 		"content": "You're kind of still working on it. It's just a 400 page brick of a dissertation now. What are they called again, your little buddies?",
+# # 		"choices": 	[
+# # 			{ "gotoId" : "pickShrimp", "speaker" : "protagonist"},
+# # 			{ "gotoId" : "pickLobsters", "speaker" : "protagonist"},
+# # 			{ "gotoId" : "pickCoral", "speaker" : "protagonist"}
+# # 		],
+# # 		"effects": ["set goto_whatspeciality true"]
+# # 	},
+
+Content whatspecialty: You're kind of still working on it. It's just a 400 page brick of a dissertation now. What are they called again, your little buddies?
+Speaker whatspecialty ?speaker: [= ?speaker "Ally"]
+Effects whatspecialty: [set ^Goto_whatspeciality = true]
+Choice whatspecialty ?speaker 1: [= ?speaker "Protagonist"] #[set ^PickShrimp = true] #TODO GOTO
+Choice whatspecialty ?speaker 2: [= ?speaker "Protagonist"] #[set ^PickLobsters = true]
+Choice whatspecialty ?speaker 3: [= ?speaker "Protagonist"] #[set ^PickCoral = true]
+
+
+# # 	{
+# # 		"id": 	"pickShrimp",
+# # 		"choiceLabel" : "<i>Lysmata amboinensis.</i> Pacific cleaner shrimp.",
+# # 		"speaker" : "ally",
+# # 		"content": 	"Right. Lysmata amoeba ninnies. Thingies. I invited some to dinner, but turned out they're a more expensive date than I thought. Seafood is ex<i>pennnn</i>sive.",
+# # 		//"choices": 	[
+# # 		//	{ "gotoId" : "howufeelChoicetext1" }
+# # 		//],
+# # 		"effects" : ["set career shrimp", "set establishSpecialtyInfo true" ]
+# # 	},
+
+
+
+# # 	{
+# # 		"id": 	"pickLobsters",
+# # 		"choiceLabel" : "<i>Homarus americanus.</i> Lobsters.",
+# # 		"speaker" : "ally",
+# # 		"content": 	"Right. I tried to invite old Homarus to dinner, but turns out he's a more expensive date than I thought. Seafood's getting ex<i>pennnn</i>sive.",
+# # 		//"choices": 	[
+# # 		//	{ "gotoId" : "howufeelChoicetext1" }
+# # 		//],
+# # 		"effects" : ["set career lobster", "set establishSpecialtyInfo true"]
+# # 	},
+# # 	{
+# # 		"id": 	"pickCoral",
+# # 		"choiceLabel" : "<i>Octocorallia.</i> Backbone of the coral reefs.",
+# # 		"speaker" : "ally",
+# # 		"content": 	"Right. Octo-coro-lala-rama-dingdong. I tried to invite ol' Octo Lala to dinner, but turns out he was too busy getting registered on the endangered species list to attend.",
+# # 		//"choices": 	[
+# # 		//	{ "gotoId" : "howufeelChoicetext2" }
+# # 		//],
+# # 		"effects" : ["set career coral", "set establishSpecialtyInfo true"]
+# # 	},
+
+
+# # 	//---------------------------CHALLENGE---------------------------------------
+# # 	{
+# # 		"id": "howufeelChoicetext1",
+# # 		"choiceLabel" : "Don't blame me, I just work here.",
+# # 		"request": {"condition": "provokeConfidenceChoice eq true"}
+# # 	},
+# # 	{
+# # 		"id": "howufeelChoicetext2",
+# # 		"choiceLabel" : "Very funny.",
+# # 		"request": {"condition": "provokeConfidenceChoice eq true"}
+# # 	},
+# # 	{
+# # 		"id": "howufeel",
+# # 		"speaker" : "ally",
+# # 		"content" : "Hey. What's up? Oh, don't give me that look. You're quiet, and it's not just nerves. What's on your mind?",
+# # 		"choices": 	[
+# # 			{ "gotoId" : "surePath", "speaker" : "protagonist" },
+# # 			{ "gotoId" : "unsurePath", "speaker" : "protagonist" },
+# # 			{ "gotoId" : "futureWorry", "speaker" : "protagonist" }
+# # 		],
+# # 		"conditions" : ["establishProtagBackstory eq true", "argue eq false"],
+# # 		"effects" : ["set provokeConfidenceChoice true"]
+# # 	},
+
+# # //---------------------------ARGUMENT---------------------------------------
+# # {
+# # 		"id": "howufeel_arg",
+# # 		"speaker" : "ally",
+# # 		"content" : "Hey. What's up? You've got that look. What's going on?",
+# # 		"choices": 	[
+# # 			{ "gotoId" : "aJoke", "speaker" : "protagonist" },
+# # 			{ "gotoId" : "nothing", "speaker" : "protagonist" },
+# # 			{ "gotoId" : "futureWorry", "speaker" : "protagonist" }
+# # 		],
+# # 		"conditions" : ["establishProtagBackstory eq true", "argue eq true"],
+# # 		"effects" : ["set provokeArgument true", "set provokeConfidenceChoice true"]
+# # 	},
+
+# # 	{
+# # 		"id" : "aJoke",
+# # 		"choiceLabel" : "What, do you think this is some kind of joke? That if we just laugh the {ifState|career|shrimp|shrimp|}{ifState|career|lobster|lobsters|}{ifState|career|coral|coral reefs|} are gonna be just fine?",
+# # 		"speaker" : "ally",
+# # 		"content" : "Woah. Hey, I'm sorry. I'm just trying to make you feel better. Are we good?",
+# # 		"effects" : ["incr confidence 1"],
+# # 		"choices" : [
+# # 			{"condition": "resolveArgument eq true", "speaker" : "protagonist"}
+# # 		]
+# # 	},
+# # 		{
+# # 		"id" : "nothing",
+# # 		"choiceLabel" : "Nothing. Let's just eat.",
+# # 		"speaker" : "ally",
+# # 		"content" : "Hey, was it what I said, about the {ifState|career|shrimp|shrimp|}{ifState|career|lobster|lobster|}{ifState|career|coral|coral reef|}? Look I didn't mean anything by it...I was just trying to cheer you up.",
+# # 		"choices" : [
+# # 			{"condition": "resolveArgument eq true", "speaker" : "protagonist"}
+# # 		],
+# # 		"effects" : ["incr confidence 1"],
+# # 	},
+# # 	{
+# # 		"id" : "outburstResolve",
+# # 		"choiceLabel" : "It's ok. Sorry Z, I guess I'm just really on edge.",
+# # 		"speaker" : "ally",
+# # 		"content" : "It's ok. You're gonna knock 'em out of the park, Em. I just know it.",
+# # 		"effects" : ["set resolveArgument true"]
+# # 	},
+
+# # 	//---------------------------SUPPORT-----------------------------------------
+# # 	{
+# # 		"id" : "surePath",
+# # 		"choiceLabel" : "I'm just excited to be starting my career.",
+# # 		"speaker" : "ally",
+# # 		"content" : "Heh. You're gonna knock 'em out of the park, Em. {ifState|career|shrimp|Those amoeba shrimp|}{ifState|career|lobster|Your Homarus Lobstarus buddies|}{ifState|career|coral|Your octo-coral-reefie pals|} have got a new superhero.",
+# # 		"effects" : ["incr confidence 1"],
+# # 		"choices" : [
+# # 			{ "gotoId" : "thanks_haveSomeWine_label", "speaker": "narrator" }
+# # 		]
+# # 	},
+# # 	{
+# # 		"id" : "unsurePath",
+# # 		"choiceLabel" : "I'm just wondering if it was worth it.",
+# # 		"speaker" : "ally",
+# # 		"content" : "Worth it? Are you kidding? You're about to start a career doing everything you love. Emma Richards, defender of {ifState|career|shrimp|the amoeba shrimp!|}{ifState|career|lobster|Homarus Lobstarus!|}{ifState|career|coral|the octo-coral-reefies!|} You're going places. I can feel it.",
+# # 		"effects" : ["decr confidence 1"],
+# # 		"choices" : [
+# # 			{ "gotoId" : "thanks_haveSomeWine_label", "speaker": "narrator" }
+# # 		]
+# # 	},
+# # 	{
+# # 		"id" : "futureWorry",
+# # 		"choiceLabel" : "I'm just worried about the future.",
+# # 		"speaker" : "ally",
+# # 		"content" : "Look at you, always freaking out when things go too well. Look, Emma. You've fought hard to get here. From what I've seen, you're an amazing scientist and a good teacher. Now if I can just get you to take an evening off and go on a date, you'll pretty much have it all.",
+# # 		"effects" : ["decr confidence 1"],
+# # 		"choices" : [
+# # 			{ "gotoId" : "thanks_haveSomeWine_label", "speaker" : "protagonist" }
+# # 		]
+# # 	},
+# # 	{
+# # 		"id" : "thanks_haveSomeWine_label",
+# # 		"choiceLabel" : "Thanks.",
+# # 		"request" : { "gotoId" : "thanks_haveSomeWine" }
+# # 	},
+# # 	{
+# # 		"id" : "thanks_haveSomeWine",
+# # 		"speaker" : "ally",
+# # 		"content" : "Now seriously. I am not joking about this. Have some damn wine. Relax with your friends. The future can take care of itself.",
+# # 		"conditions" : ["provokeConfidenceChoice eq true"],
+# # 		"effects" : ["set allyReassuresProtag true"]
+# # 	}
