@@ -1,0 +1,14 @@
+RunStory ?frag:
+    [StoryAssembler ?]
+    # [Paragraph]
+    # [StoryAssembler ?]
+    # [Paragraph]
+    # [StoryAssembler ?]
+    # [Paragraph]
+    # [StoryAssembler ?]
+    # [Paragraph]
+    # [StoryAssembler ?]
+    # [Paragraph]
+[end]
+
+RunStoryWrap: [RunStory ?frag]

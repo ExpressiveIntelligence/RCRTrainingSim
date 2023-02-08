@@ -1,11 +1,12 @@
-Author: Alex
+# Author: Alex
 
-# Foo: global variable test
+# # Foo: global variable test
+# # Button "Assemble Story" [StoryAssembler ?].
 
-Button "Assemble Story" [StoryAssembler ?].
+# [main]
+# Test: test.
 
 # Button 
-
 [main]
 StoryAssembler ?frag:
     [AvailableFragment ?frag]
@@ -71,28 +72,6 @@ predicate Choice ?frag ?speaker ?n.
 
 [predicate]
 AvailableFragment ?fragment: [Fragment ?fragment] [Conditions ?fragment]
-
-GetRandChoice ?fragment ?n:
-    [MakeChoice ?fragment ?n]
-[end]
-
-MakeChoice ?fragment ?n:
-    [RandInt ?n]
-    [Choice ?fragment ?speaker ?n]
-[end]
-
-[randomly]
-RandInt 0.
-RandInt 1.
-RandInt 2.
-RandInt 3.
-RandInt 4.
-RandInt 5.
-RandInt 6.
-RandInt 7.
-RandInt 8.
-RandInt 9.
-
 
 # Scene stuff
 predicate Scene ?scene.

@@ -1,0 +1,19 @@
+﻿### Edge Testing ###
+
+[predicate]
+Edge a b.
+Edge b c.
+Edge c d.
+Edge b x.
+Edge x y.
+Edge m n.
+
+[predicate]
+Reachable ?v ?v.
+Reachable ?s ?e: [Edge ?s ?i] [Reachable ?i ?e]
+
+Test: [set X = 0] [inc ^X 2] [TestReachable] [^X] [dec ^X 10] [^X] [More]
+More: [set ^X = 1.1] [dec ^X 11] ^X
+
+TestReachable: [Reachable a b] Reachable!x	
+TestReachable: Not reachable :(
