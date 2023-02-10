@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepSyntaxHighlighting", "SyntaxHighlighting\StepSyntaxHighlighting.csproj", "{BFB21AF9-42E2-41D9-B359-CA6938EAF057}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlexTestingStep", "AlexTestingStep\AlexTestingStep.csproj", "{9B28F352-BF31-40AB-9F89-D8F7B1DFF124}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepDrivers", "StepDrivers\StepDrivers.csproj", "{9B28F352-BF31-40AB-9F89-D8F7B1DFF124}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{9B28F352-BF31-40AB-9F89-D8F7B1DFF124}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>AlexTestingStep</RootNamespace>
-    <AssemblyName>AlexTestingStep</AssemblyName>
+    <RootNamespace>StepDrivers</RootNamespace>
+    <AssemblyName>StepDrivers</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -43,11 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestEntryPoint.cs" />
+    <Compile Include="StepREPL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="StoryAssembler.step" />
     <None Include="AlexsTest.step" />
     <None Include="App.config" />
   </ItemGroup>

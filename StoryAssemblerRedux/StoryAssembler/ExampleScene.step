@@ -120,8 +120,6 @@ Request iguess: [= EstablishAllyBackstory true]
 ChoiceLabel iknowright: I know, right?
 Request iknowright. # TODO request go to's
 
-
-
 # # 	{
 # # 		"id": "inSpain",
 # # 		//"speaker" : "ally",
