@@ -12,7 +12,7 @@ namespace StepDrivers
 
         static void Main(string[] args)
             {
-                Module module = new Module("Run");
+                Module module = new Module("REPL");
                 Console.WriteLine(module);
 
                 module.LoadDirectory("\\\\Mac\\code\\retl\\RCR\\StoryAssemblerRedux\\StoryAssembler\\");
@@ -41,9 +41,8 @@ namespace StepDrivers
             static void ExecuteStep(string input, Module module)
             {
                 var result = module.ParseAndExecute(input);
-                    Console.WriteLine("Result");
-                    Console.WriteLine(result);
-                    Console.ReadLine();
+                Console.WriteLine("Result");
+                Console.WriteLine(result);
             }
     }
 

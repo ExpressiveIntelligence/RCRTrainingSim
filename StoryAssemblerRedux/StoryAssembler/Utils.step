@@ -12,3 +12,14 @@ RunStory ?frag:
 [end]
 
 RunStoryWrap: [RunStory ?frag]
+
+DoTest: 
+    [InitScene ^CurrentScene]
+    Testing: ^CurrentScene
+    [BestPath ?bf ?s]
+    ?bf ?s
+[end]
+
+initially:
+    [set CurrentScene = test]
+[end]

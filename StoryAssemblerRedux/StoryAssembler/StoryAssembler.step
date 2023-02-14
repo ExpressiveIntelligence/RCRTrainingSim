@@ -3,65 +3,65 @@
 # # Foo: global variable test
 # # Button "Assemble Story" [StoryAssembler ?].
 
+# # [main]
+# # Test: test.
+
+# # Button 
 # [main]
-# Test: test.
-
-# Button 
-[main]
-StoryAssembler ?frag:
-    [AvailableFragment ?frag]
-    [PrintFragment ?frag]
-    [Effects ?frag]
-[end]
-
-[predicate]
-PrintFragment ?frag:
-    --Fragment--
-    [Paragraph]
-    [Fragment ?frag]
-    [PrintContent ?frag]
-    [Paragraph]
-    [PrintChoices ?frag]
-    [Paragraph]
-    [PrintConditions ?frag]
-    [PrintEffects ?frag]
-    [PrintChoiceLabel ?frag]
-[end]
-
-[predicate]
-PrintContent ?frag:
-    ?frag/Speaker/Write Speaking: [Content ?frag]
-[end]
-PrintContent ?frag:
-    [Content ?frag]
-[end]
-PrintContent ?frag:
-    ?frag # If there is no content, just print the fragment name
-[end]
-
-PrintChoices ?frag:
-    [Choices ?frag]
-[end]
-PrintChoices ?frag.
-
-PrintChoiceLabel ?frag:
-    [ChoiceLabel ?frag]
-[end]
-PrintChoiceLabel ?frag.
-
-# PrintConditions ?frag:
-#     Conditions: [Conditions ?frag]
+# StoryAssembler ?frag:
+#     [AvailableFragment ?frag ^CurrentScene]
+#     [PrintFragment ?frag]
+#     [Effects ?frag]
 # [end]
-PrintConditions ?frag.
 
-# PrintEffects ?frag:
-#     Effects: [Effects ?frag]
+# [predicate]
+# PrintFragment ?frag:
+#     --Fragment--
+#     [Paragraph]
+#     [Fragment ?frag ?scene]
+#     [PrintContent ?frag]
+#     [Paragraph]
+#     [PrintChoices ?frag]
+#     [Paragraph]
+#     [PrintConditions ?frag]
+#     [PrintEffects ?frag]
+#     [PrintChoiceLabel ?frag]
 # [end]
-PrintEffects ?frag.
+
+# [predicate]
+# PrintContent ?frag:
+#     ?frag/Speaker/Write Speaking: [Content ?frag]
+# [end]
+# PrintContent ?frag:
+#     [Content ?frag]
+# [end]
+# PrintContent ?frag:
+#     ?frag # If there is no content, just print the fragment name
+# [end]
+
+# PrintChoices ?frag:
+#     [Choices ?frag]
+# [end]
+# PrintChoices ?frag.
+
+# PrintChoiceLabel ?frag:
+#     [ChoiceLabel ?frag]
+# [end]
+# PrintChoiceLabel ?frag.
+
+# # PrintConditions ?frag:
+# #     Conditions: [Conditions ?frag]
+# # [end]
+# PrintConditions ?frag.
+
+# # PrintEffects ?frag:
+# #     Effects: [Effects ?frag]
+# # [end]
+# PrintEffects ?frag.
 
 
 # Define the Fragment attributes as predicates
-predicate Fragment ?frag.
+predicate Fragment ?frag ?scene.
 predicate Conditions ?frag.
 predicate Effects ?frag.
 predicate Content ?frag.
@@ -71,13 +71,14 @@ predicate ChoiceLabel ?frag.
 predicate Choice ?frag ?speaker ?n.
 
 [predicate]
-AvailableFragment ?fragment: [Fragment ?fragment] [Conditions ?fragment]
+AvailableFragment ?fragment ?scene: [Fragment ?fragment ?scene] [Conditions ?fragment]
 
 # Scene stuff
 predicate Scene ?scene.
+predicate InitScene ?scene.
 predicate StartState ?scene.
 
-# A Want is an element in a story spec 
+# # A Want is an element in a story spec 
 # A Want is attached to a scene, and can be fulfilled
 # or unfullfilled
 predicate Want ?scene ?want_id.
@@ -102,7 +103,8 @@ PrintFinishState ?scene:
 [end]
 
 [predicate]
-InitScene ?scene ?item:
+InitScene ?scene:
+    [= 0 0]
     [StartState ?scene]
 [end]
 
@@ -129,18 +131,10 @@ CompleteStorySpec ?scene:
     [Not [IncompleteStorySpec ?scene]]
 [end]
 
-# predicate Score ?score.
-
 # InitScore ?scene:
 #     [set CurrentScore = 0]
-    
 # [end]
 
 # Score ?scene:
 #     [Want ?scene ?want]
 # [end]
-
-initially: 
-    [InitScene ?scene ?item]
-    # [InitScore ?scene]
-[end]

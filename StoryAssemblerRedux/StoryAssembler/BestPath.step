@@ -1,0 +1,41 @@
+# How to find the max of something
+# [generator] # equiv to [predicate] I believe
+# Generate b 2.
+# Generate a 1.
+# [Max ?score [Generate ?x ?score]] ?x ?score
+
+initially: 
+    [set MaxDepth = 3]
+    [set CurDepth = 0]
+[end]
+
+Mention ?x: [Write ?x]
+
+BestPath ?best_frag ?score:
+    [Max ?score [ScoreFragment ?best_frag ?score]]
+[end]
+
+[predicate]
+ScoreFragment ?frag ?score:
+    [> ^MaxDepth ^CurDepth] # Enforce recursion limit
+    [inc ^CurDepth]
+    Scoring ?frag ...
+    [Effects ?frag]
+    [BestPath ?best_outgoing ?best_outgoing_score]
+    [Score ?frag ?score]
+    # [= ?score [inc ?best_outgoing_score ?current_score]]
+[end]
+ScoreFragment ?frag ?score:
+    max depth ?frag
+    [Score ?frag ?score]
+[end]
+
+# This is the hard part
+[predicate]
+Score ?fragment ?score:
+    [Fragment ?fragment ?scene] # get the scene
+    [CompleteStorySpec ?scene]
+    [= ?score 100]
+[end]
+Score disastrous_date ?score: [=?score 1]
+Score ?fragment ?score: [= ?score 0]

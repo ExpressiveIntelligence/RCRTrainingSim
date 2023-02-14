@@ -1,0 +1,93 @@
+[randomly]
+Fragment disastrous_date test.
+Fragment another_one test.
+Fragment bad test.
+
+StartState test:
+    [set ^Initialized = true]
+    [set ^IntroMechanics = false]
+[end]
+
+Content disastrous_date: "a very bad date"
+Conditions disastrous_date: 
+    [= ^Intialized true]
+[end]
+Effects disastrous_date. # no effects
+Speaker disastrous_date ?speaker: [= ?speaker "Audrey"]
+ChoiceLabel disastrous_date: "a choicy label"
+
+Content another_one: "another one"
+Effects another_one: 
+    [set ^IntroMechanics = true]
+[end]
+Conditions another_one.
+
+# Content bad: "bad"
+# Effects bad.
+
+# # Define Scenes #
+# [randomly]
+# Scene dinner.
+# Scene lunch.
+# Scene happy.
+
+# [randomly]
+# Want dinner full.
+# Want dinner not.
+# Want lunch another_not.
+# Want happy another_full.
+
+# [randomly]
+# Fulfilled full:
+#     [= ^Initialized true]
+# [end]
+# Fulfilled another_full: 
+#     [= ^Initialized true]
+# [end]
+# Fulfilled not: 
+#     [= ^Initialized false]
+# [end]
+# Fulfilled another_not: 
+#     [= ^FriendReassuresEmma true]
+# [end]
+
+
+
+[randomly]
+Want intro_mechanics test.
+# # Want establish_specialty_info.
+# # Want establish_setting.
+# # Want establish_ally_backstory.
+# # Want establish_protag_regrets.
+# # Want establish_protag_backstory.
+# # Want provoke_confidence_choice.
+# # Want ally_reassures_protag.
+# # Want dropped_knowledge.
+
+Fulfilled intro_mechanics: 
+    [= ^IntroMechanics true]
+[end]
+# # Fulfilled establish_specialty_info: 
+# #     [= ^EstablishSpecialtyInfo true]
+# # [end]
+# # Fulfilled establish_setting: 
+# #     [= ^EstablishSetting true]
+# # [end]
+# # Fulfilled establish_ally_backstory: 
+# #     [= ^EstablishAllyBackstory true]
+# # [end]
+# # Fulfilled establish_protag_regrets: 
+# #     [= ^EstablishProtagRegrets true]
+# # [end]
+# # Fulfilled establish_protag_backstory: 
+# #     [= ^EstablishProtagBackstory true]
+# # [end]
+# # Fulfilled provoke_confidence_choice: 
+# #     [= ^ProvokeConfidenceChoice true]
+# # [end]
+# # Fulfilled ally_reassures_protag: 
+# #     [= ^AllyReassuresProtag true]
+# # [end]
+# # Fulfilled dropped_knowledge: 
+# #     [>= ^DroppedKnowledge 2]
+# # [end]
