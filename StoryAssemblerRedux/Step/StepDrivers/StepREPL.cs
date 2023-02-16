@@ -9,34 +9,32 @@ namespace StepDrivers
 {
     internal class StepREPL
     {
-
         static void Main(string[] args)
+        {
+            Module module = LoadModule();
+      
+            while (true)
             {
-                Module module = new Module("REPL");
-                Console.WriteLine(module);
-
-                module.LoadDirectory("\\\\Mac\\code\\retl\\RCR\\StoryAssemblerRedux\\StoryAssembler\\");
-                Console.WriteLine("Loaded");
-
-                while (true)
-                        {
-                            Console.WriteLine("Enter Step code or type 'q' to exit:");
-                            string input = Console.ReadLine();
-                            if (input.ToLower() == "q")
-                            {
-                                break;
-                            }
-
-                            try
-                            {
-                                ExecuteStep(input, module);
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine("An error occurred: " + ex.Message);
-                            }
-                        }
-                    }
+                Console.WriteLine("Enter Step code or type 'q' to exit, 'r' to reload:");
+                string input = Console.ReadLine();
+                if (input.ToLower() == "q")
+                {
+                    break;
+                }
+                else if (input.ToLower() == "r")
+                {
+                    module = LoadModule();
+                }
+                try
+                {
+                    ExecuteStep(input, module);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("An error occurred: " + ex.Message);
+                }
+            }
+        }
 
             static void ExecuteStep(string input, Module module)
             {
@@ -44,6 +42,27 @@ namespace StepDrivers
                 Console.WriteLine("Result");
                 Console.WriteLine(result);
             }
+            
+            static Module LoadModule()
+            {
+                Module module = null;
+                while (module == null) {
+                    try
+                    {
+                        module = new Module("REPL");
+                        var dir = "\\\\Mac\\code\\retl\\RCR\\StoryAssemblerRedux\\StoryAssembler\\";
+                        module.LoadDirectory(dir);
+                        Console.WriteLine("Loaded " + dir);
+                        return module;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        Console.WriteLine("Press any character to reload.");
+                        Console.ReadLine();
+                    }
+                }
+                return module;
+            }
     }
-
 }
