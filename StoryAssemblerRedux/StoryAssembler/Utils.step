@@ -13,11 +13,14 @@ RunStory ?frag:
 
 RunStoryWrap: [RunStory ?frag]
 
-DoTest: 
+T: 
+    [set CurrentScene = test]
     [InitScene ^CurrentScene]
     Testing: ^CurrentScene
+    [Paragraph]
     [BestPath ?bf ?s]
-    ?bf ?s
+    [Paragraph]
+    Best Path: ?bf Score: r?s
 [end]
 
 initially:

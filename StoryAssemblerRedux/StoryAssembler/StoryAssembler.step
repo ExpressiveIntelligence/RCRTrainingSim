@@ -86,12 +86,12 @@ predicate Fulfilled ?want_id.
 
 # Functions for retreiving wants
 predicate FulfilledWant ?scene ?want_id.
-predicate UnfulfilledWant ?scene ?want_id.
+predicate UnFulfilledWant ?scene ?want_id.
 
 # Is a story spec finished? (all wants fulfilled)
 predicate CompleteStorySpec ?scene.
 # Or is it incomplete?
-predicate IncompleteStorySpec ?scene.
+predicate InCompleteStorySpec ?scene.
 
 [predicate]
 PrintFinishState ?scene:
@@ -99,17 +99,23 @@ PrintFinishState ?scene:
     Congrats you're done.
 [end]
 PrintFinishState ?scene:
+    [InCompleteStorySpec ?scene]
     You are not done.
+[end]
+PrintFinishState ?scene:
+    Error with finish state check...
 [end]
 
 [predicate]
 InitScene ?scene:
     [= 0 0]
-    [StartState ?scene]
+    [InitialSceneState ?scene]
+    Initialized Scene: ?scene
+    [Paragraph]
 [end]
 
 [predicate]
-UnfulfilledWant ?scene ?want:
+UnFulfilledWant ?scene ?want:
     [Want ?scene ?want]
     [Not [Fulfilled ?want]]
 [end]
@@ -121,20 +127,12 @@ FulfilledWant ?scene ?want:
 [end]
 
 [predicate]
-IncompleteStorySpec ?scene:
-    [UnfulfilledWant ?scene ?want]
+InCompleteStorySpec ?scene:
+    [UnFulfilledWant ?scene ?want]
 [end]
 
 [predicate]
 CompleteStorySpec ?scene:
     [Scene ?scene] # find a scene with at least one attached want (ask michael about why this line is necessary, although it is intuitive)
-    [Not [IncompleteStorySpec ?scene]]
+    [Not [InCompleteStorySpec ?scene]]
 [end]
-
-# InitScore ?scene:
-#     [set CurrentScore = 0]
-# [end]
-
-# Score ?scene:
-#     [Want ?scene ?want]
-# [end]

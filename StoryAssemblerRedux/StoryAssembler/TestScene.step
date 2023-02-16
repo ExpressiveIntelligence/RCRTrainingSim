@@ -1,57 +1,78 @@
+# Must declare the scene for various checks to succeed
+Scene test.
+
 [randomly]
 Fragment disastrous_date test.
-Fragment another_one test.
+Fragment on_the_path test.
+Fragment not_on_the_path test.
+Fragment hard test.
 Fragment bad test.
 
-StartState test:
+InitialSceneState test:
     [set ^Initialized = true]
-    [set ^IntroMechanics = false]
+    [set ^TestVariable1 = false]
+    [set ^Goal = false]
 [end]
 
 Content disastrous_date: "a very bad date"
 Conditions disastrous_date: 
-    [= ^Intialized true]
+    [= ^Initialized true]
 [end]
 Effects disastrous_date. # no effects
 Speaker disastrous_date ?speaker: [= ?speaker "Audrey"]
 ChoiceLabel disastrous_date: "a choicy label"
 
-Content another_one: "another one"
-Effects another_one: 
-    [set ^IntroMechanics = true]
+Content on_the_path: "another one"
+Effects on_the_path:
+    [set ^TestVariable1 = true]
 [end]
-Conditions another_one.
+Conditions on_the_path.
 
-# Content bad: "bad"
-# Effects bad.
+Content not_on_the_path: "another one"
+Effects not_on_the_path:
+    [set ^UnusedVariable = true]
+[end]
+Conditions not_on_the_path.
 
-# # Define Scenes #
-# [randomly]
-# Scene dinner.
-# Scene lunch.
-# Scene happy.
+Content hard: "hard"
+Effects hard: [set ^Goal = true]
+Conditions hard:
+    [= ^TestVariable1 true]
+[end]
 
-# [randomly]
-# Want dinner full.
-# Want dinner not.
-# Want lunch another_not.
-# Want happy another_full.
+Content bad: "bad"
+Effects bad.
 
-# [randomly]
-# Fulfilled full:
-#     [= ^Initialized true]
-# [end]
-# Fulfilled another_full: 
-#     [= ^Initialized true]
-# [end]
-# Fulfilled not: 
-#     [= ^Initialized false]
-# [end]
-# Fulfilled another_not: 
-#     [= ^FriendReassuresEmma true]
-# [end]
+[randomly]
+Want test initialized.
+Want test var_1_true.
+Want test goal_true.
+
+[randomly]
+Fulfilled initialized:
+    [= ^Initialized true]
+[end]
+Fulfilled var_1_true: 
+    [= ^TestVariable1 true]
+[end]
+Fulfilled goal_true: 
+    [= ^Goal true]
+[end]
+
+# Another scene
+# ... with an incomplete storyspec
+Scene incomplete_scene.
+InitialSceneState incomplete_scene:
+    [set Initialized = false]
+[end]
+[randomly]
+Want incomplete_scene initialized.
+Fulfilled initialized:
+    [= ^Initialized true]
+[end]
 
 
+# Old reference code
 
 [randomly]
 Want intro_mechanics test.

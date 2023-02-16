@@ -13,21 +13,37 @@ Mention ?x: [Write ?x]
 
 BestPath ?best_frag ?score:
     [Max ?score [ScoreFragment ?best_frag ?score]]
+    Path score ?score [Paragraph]
 [end]
 
 [predicate]
 ScoreFragment ?frag ?score:
-    [> ^MaxDepth ^CurDepth] # Enforce recursion limit
+    # Enforce recursion limit
+    [> ^MaxDepth ^CurDepth] 
     [inc ^CurDepth]
-    Scoring ?frag ...
+    # Get an avilable fragment in the scene
+    [AvailableFragment ?frag ^CurrentScene]
+    [Paragraph]
+    # Apply the fragment's effects
     [Effects ?frag]
-    [BestPath ?best_outgoing ?best_outgoing_score]
+    # Recursively call BestPath to get the best outgoing path
+    # [BestPath ?best_outgoing ?best_outgoing_score]
+    # The issue here is that bestpath needs to undo all of the things that it did
+    # Get the score and bind it to the ?score arg
     [Score ?frag ?score]
-    # [= ?score [inc ?best_outgoing_score ?current_score]]
 [end]
 ScoreFragment ?frag ?score:
-    max depth ?frag
+    Default ?frag
+    [Paragraph]
+    [AvailableFragment ?frag ^CurrentScene]
+    [Conditions ?frag]
     [Score ?frag ?score]
+[end]
+ScoreFragment ?frag ?score:
+    Error, unavailable scene ?frag
+    [Paragraph]
+    [Fragment ?frag ^CurrentScene]
+    [= ?score 0]
 [end]
 
 # This is the hard part
@@ -37,5 +53,7 @@ Score ?fragment ?score:
     [CompleteStorySpec ?scene]
     [= ?score 100]
 [end]
-Score disastrous_date ?score: [=?score 1]
+Score not_on_the_path ?score: [= ?score 2]
+Score on_the_path ?score: [= ?score 1]
+Score hard ?score: [= ?score 3]
 Score ?fragment ?score: [= ?score 0]
