@@ -1,16 +1,12 @@
-# How to find the max of something
-# [generator] # equiv to [predicate] I believe
-# Generate b 2.
-# Generate a 1.
-# [Max ?score [Generate ?x ?score]] ?x ?score
-
 initially: 
     [set MaxDepth = 3]
     [set CurDepth = 0]
+    [set MaxValue = 100]
 [end]
 
 Mention ?x: [Write ?x]
 
+[predicate]
 BestPath ?best_frag ?score:
     [Max ?score [ScoreFragment ?best_frag ?score]]
     Path score ?score [Paragraph]
@@ -18,42 +14,68 @@ BestPath ?best_frag ?score:
 
 [predicate]
 ScoreFragment ?frag ?score:
-    # Enforce recursion limit
-    [> ^MaxDepth ^CurDepth] 
-    [inc ^CurDepth]
-    # Get an avilable fragment in the scene
-    [AvailableFragment ?frag ^CurrentScene]
-    [Paragraph]
+    [AvailableUnexploredFragment ?frag ^CurrentScene] # Get an avilable fragment in the scene
+    ?frag
     # Apply the fragment's effects
+    [now [Expanded ?frag]]
     [Effects ?frag]
-    # Recursively call BestPath to get the best outgoing path
-    # [BestPath ?best_outgoing ?best_outgoing_score]
-    # The issue here is that bestpath needs to undo all of the things that it did
-    # Get the score and bind it to the ?score arg
-    [Score ?frag ?score]
+
+    # Score the current fragment
+    [RecursivelyScoreValidPaths ?frag ?score]
 [end]
-ScoreFragment ?frag ?score:
+ScoreFragent none 0:
+    No available fragment.
+[end]
+
+[predicate]
+RecursivelyScoreValidPaths ?frag ?score:
+    # Don't need to keep recursing if we're at the max value
+    [Value ?frag ?score]
+    [>= ?score ^MaxValue]
+    Frag ?frag at max value ?score
+[end]
+RecursivelyScoreValidPaths ?frag ?score:
+    # Enforce recursion limit
+    [>= ^MaxDepth ^CurDepth] 
+    [inc ^CurDepth]
+
+    [Value ?frag ?cur_frag_value] # get the value of our current state
+
+    Frag ?frag
+    # Apply the fragment's effects
+    
+    # Recursively call BestPath to get the best outgoing path
+    [BestPath ?new_frag ?chain_value]
+    # Get the value of this fragment
+    # [set ?score = ?cur_frag_value + ?chain_value]
+    [MaxOf ?cur_frag_value ?chain_value ?max]
+    [set ?score = ?max]
+    
+    In ScoreFragment Frag ?frag Score ?score [Paragraph]
+[end]
+RecursivelyScoreValidPaths ?frag ?score:
+    [> ^CurDepth ^MaxDepth] # We're at the furthest we can go (base case)
+    Base Case ?frag
+    [Effects ?frag]
+    [Value ?frag ?score]
+[end]
+RecursivelyScoreValidPaths ?frag ?score:
+    [Value ?frag ?score]
     Default ?frag
     [Paragraph]
-    [AvailableFragment ?frag ^CurrentScene]
-    [Conditions ?frag]
-    [Score ?frag ?score]
 [end]
-ScoreFragment ?frag ?score:
-    Error, unavailable scene ?frag
-    [Paragraph]
-    [Fragment ?frag ^CurrentScene]
-    [= ?score 0]
-[end]
+# RecursivelyScoreValidPaths ?frag ?score:
+#     Error, unavailable fragment ?frag
+# [end]
 
 # This is the hard part
 [predicate]
-Score ?fragment ?score:
+Value ?fragment ?value:
     [Fragment ?fragment ?scene] # get the scene
     [CompleteStorySpec ?scene]
-    [= ?score 100]
+    [= ?value ^MaxValue]
 [end]
-Score not_on_the_path ?score: [= ?score 2]
-Score on_the_path ?score: [= ?score 1]
-Score hard ?score: [= ?score 3]
-Score ?fragment ?score: [= ?score 0]
+# Value not_on_the_path ?value: [= ?value 1]
+# Value on_the_path ?value: [= ?value 2]
+# Value hard ?value: [= ?value 3]
+Value ?fragment ?value: [Fragment ?fragment ?scene] [= ?value 0]

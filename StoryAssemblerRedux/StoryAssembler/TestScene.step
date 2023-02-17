@@ -8,36 +8,37 @@ Fragment not_on_the_path test.
 Fragment hard test.
 Fragment bad test.
 
+fluent Married ? ?.
+
 InitialSceneState test:
     [set ^Initialized = true]
-    [set ^TestVariable1 = false]
-    [set ^Goal = false]
+    [now [Not [Dating ally protagonist]]]
 [end]
 
 Content disastrous_date: "a very bad date"
-Conditions disastrous_date: 
-    [= ^Initialized true]
-[end]
+Conditions disastrous_date.
 Effects disastrous_date. # no effects
-Speaker disastrous_date ?speaker: [= ?speaker "Audrey"]
+Speaker disastrous_date ?speaker: [= ?speaker "ally"]
 ChoiceLabel disastrous_date: "a choicy label"
 
-Content on_the_path: "another one"
+Content on_the_path: "Start dating"
 Effects on_the_path:
-    [set ^TestVariable1 = true]
+    [now [Dating ally protagonist]]
 [end]
 Conditions on_the_path.
 
 Content not_on_the_path: "another one"
 Effects not_on_the_path:
-    [set ^UnusedVariable = true]
+    [now [Dating someone_else another_person]]
 [end]
 Conditions not_on_the_path.
 
-Content hard: "hard"
-Effects hard: [set ^Goal = true]
+Content hard: "I do"
+Effects hard:
+    [now [Married ally protagonist]]
+[end]
 Conditions hard:
-    [= ^TestVariable1 true]
+    [Dating ally protagonist]
 [end]
 
 Content bad: "bad"
@@ -45,19 +46,23 @@ Effects bad.
 
 [randomly]
 Want test initialized.
-Want test var_1_true.
-Want test goal_true.
+Want test characters_dating.
+# Want test goal_true.
+# [ [Want Test initialized] [Want test characters_dating] ].
+
+EffectMakesWantTrue 
+# might want to count how many are true and then purposely fail
 
 [randomly]
 Fulfilled initialized:
     [= ^Initialized true]
 [end]
-Fulfilled var_1_true: 
-    [= ^TestVariable1 true]
+Fulfilled characters_dating: 
+    [Dating ally protagonist]
 [end]
-Fulfilled goal_true: 
-    [= ^Goal true]
-[end]
+# Fulfilled goal_true: 
+#     [= ^Goal true]
+# [end]
 
 # Another scene
 # ... with an incomplete storyspec
@@ -65,6 +70,7 @@ Scene incomplete_scene.
 InitialSceneState incomplete_scene:
     [set Initialized = false]
 [end]
+
 [randomly]
 Want incomplete_scene initialized.
 Fulfilled initialized:
@@ -72,10 +78,16 @@ Fulfilled initialized:
 [end]
 
 
+
+
+
+
+
+
 # Old reference code
 
-[randomly]
-Want intro_mechanics test.
+# [randomly]
+# Want intro_mechanics test.
 # # Want establish_specialty_info.
 # # Want establish_setting.
 # # Want establish_ally_backstory.
@@ -85,9 +97,9 @@ Want intro_mechanics test.
 # # Want ally_reassures_protag.
 # # Want dropped_knowledge.
 
-Fulfilled intro_mechanics: 
-    [= ^IntroMechanics true]
-[end]
+# Fulfilled intro_mechanics: 
+#     [= ^IntroMechanics true]
+# [end]
 # # Fulfilled establish_specialty_info: 
 # #     [= ^EstablishSpecialtyInfo true]
 # # [end]

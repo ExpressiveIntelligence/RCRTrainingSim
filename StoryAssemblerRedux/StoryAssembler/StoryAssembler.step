@@ -62,16 +62,19 @@
 
 # Define the Fragment attributes as predicates
 predicate Fragment ?frag ?scene.
+predicate Effects ?frag. # Effects must be declared
 predicate Conditions ?frag.
-predicate Effects ?frag.
 predicate Content ?frag.
 predicate Speaker ?frag ?speaker.
 predicate Choices ?frag. 
 predicate ChoiceLabel ?frag.
 predicate Choice ?frag ?speaker ?n.
+fluent Expanded ?fragment.
 
 [predicate]
 AvailableFragment ?fragment ?scene: [Fragment ?fragment ?scene] [Conditions ?fragment]
+[predicate]
+AvailableUnexploredFragment ?fragment ?scene: [AvailableFragment ?fragment ?scene] [Not [Expanded ?fragment]]
 
 # Scene stuff
 predicate Scene ?scene.
@@ -81,7 +84,7 @@ predicate StartState ?scene.
 # # A Want is an element in a story spec 
 # A Want is attached to a scene, and can be fulfilled
 # or unfullfilled
-predicate Want ?scene ?want_id.
+fluent Want ?scene ?want_id.
 predicate Fulfilled ?want_id.
 
 # Functions for retreiving wants
@@ -136,3 +139,6 @@ CompleteStorySpec ?scene:
     [Scene ?scene] # find a scene with at least one attached want (ask michael about why this line is necessary, although it is intuitive)
     [Not [InCompleteStorySpec ?scene]]
 [end]
+
+# MyList = empty
+# [add MyList [thing]]

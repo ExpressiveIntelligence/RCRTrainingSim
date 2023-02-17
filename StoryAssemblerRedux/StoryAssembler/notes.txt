@@ -1,0 +1,39 @@
+[remembered]
+States that when the task is called, its results (arguments and text output) should be cached.  Subsequent calls should be unified with the remembered arguments; when a match is found the remembered text, if any, should be printed and the task should complete.
+[fluent]
+States that the task is a [predicate] and, additionally, can be updated using now.  Methods can still be declared for the predicate, in which case they behave as defaults.
+[function]
+For [fluents], states that the predicate has the additional property of being a function in the sense that its last argument is unique given its previous arguments.  This means that an update like [now [F 1 2]] will not only mark [F 1 2] as true, but mark any previous [F 1 ?] as false.
+
+
+
+Where to find Max, other definitons
+
+HigherOrderPrimitiveTests.cs
+
+    FindUnique
+    FindFirstNUnique
+    FindAtMostNUnique
+    DoAll
+    Or
+    Not
+    ForEach
+    Once
+    ExactlyOnce
+    Max
+    Min
+    PreviousCall
+    UniqueCall
+
+PrimitiveTests
+
+    Test
+    Write
+    =
+    <
+    >
+
+    Lists
+        [add ?x List]
+        [set List = empty]
+        
