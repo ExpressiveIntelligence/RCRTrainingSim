@@ -1,63 +1,49 @@
-# Author: Alex
+Author: Alex
 
-# # Foo: global variable test
-# # Button "Assemble Story" [StoryAssembler ?].
+# Foo: global variable test
+# Button "Assemble Story" [StoryAssembler ?].
 
-# # [main]
-# # Test: test.
+[predicate]
+RenderFragment ?frag:
 
-# # Button 
-# [main]
-# StoryAssembler ?frag:
-#     [AvailableFragment ?frag ^CurrentScene]
-#     [PrintFragment ?frag]
-#     [Effects ?frag]
-# [end]
+[end]
 
-# [predicate]
-# PrintFragment ?frag:
-#     --Fragment--
-#     [Paragraph]
-#     [Fragment ?frag ?scene]
-#     [PrintContent ?frag]
-#     [Paragraph]
-#     [PrintChoices ?frag]
-#     [Paragraph]
-#     [PrintConditions ?frag]
-#     [PrintEffects ?frag]
-#     [PrintChoiceLabel ?frag]
-# [end]
+[predicate]
+PrintFragment ?frag:
+    --Fragment ?frag--
+    [Fragment ?frag ?scene]
+    [PrintContent ?frag]
+    [Paragraph]
+    [PrintConditions ?frag]
+    [PrintEffects ?frag]
+    [PrintChoiceLabel ?frag]
+[end]
 
-# [predicate]
-# PrintContent ?frag:
-#     ?frag/Speaker/Write Speaking: [Content ?frag]
-# [end]
-# PrintContent ?frag:
-#     [Content ?frag]
-# [end]
-# PrintContent ?frag:
-#     ?frag # If there is no content, just print the fragment name
-# [end]
+[predicate]
+PrintContent ?frag:
+    ?frag/Speaker/Write Speaking: [Content ?frag]
+[end]
+PrintContent ?frag:
+    [Content ?frag]
+[end]
+PrintContent ?frag:
+    ?frag # If there is no content, just print the fragment name
+[end]
 
-# PrintChoices ?frag:
-#     [Choices ?frag]
-# [end]
-# PrintChoices ?frag.
+PrintChoiceLabel ?frag:
+    [ChoiceLabel ?frag]
+[end]
+PrintChoiceLabel ?frag.
 
-# PrintChoiceLabel ?frag:
-#     [ChoiceLabel ?frag]
-# [end]
-# PrintChoiceLabel ?frag.
+PrintConditions ?frag:
+    Conditions: [Conditions ?frag]
+[end]
+PrintConditions ?frag.
 
-# # PrintConditions ?frag:
-# #     Conditions: [Conditions ?frag]
-# # [end]
-# PrintConditions ?frag.
-
-# # PrintEffects ?frag:
-# #     Effects: [Effects ?frag]
-# # [end]
-# PrintEffects ?frag.
+PrintEffects ?frag:
+    Effects: [Effects ?frag]
+[end]
+PrintEffects ?frag.
 
 
 # Define the Fragment attributes as predicates
@@ -66,7 +52,6 @@ predicate Effects ?frag. # Effects must be declared
 predicate Conditions ?frag.
 predicate Content ?frag.
 predicate Speaker ?frag ?speaker.
-predicate Choices ?frag. 
 predicate ChoiceLabel ?frag.
 predicate Choice ?frag ?speaker ?n.
 fluent Expanded ?fragment.
@@ -75,6 +60,7 @@ fluent Expanded ?fragment.
 AvailableFragment ?fragment ?scene: [Fragment ?fragment ?scene] [Conditions ?fragment]
 [predicate]
 AvailableUnexploredFragment ?fragment ?scene: [AvailableFragment ?fragment ?scene] [Not [Expanded ?fragment]]
+
 
 # Scene stuff
 predicate Scene ?scene.
@@ -142,3 +128,12 @@ CompleteStorySpec ?scene:
 
 # MyList = empty
 # [add MyList [thing]]
+
+# might want to count how many are true and then purposely fail
+[predicate]
+EffectMakesWantTrue ?fragment ?want: 
+    [Want ?scene ?want_id]
+    [Not [Fulfilled ?want_id]]
+    [Effects ?fragment]
+    [Fulfilled ?want_id]
+[end]

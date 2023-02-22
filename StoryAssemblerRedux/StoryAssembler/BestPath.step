@@ -6,65 +6,86 @@ initially:
 
 Mention ?x: [Write ?x]
 
+PrintAllSatisfyingChoices ?source_frag:
+    [AllSatisfyingChoices ?source_frag ?specs]
+    Potential choices from ?source_frag: ?specs
+[end]
+
+AllSatisfyingChoices ?source_frag ?satisfying_frag_list:
+    [FindAll ?frag [SatisfyingChoiceSpec ?source_frag ?choice_id ?frag] ?satisfying_frag_list]
+[end]
+
+[predicate]
+SatisfyingChoiceSpec ?source_frag ?choice_id ?satisfying_frag: 
+    [ChoiceLabel ?satisfying_frag]        # the new fragment must have a choice label
+    [Conditions ?satisfying_frag]
+    [Effects ?satisfying_frag]            # apply the effects of the new frag
+    [ChoiceSpec ?source_frag ?choice_id]  # see if they satisfy the choice spec of the source frag
+    [Not [Expanded ?satisfying_frag]]     # TODO I can't put this at the top even though it would speedup
+[end]
+
 [predicate]
 BestPath ?best_frag ?score:
     [Max ?score [ScoreFragment ?best_frag ?score]]
-    Path score ?score [Paragraph]
 [end]
 
 [predicate]
 ScoreFragment ?frag ?score:
-    [AvailableUnexploredFragment ?frag ^CurrentScene] # Get an avilable fragment in the scene
+    # Get an avilable fragment in the scene
+    [AvailableUnexploredFragment ?frag ^CurrentScene] 
     ?frag
+
     # Apply the fragment's effects
     [now [Expanded ?frag]]
     [Effects ?frag]
 
     # Score the current fragment
-    [RecursivelyScoreValidPaths ?frag ?score]
+    [SearchAndScoreValidPaths ?frag ?score]
 [end]
-ScoreFragent none 0:
+ScoreFragent none 0: 
+    # Not sure this does anything useful
     No available fragment.
 [end]
 
 [predicate]
-RecursivelyScoreValidPaths ?frag ?score:
+SearchAndScoreValidPaths ?frag ?score:
     # Don't need to keep recursing if we're at the max value
     [Value ?frag ?score]
     [>= ?score ^MaxValue]
     Frag ?frag at max value ?score
 [end]
-RecursivelyScoreValidPaths ?frag ?score:
+SearchAndScoreValidPaths ?frag ?score:
+    # Called after applying the fragment's effects
+
     # Enforce recursion limit
     [>= ^MaxDepth ^CurDepth] 
     [inc ^CurDepth]
 
     [Value ?frag ?cur_frag_value] # get the value of our current state
 
-    Frag ?frag
-    # Apply the fragment's effects
-    
+    Frag ?Frag
+
     # Recursively call BestPath to get the best outgoing path
     [BestPath ?new_frag ?chain_value]
     # Get the value of this fragment
-    # [set ?score = ?cur_frag_value + ?chain_value]
-    [MaxOf ?cur_frag_value ?chain_value ?max]
+    [set ?score = ?cur_frag_value + ?chain_value]
+    # [MaxOf ?cur_frag_value ?chain_value ?max]
     [set ?score = ?max]
     
     In ScoreFragment Frag ?frag Score ?score [Paragraph]
 [end]
-RecursivelyScoreValidPaths ?frag ?score:
+SearchAndScoreValidPaths ?frag ?score:
     [> ^CurDepth ^MaxDepth] # We're at the furthest we can go (base case)
     Base Case ?frag
     [Effects ?frag]
     [Value ?frag ?score]
 [end]
-RecursivelyScoreValidPaths ?frag ?score:
+SearchAndScoreValidPaths ?frag ?score:
     [Value ?frag ?score]
     Default ?frag
     [Paragraph]
 [end]
-# RecursivelyScoreValidPaths ?frag ?score:
+# SearchAndScoreValidPaths ?frag ?score:
 #     Error, unavailable fragment ?frag
 # [end]
 

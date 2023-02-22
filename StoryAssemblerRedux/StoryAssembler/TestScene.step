@@ -1,3 +1,5 @@
+
+
 # Must declare the scene for various checks to succeed
 Scene test.
 
@@ -8,6 +10,9 @@ Fragment not_on_the_path test.
 Fragment hard test.
 Fragment bad test.
 
+# Scene specific predicates
+fluent Dating ?person1 ?person2.
+fluent Dislikes ?person1 ?person2.
 fluent Married ? ?.
 
 InitialSceneState test:
@@ -15,19 +20,35 @@ InitialSceneState test:
     [now [Not [Dating ally protagonist]]]
 [end]
 
-Content disastrous_date: "a very bad date"
-Conditions disastrous_date.
+Content disastrous_date: Ally and protagonist go to a high end restaurant. Ally orders a $100 bottle of wine. Protagonist is offended. 
+Conditions disastrous_date:
+    [Not [Dating ally protagonist]]
+[end]
 Effects disastrous_date. # no effects
 Speaker disastrous_date ?speaker: [= ?speaker "ally"]
-ChoiceLabel disastrous_date: "a choicy label"
+[randomly]
+ChoiceSpec disastrous_date ends_badly: 
+    [Dislikes ally protagonist]
+[end]
+ChoiceSpec disastrous_date tentative_recovery: 
+    [Dating ally protagonist]
+[end]
 
-Content on_the_path: "Start dating"
-Effects on_the_path:
+Content unapologetic: ""
+[randomly] ChoiceLabel unapologetic: You won't even spend $100 on me?.
+Effects unapologetic:
+    [now [Dislikes ally protagonist]]
+[end]
+Conditions unapologetic.
+
+Content apology: ""
+[randomly] ChoiceLabel apology: I'm sorry I ordered the wine, give me another chance?.
+Effects apology:
     [now [Dating ally protagonist]]
 [end]
-Conditions on_the_path.
+Conditions apology.
 
-Content not_on_the_path: "another one"
+Content not_on_the_path: "In another town, someone else is dating"
 Effects not_on_the_path:
     [now [Dating someone_else another_person]]
 [end]
@@ -50,8 +71,6 @@ Want test characters_dating.
 # Want test goal_true.
 # [ [Want Test initialized] [Want test characters_dating] ].
 
-EffectMakesWantTrue 
-# might want to count how many are true and then purposely fail
 
 [randomly]
 Fulfilled initialized:
@@ -76,51 +95,3 @@ Want incomplete_scene initialized.
 Fulfilled initialized:
     [= ^Initialized true]
 [end]
-
-
-
-
-
-
-
-
-# Old reference code
-
-# [randomly]
-# Want intro_mechanics test.
-# # Want establish_specialty_info.
-# # Want establish_setting.
-# # Want establish_ally_backstory.
-# # Want establish_protag_regrets.
-# # Want establish_protag_backstory.
-# # Want provoke_confidence_choice.
-# # Want ally_reassures_protag.
-# # Want dropped_knowledge.
-
-# Fulfilled intro_mechanics: 
-#     [= ^IntroMechanics true]
-# [end]
-# # Fulfilled establish_specialty_info: 
-# #     [= ^EstablishSpecialtyInfo true]
-# # [end]
-# # Fulfilled establish_setting: 
-# #     [= ^EstablishSetting true]
-# # [end]
-# # Fulfilled establish_ally_backstory: 
-# #     [= ^EstablishAllyBackstory true]
-# # [end]
-# # Fulfilled establish_protag_regrets: 
-# #     [= ^EstablishProtagRegrets true]
-# # [end]
-# # Fulfilled establish_protag_backstory: 
-# #     [= ^EstablishProtagBackstory true]
-# # [end]
-# # Fulfilled provoke_confidence_choice: 
-# #     [= ^ProvokeConfidenceChoice true]
-# # [end]
-# # Fulfilled ally_reassures_protag: 
-# #     [= ^AllyReassuresProtag true]
-# # [end]
-# # Fulfilled dropped_knowledge: 
-# #     [>= ^DroppedKnowledge 2]
-# # [end]
