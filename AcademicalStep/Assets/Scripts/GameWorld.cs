@@ -2,33 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//Core singleton for application. Used to navigate across managers and key game objects
-
-/**TODOS:
- * 1. Link and create safe way to reference player profile and game world
- * 
- */
-
-
-public class GameSession : MonoBehaviour
+public class GameWorld : MonoBehaviour
 {
     // Singleton instance variable
-    public static GameSession instance = null;
-
-    // Player Profile Information and Save Data
-    public PlayerProfile playerProfile;
-
-    // Updated Game World Object
-    public GameWorld gameWorld;
+    public static GameWorld instance = null;
 
     // Awake is used to instantiate class as singleton
-    void Awake() 
+    void Awake()
     {
         if (instance == null)
         {
             instance = this;
         }
-        else if (instance != this) 
+        else if (instance != this)
         {
             Destroy(gameObject);
         }
