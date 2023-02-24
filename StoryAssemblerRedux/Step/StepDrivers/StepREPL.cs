@@ -11,13 +11,21 @@ namespace StepDrivers
     {
         static void Main(string[] args)
         {
+            Console.CancelKeyPress += (sender, e) => {
+                e.Cancel = true;
+            };
+
             Module module = LoadModule();
       
             while (true)
             {
                 Console.WriteLine("Enter Step code or type 'q' to exit, 'r' to reload:");
                 string input = Console.ReadLine();
-                if (input.ToLower() == "q")
+                if (input == null)
+                {
+                    // do nothing
+                }
+                else if (input.ToLower() == "q")
                 {
                     break;
                 }
