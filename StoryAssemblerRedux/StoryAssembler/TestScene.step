@@ -1,23 +1,29 @@
-
-
 # Must declare the scene for various checks to succeed
 Scene test.
 
+# Declare all storylets (fragments)
 [randomly]
 Fragment disastrous_date test.
 Fragment on_the_path test.
 Fragment not_on_the_path test.
 Fragment hard test.
 Fragment bad test.
+Fragment pause test.
+Fragment unapologetic test.
+Fragment apology test.
+Fragment respite test.
+Fragment overthinking test. 
 
 # Scene specific predicates
 fluent Dating ?person1 ?person2.
 fluent Dislikes ?person1 ?person2.
 fluent Married ? ?.
+fluent Respite.
 
 InitialSceneState test:
     [set ^Initialized = true]
     [now [Not [Dating ally protagonist]]]
+    [now [Not [Respite]]]
 [end]
 
 Content disastrous_date: Ally and protagonist go to a high end restaurant. Ally orders a $100 bottle of wine. Protagonist is offended. 
@@ -33,20 +39,31 @@ ChoiceSpec disastrous_date ends_badly:
 ChoiceSpec disastrous_date tentative_recovery: 
     [Dating ally protagonist]
 [end]
+ChoiceSpec disastrous_date pause: 
+    [Respite]
+[end]
+GoToChoice disastrous_date overthinking.
 
-Content unapologetic: ""
-[randomly] ChoiceLabel unapologetic: You won't even spend $100 on me?.
+Content unapologetic: You won't even spend $100 on me?.
+[randomly] ChoiceLabel unapologetic: Be unapologetic.
 Effects unapologetic:
     [now [Dislikes ally protagonist]]
 [end]
 Conditions unapologetic.
 
-Content apology: ""
-[randomly] ChoiceLabel apology: I'm sorry I ordered the wine, give me another chance?.
+Content apology: I'm sorry I ordered the wine, give me another chance?.
+[randomly] ChoiceLabel apology: Apologize...
 Effects apology:
     [now [Dating ally protagonist]]
 [end]
 Conditions apology.
+
+Content respite: Can we step outside for some fresh air? I think we need to step back.
+[randomly] ChoiceLabel respite: Take a break.
+Effects respite:
+    [now [Respite]]
+[end]
+Conditions respite.
 
 Content not_on_the_path: "In another town, someone else is dating"
 Effects not_on_the_path:
@@ -65,12 +82,15 @@ Conditions hard:
 Content bad: "bad"
 Effects bad.
 
+Content overthinking: What is happening?? I'm overthinking this. I need to take a break.
+Effects overthinking.
+Conditions overthinking.
+
 [randomly]
 Want test initialized.
 Want test characters_dating.
 # Want test goal_true.
 # [ [Want Test initialized] [Want test characters_dating] ].
-
 
 [randomly]
 Fulfilled initialized:

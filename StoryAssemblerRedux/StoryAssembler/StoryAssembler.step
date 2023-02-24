@@ -1,66 +1,44 @@
 Author: Alex
 
-# Foo: global variable test
-# Button "Assemble Story" [StoryAssembler ?].
+## Define the Fragment attributes ##
 
-[predicate]
-RenderFragment ?frag:
+# Original StoryAssembler example frag: https://github.com/LudoNarrative/StoryAssembler/wiki/Creating-Scene-Content
 
-[end]
-
-[predicate]
-PrintFragment ?frag:
-    --Fragment ?frag--
-    [Fragment ?frag ?scene]
-    [PrintContent ?frag]
-    [Paragraph]
-    [PrintConditions ?frag]
-    [PrintEffects ?frag]
-    [PrintChoiceLabel ?frag]
-[end]
-
-[predicate]
-PrintContent ?frag:
-    ?frag/Speaker/Write Speaking: [Content ?frag]
-[end]
-PrintContent ?frag:
-    [Content ?frag]
-[end]
-PrintContent ?frag:
-    ?frag # If there is no content, just print the fragment name
-[end]
-
-PrintChoiceLabel ?frag:
-    [ChoiceLabel ?frag]
-[end]
-PrintChoiceLabel ?frag.
-
-PrintConditions ?frag:
-    Conditions: [Conditions ?frag]
-[end]
-PrintConditions ?frag.
-
-PrintEffects ?frag:
-    Effects: [Effects ?frag]
-[end]
-PrintEffects ?frag.
-
-
-# Define the Fragment attributes as predicates
-predicate Fragment ?frag ?scene.
-predicate Effects ?frag. # Effects must be declared
+# Required predicates
+predicate Fragment ?frag ?scene. 
+predicate Effects ?frag.
 predicate Conditions ?frag.
+
+# Optional predicates
 predicate Content ?frag.
 predicate Speaker ?frag ?speaker.
 predicate ChoiceLabel ?frag.
-predicate Choice ?frag ?speaker ?n.
+task ChoiceSpec ?frag ?choice_id.
+task GoToChoice ?frag ?target_frag.
+
+# Fragment fluents set during execution
 fluent Expanded ?fragment.
+fluent Reusable ?fragment.
+
+AddWishListItem ?fragment. # TODO https://github.com/LudoNarrative/StoryAssembler/wiki/Authoring-Patterns
+
+Request ?fragment. # TODO https://github.com/LudoNarrative/StoryAssembler/wiki/Authoring-Patterns#fragment-available-both-as-choice-and-dynamically
+
+TopLevelFragment ?frag: [Fragment ?frag ?] [Not [ChoiceLabel ?frag]] # If it has a choice label it is not a top level fragment
 
 [predicate]
-AvailableFragment ?fragment ?scene: [Fragment ?fragment ?scene] [Conditions ?fragment]
-[predicate]
-AvailableUnexploredFragment ?fragment ?scene: [AvailableFragment ?fragment ?scene] [Not [Expanded ?fragment]]
+RenderFragment ?frag: # TODO display with API parsing
 
+[end]
+
+# [predicate]
+# AvailableFragment ?fragment ?scene: [Fragment ?fragment ?scene] [Conditions ?fragment]
+# [predicate]
+# AvailableUnexploredFragment ?fragment ?scene: [AvailableFragment ?fragment ?scene] [Not [Expanded ?fragment]]
+
+[predicate]
+Available ?fragment: [Reusable ?fragment]
+Available ?fragment: [Not [Expanded ?fragment]]
 
 # Scene stuff
 predicate Scene ?scene.

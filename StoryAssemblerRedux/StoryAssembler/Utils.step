@@ -35,20 +35,11 @@ R:
     [AvailableUnexploredFragment ?frag ^CurrentScene]
 [end]
 
-fluent Dating ?char1 ?char2.
-
-[predicate]
-Generate a 1:
-    [now [Dating a b]]
+TestAllSatisfiableChoices:
+    [set CurrentScene = test]
+    [InitScene ^CurrentScene]
+    [DoAll [AllSatisfiableChoices ?frag ?list] [Write ?frag ][Write ?list]]
 [end]
-Generate b 2:
-    [now [Dating b c]]
-[end]
-Generate c 3:
-    [now [Dating d e]]
-[end]
-
-TestMax: [Max ?s [Generate ?x ?s]] ?x ?s
 
 initially:
     [set ^CurrentScene = test]

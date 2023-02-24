@@ -4,30 +4,57 @@ initially:
     [set MaxValue = 100]
 [end]
 
-Mention ?x: [Write ?x]
+# Mention ?x: [Write ?x]
 
-PrintAllSatisfyingChoices ?source_frag:
-    [AllSatisfyingChoices ?source_frag ?specs]
+PrintAllSatisfiableChoices ?source_frag:
+    [AllSatisfiableChoices ?source_frag ?specs]
     Potential choices from ?source_frag: ?specs
 [end]
 
-AllSatisfyingChoices ?source_frag ?satisfying_frag_list:
+AllSatisfiableChoices ?source_frag ?satisfying_frag_list: # TODO this doesn't return teh choice_id. Do we need this?
     [FindAll ?frag [SatisfyingChoiceSpec ?source_frag ?choice_id ?frag] ?satisfying_frag_list]
 [end]
 
+# Returns true if ?satisfying_frag satisfies ?source_frag's choice ?choice_id
 [predicate]
 SatisfyingChoiceSpec ?source_frag ?choice_id ?satisfying_frag: 
     [ChoiceLabel ?satisfying_frag]        # the new fragment must have a choice label
     [Conditions ?satisfying_frag]
     [Effects ?satisfying_frag]            # apply the effects of the new frag
     [ChoiceSpec ?source_frag ?choice_id]  # see if they satisfy the choice spec of the source frag
-    [Not [Expanded ?satisfying_frag]]     # TODO I can't put this at the top even though it would speedup
+    [Available ?satisfying_frag]     # TODO I can't put this at the top even though it would speedup
 [end]
 
 [predicate]
-BestPath ?best_frag ?score:
-    [Max ?score [ScoreFragment ?best_frag ?score]]
+AlternateAllSatisfiableChoices ?source_frag ?satisfying_frag_list: # Need to test the speed of this one... faster?
+    [ChoiceLabel ?satisfying_frag]        # the new fragment must have a choice label
+    [Conditions ?satisfying_frag]
+    [Effects ?satisfying_frag]            # apply the effects of the new frag
+    [ChoiceSpec ?source_frag ?choice_id]  # see if they satisfy the choice spec of the source frag
+    [Available ?satisfying_frag]     # TODO I can't put this at the top even though it would speedup
+    [FindAll ?satisfying_frag [SatisfyingChoiceSpec ?source_frag ?choice_id ?satisfying_frag] ?satisfying_frag_list]
 [end]
+
+[predicate]
+AllAvailableTopLevelFragments ?fragments:
+    [FindAll ?frag [AvailableTopLevelFragment ?frag] ?fragments]
+[end]
+
+[predicate]
+AvailableTopLevelFragment ?frag:
+    [TopLevelFragment ?frag]    # must not have a choice label
+    [Conditions ?frag]
+    [Available ?frag]
+[end]
+
+[predicate]
+# BestPath ?best_frag ?score:
+#     [Max ?score [ScoreFragment ?best_frag ?score]]
+# # [end]
+
+# BestPath ?current_frag ?best_frag ?score:
+#     [AllSatisfiableChoices ]
+
 
 [predicate]
 ScoreFragment ?frag ?score:
@@ -58,7 +85,7 @@ SearchAndScoreValidPaths ?frag ?score:
     # Called after applying the fragment's effects
 
     # Enforce recursion limit
-    [>= ^MaxDepth ^CurDepth] 
+    [>= ^MaxDepth ^CurDepth]
     [inc ^CurDepth]
 
     [Value ?frag ?cur_frag_value] # get the value of our current state

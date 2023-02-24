@@ -43,8 +43,58 @@ ClearContext:
 
 initially: [ClearContext]
 
+
+[predicate]
+PrintFragment ?frag:
+    \<[Fragment ?frag ?scene]
+    Fragment [Write ?frag]
+    [PrintContent ?frag]
+    [PrintConditions ?frag]\>
+    # [PrintEffects ?frag]
+    [PrintChoiceLabel ?frag]
+[end]
+
+[predicate]
+PrintContent ?frag:
+    \(?frag/Speaker/Write Speaking: [Content ?frag]\) 
+[end]
+PrintContent ?frag:
+    \([Content ?frag]) 
+[end]
+PrintContent ?frag:
+    \(No Content) 
+[end]
+
+PrintChoiceLabel ?frag:
+    (Label [ChoiceLabel ?frag])
+[end]
+PrintChoiceLabel ?frag.
+
+PrintConditions ?frag:
+    [FindAll ?frag [Conditions ?frag] ?conditions]
+    [Length ?conditions ?length]
+    [PrintConditionsHelper ?length]
+[end]
+PrintConditions ?frag.
+
+PrintConditionsHelper ?length:
+    [= ?length 0]
+    \(No Conditions\)
+[end]
+PrintConditionsHelper ?length:
+    \(?length/Write Conditions\)
+[end]
+
+PrintEffects ?frag:
+    Effects: [Effects ?frag]
+[end]
+PrintEffects ?frag.
+
 # Mention ?x
 # Print ?x however is appropriate, and keeping track of pronouns.
+
+# Custom Mention code for StoryAssembler
+Mention ?fragment: [PrintFragment ?fragment]
 Mention Him: he [set ThirdPersonSingular = true] [set MentionedPlural = false]
 Mention Her: she [set ThirdPersonSingular = true] [set MentionedPlural = false]
 Mention Them: they [set ThirdPersonSingular = false] [set MentionedPlural = true] 
