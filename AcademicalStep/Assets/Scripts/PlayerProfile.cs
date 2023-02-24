@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//TODO: Create a serialized version with the group
 public class PlayerProfile : MonoBehaviour
 {
 

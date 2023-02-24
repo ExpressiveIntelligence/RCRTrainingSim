@@ -2,10 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//TODO: Create a serialized version with Alex
 public class GameWorld : MonoBehaviour
 {
     // Singleton instance variable
-    public static GameWorld instance = null; 
+    public static GameWorld instance = null;
+
+    // Create a map of characters for save state purposes
+    public Dictionary<string, Character> characters;
 
     // Awake is used to instantiate class as singleton
     void Awake()
