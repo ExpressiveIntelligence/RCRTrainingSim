@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameWorld : MonoBehaviour
 {
     // Singleton instance variable
-    public static GameWorld instance = null;
+    public static GameWorld instance = null; 
 
     // Awake is used to instantiate class as singleton
     void Awake()
