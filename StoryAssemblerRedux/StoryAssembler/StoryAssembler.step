@@ -27,8 +27,8 @@ Request ?fragment. # TODO https://github.com/LudoNarrative/StoryAssembler/wiki/A
 TopLevelFragment ?frag: [Fragment ?frag ?] [Not [ChoiceLabel ?frag]] # If it has a choice label it is not a top level fragment
 
 [predicate]
-RenderFragment ?frag: # TODO display with API parsing
-
+RenderFragment ?frag:
+    Rendered: ?frag
 [end]
 
 # [predicate]
@@ -37,7 +37,7 @@ RenderFragment ?frag: # TODO display with API parsing
 # AvailableUnexploredFragment ?fragment ?scene: [AvailableFragment ?fragment ?scene] [Not [Expanded ?fragment]]
 
 [predicate]
-Available ?fragment: [Reusable ?fragment]
+# Available ?fragment: [Reusable ?fragment]
 Available ?fragment: [Not [Expanded ?fragment]]
 
 # Scene stuff
@@ -75,10 +75,7 @@ PrintFinishState ?scene:
 
 [predicate]
 InitScene ?scene:
-    [= 0 0]
     [InitialSceneState ?scene]
-    Initialized Scene: ?scene
-    [Paragraph]
 [end]
 
 [predicate]
@@ -114,4 +111,33 @@ EffectMakesWantTrue ?fragment ?want:
     [Not [Fulfilled ?want_id]]
     [Effects ?fragment]
     [Fulfilled ?want_id]
+[end]
+
+Visit ?frag:
+    [Fragment ?frag ?]      # without this line, ?frag may not be ground...
+    [now [Expanded ?frag]]
+    [Effects ?frag]
+[end]
+
+# Algorithms
+Start ?frag:
+    [BestFrag root ?frag ?score]
+    [Visit ?frag]
+    # [RenderFragment ?frag]
+    ?frag/Write
+[end]
+Start ?frag:
+    Error
+[end]
+
+Continue ?cur_frag ?next_frag:
+    [BestFrag ?cur_frag ?path ?score]
+    [Visit ?next_frag]
+    [RenderFragment ?next_frag]
+[end]
+Continue ?cur_frag ?next_frag: 
+    [Start ?next_frag]
+[end]
+Continue ?cur_frag ?next_frag:
+    Error
 [end]

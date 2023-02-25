@@ -11,37 +11,35 @@ RunStory ?frag:
     # [Paragraph]
 [end]
 
+initially:
+    [set ^CurrentScene = test]
+    [set ^CatTemp = empty]
+[end]
+
 RunStoryWrap: [RunStory ?frag]
+
+# Custom list operations
+Cat ?l1 ?l2 ?result:
+    [set ^CatTemp = empty]
+    [add 1 CatTemp]
+    # [DoAll [Member ?x ?l1] [add 1 CatTemp]]
+    # [DoAll [Member ?x ?l2] [add 1 ^CatTemp]]
+    [= ?result ^CatTemp]
+[end]
+
+Add ?element ?list:
+    [set ^ETemp = ?element]
+    [set ^LTemp = ?list]
+    [add ^ETemp ^LTemp]
+    [= ?new_list ^LTemp]
+[end]
 
 # Custom max check
 [predicate]
 MaxOf ?x ?y ?max: [< ?x ?y] [set ?max = ?y]
 MaxOf ?x ?y ?max: [set ?max = ?x]
 
-T: 
+SetupTestScene:
     [set CurrentScene = test]
     [InitScene ^CurrentScene]
-    Testing: ^CurrentScene
-    [Paragraph]
-    [BestPath ?bf ?s]
-    [Paragraph]
-    Best Path: ?bf Score: r?s
 [end]
-
-R:
-    [set CurrentScene = test]
-    [InitScene ^CurrentScene]
-    Testing: ^CurrentScene
-    [AvailableUnexploredFragment ?frag ^CurrentScene]
-[end]
-
-TestAllSatisfiableChoices:
-    [set CurrentScene = test]
-    [InitScene ^CurrentScene]
-    [DoAll [AllSatisfiableChoices ?frag ?list] [Write ?frag ][Write ?list]]
-[end]
-
-initially:
-    [set ^CurrentScene = test]
-[end]
-

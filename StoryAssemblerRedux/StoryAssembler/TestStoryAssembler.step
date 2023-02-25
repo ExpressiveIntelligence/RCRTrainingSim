@@ -1,0 +1,111 @@
+# initially: [set ^TestCounter = 0]
+
+# Test ?executable ?n:
+#     [set ^TestCounter = 0]
+#     [DoAll [Counter ?a ?n] [Write [?a ^TestCounter]]]
+# [end]
+
+# Counter ?a ?n:
+#     [< ^TestCounter ?n]
+#     [Write [hi ?n]]
+#     [inc ^TestCounter]
+#     [Write [^TestCounter]]
+# [end]
+
+TestStart ?f1:
+    [SetupTestScene]
+    [Start ?f1] [Paragraph]
+    [Start ?] [Paragraph]
+    [Start ?] [Paragraph]
+    [Start ?] [Paragraph]
+    [Start ?] [Paragraph]
+    [Start ?] [Paragraph]
+    [Start ?] [Paragraph]
+    [Start ?] [Paragraph]
+    [Start ?] [Paragraph]
+    [Start ?] [Paragraph]
+[end]
+
+TestContinue ?f:
+    [SetupTestScene]
+    [Start ?f] [Paragraph]
+    [Continue ?f ?new] [Paragraph]
+[end]
+
+TestX:
+    [SetupTestScene]
+    [BestFrag root ?frag ?score]
+    [Visit ?frag]
+
+    # [BestFrag root ?frag2 ?score]
+    # [Visit ?frag2]
+    # ?frag2/Write
+    # [BestFrag root ?frag3 ?score]
+    # [Visit ?frag3]
+    # ?frag3/Write
+    # [BestFrag root ?frag4 ?score]
+    # [Visit ?frag4]
+    # ?frag4/Write
+    # [BestFrag root ?frag5 ?score]
+    # [Visit ?frag5]
+    # ?frag5/Write
+[end]
+
+
+TestAllSatisfiableChoices:
+    [SetupTestScene]
+    [DoAll [AllSatisfiableChoices ?frag ?list] [Write ?frag][Write ?list]]
+[end]
+
+TestBestFrag:
+    [SetupTestScene]
+    [BestFrag root ?best ?score]
+    [Visit ?best]
+    Best Fragment: ?best ?score
+[end]
+
+TestExpanded:
+    [SetupTestScene]
+    [AllAvailableTopLevelFragments ?f]
+    [Length ?f ?len] Length: ?len/Write
+    ?f/Write
+    [Member ?x ?f][Visit ?x]
+    [AllAvailableTopLevelFragments ?f2]
+    [Length ?f2 ?len2] Length: ?len2/Write
+    ?f2/Write
+[end]
+
+TestBest3ChoiceTypes:
+    [TestBestTopLevelFrag] [Paragraph]
+    [TestBestSatisfiableFrag] [Paragraph]
+    [TestBestGoToFrag] [Paragraph]
+[end]
+
+TestBestTopLevelFrag:
+    [SetupTestScene]
+    [AllAvailableTopLevelFragments ?f] [TopFrag ?f ?frag ?score]
+    Best Top Level Fragment: ?frag ?score
+[end]
+TestBestTopLevelFrag:
+    Best Top Level Fragment: FAIL
+[end]
+TestBestSatisfiableFrag:
+    [SetupTestScene]
+    [AllSatisfiableChoices ?source ?fs] [TopFrag ?fs ?frag ?score]
+    Best Choice Spec Fragment: ?frag ?score
+[end]
+TestBestSatisfiableFrag:
+    Best Choice Spec Fragment: FAIL
+[end]
+TestBestGoToFrag:
+    [SetupTestScene]
+    [AllGoToChoices ?source ?fs] [TopFrag ?fs ?frag ?score]
+    Best Choice Spec Fragment: ?frag ?score
+[end]
+TestBestGoToFrag:
+    Best Choice Spec Fragment: FAIL
+[end]
+
+
+
+

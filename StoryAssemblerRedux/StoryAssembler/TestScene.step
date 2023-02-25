@@ -83,6 +83,7 @@ Content bad: "bad"
 Effects bad.
 
 Content overthinking: What is happening?? I'm overthinking this. I need to take a break.
+[randomly] ChoiceLabel overthinking: Take a break. # TODO check that there are choicelabels for goto recipients
 Effects overthinking.
 Conditions overthinking.
 
@@ -105,13 +106,13 @@ Fulfilled characters_dating:
 
 # Another scene
 # ... with an incomplete storyspec
-Scene incomplete_scene.
-InitialSceneState incomplete_scene:
-    [set Initialized = false]
-[end]
+# Scene incomplete_scene.
+# InitialSceneState incomplete_scene:
+#     [set Initialized = false]
+# [end]
 
-[randomly]
-Want incomplete_scene initialized.
-Fulfilled initialized:
-    [= ^Initialized true]
-[end]
+# [randomly]
+# Want incomplete_scene initialized.
+# Fulfilled initialized:
+#     [= ^Initialized true]
+# [end]

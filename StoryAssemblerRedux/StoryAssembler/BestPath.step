@@ -2,27 +2,42 @@ initially:
     [set MaxDepth = 3]
     [set CurDepth = 0]
     [set MaxValue = 100]
+    [set PathList = empty]
 [end]
 
+predicate TopFrag ?fragments ?frag ?score. 
+predicate AllSatisfiableChoices ?source ?satisfying_frags.
+
 # Mention ?x: [Write ?x]
+
+# There are three types of choices: 
+# 1. GoTo: 
+#       Go to a specific fragment based on its id
+# 2. ChoiceSpec: 
+#       Find a fragment that satisfies the choice spec 
+#       Each choice must have a choice label
+# 3. TopLevel: 
+#       Find a fragment that does not have a choice label
 
 PrintAllSatisfiableChoices ?source_frag:
     [AllSatisfiableChoices ?source_frag ?specs]
     Potential choices from ?source_frag: ?specs
 [end]
 
-AllSatisfiableChoices ?source_frag ?satisfying_frag_list: # TODO this doesn't return teh choice_id. Do we need this?
-    [FindAll ?frag [SatisfyingChoiceSpec ?source_frag ?choice_id ?frag] ?satisfying_frag_list]
+AllSatisfiableChoices root empty. # there is no source frag
+AllSatisfiableChoices ?source_frag ?satisfying_frag_list: # TODO this doesn't return the choice_id. Do we need this?
+    [Different ?source_frag root]
+    [FindAll ?frag [SatisfyableChoiceSpec ?source_frag ?choice_id ?frag] ?satisfying_frag_list]
 [end]
 
 # Returns true if ?satisfying_frag satisfies ?source_frag's choice ?choice_id
 [predicate]
-SatisfyingChoiceSpec ?source_frag ?choice_id ?satisfying_frag: 
+SatisfyableChoiceSpec ?source_frag ?choice_id ?satisfying_frag: 
     [ChoiceLabel ?satisfying_frag]        # the new fragment must have a choice label
     [Conditions ?satisfying_frag]
     [Effects ?satisfying_frag]            # apply the effects of the new frag
     [ChoiceSpec ?source_frag ?choice_id]  # see if they satisfy the choice spec of the source frag
-    [Available ?satisfying_frag]     # TODO I can't put this at the top even though it would speedup
+    [Available ?satisfying_frag]          # TODO I can't put this at the top even though it would speedup
 [end]
 
 [predicate]
@@ -31,8 +46,8 @@ AlternateAllSatisfiableChoices ?source_frag ?satisfying_frag_list: # Need to tes
     [Conditions ?satisfying_frag]
     [Effects ?satisfying_frag]            # apply the effects of the new frag
     [ChoiceSpec ?source_frag ?choice_id]  # see if they satisfy the choice spec of the source frag
-    [Available ?satisfying_frag]     # TODO I can't put this at the top even though it would speedup
-    [FindAll ?satisfying_frag [SatisfyingChoiceSpec ?source_frag ?choice_id ?satisfying_frag] ?satisfying_frag_list]
+    [Available ?satisfying_frag]          # TODO I can't put this at the top even though it would speedup
+    [FindAll ?satisfying_frag [SatisfyableChoiceSpec ?source_frag ?choice_id ?satisfying_frag] ?satisfying_frag_list]
 [end]
 
 [predicate]
@@ -43,87 +58,116 @@ AllAvailableTopLevelFragments ?fragments:
 [predicate]
 AvailableTopLevelFragment ?frag:
     [TopLevelFragment ?frag]    # must not have a choice label
-    [Conditions ?frag]
     [Available ?frag]
+    [Conditions ?frag]
 [end]
 
 [predicate]
-# BestPath ?best_frag ?score:
-#     [Max ?score [ScoreFragment ?best_frag ?score]]
-# # [end]
-
-# BestPath ?current_frag ?best_frag ?score:
-#     [AllSatisfiableChoices ]
-
-
-[predicate]
-ScoreFragment ?frag ?score:
-    # Get an avilable fragment in the scene
-    [AvailableUnexploredFragment ?frag ^CurrentScene] 
-    ?frag
-
-    # Apply the fragment's effects
-    [now [Expanded ?frag]]
-    [Effects ?frag]
-
-    # Score the current fragment
-    [SearchAndScoreValidPaths ?frag ?score]
-[end]
-ScoreFragent none 0: 
-    # Not sure this does anything useful
-    No available fragment.
+AllGoToChoices root empty.  # there is no source frag
+AllGoToChoices ?source_frag ?fragments:
+    [Different ?source_frag root]
+    [FindAll ?frag [AvailableGoTo ?source_frag ?frag] ?fragments]
 [end]
 
 [predicate]
-SearchAndScoreValidPaths ?frag ?score:
-    # Don't need to keep recursing if we're at the max value
-    [Value ?frag ?score]
-    [>= ?score ^MaxValue]
-    Frag ?frag at max value ?score
+AvailableGoTo ?source_frag ?target_frag:
+    [GoToChoice ?source_frag ?target_frag]
+    [Available ?target_frag]
+    [Conditions ?target_frag]
 [end]
-SearchAndScoreValidPaths ?frag ?score:
-    # Called after applying the fragment's effects
 
-    # Enforce recursion limit
-    [>= ^MaxDepth ^CurDepth]
-    [inc ^CurDepth]
+[predicate]
+BestFrag root ?frag ?score:
+    [AllAvailableTopLevelFragments ?top_level_frags]
+    [TopFrag ?top_level_frags ?frag ?score]
+[end]
+BestFrag ?cur_frag ?path ?score:
+    [AllSatisfiableChoices ?cur_frag ?fragments] # TODO this should fail if there is no choice
+    [TopFrag ?fragments ?next_frag ?score]
+[end]
+# BestFrag ?cur_frag ?path ?score:
+#     [AllAvailableTopLevelFragments ?top_level_frags] # TODO this should fail if there is no choice
+#     [TopFrag ?top_level_frags ?next_frag ?score]
+# [end]
+# BestFrag ?cur_frag ?path ?score: # No available top level fragments or satisfiable choices
+#     [ValueHeuristic ?cur_frag ?score]
+#     # TODO what to do with the path?
+# [end]
 
-    [Value ?frag ?cur_frag_value] # get the value of our current state
+TopFrag ?fragments ?frag ?score:
+    [Member ?frag ?fragments]
+    [= ?score 0]
+    # [Max ?score [Member ?frag ?fragments] [ValueHeuristic ?frag ?score]]
+[end]
 
-    Frag ?Frag
+# [predicate]
+# ScoreFragment ?frag ?score:
+#     # Get an avilable fragment in the scene
+#     [AvailableUnexploredFragment ?frag ^CurrentScene] 
+#     ?frag
 
-    # Recursively call BestPath to get the best outgoing path
-    [BestPath ?new_frag ?chain_value]
-    # Get the value of this fragment
-    [set ?score = ?cur_frag_value + ?chain_value]
-    # [MaxOf ?cur_frag_value ?chain_value ?max]
-    [set ?score = ?max]
+#     # Apply the fragment's effects
+#     [now [Expanded ?frag]]
+#     [Effects ?frag]
+
+#     # Score the current fragment
+#     [SearchAndScoreValidPaths ?frag ?score]
+# [end]
+# ScoreFragent none 0: 
+#     # Not sure this does anything useful
+#     No available fragment.
+# [end]
+
+# [predicate]
+# SearchAndScoreValidPaths ?frag ?score:
+#     # Don't need to keep recursing if we're at the max value
+#     [ValueHeuristic ?frag ?score]
+#     [>= ?score ^MaxValue]
+#     Frag ?frag at max value ?score
+# [end]
+# SearchAndScoreValidPaths ?frag ?score:
+#     # Called after applying the fragment's effects
+
+#     # Enforce recursion limit
+#     [>= ^MaxDepth ^CurDepth]
+#     [inc ^CurDepth]
+
+#     [ValueHeuristic ?frag ?cur_frag_value] # get the value of our current state
+
+#     Frag ?Frag
+
+#     # Recursively call BestPath to get the best outgoing path
+#     [BestPath ?new_frag ?chain_value]
+#     # Get the value of this fragment
+#     [set ?score = ?cur_frag_value + ?chain_value]
+#     # [MaxOf ?cur_frag_value ?chain_value ?max]
+#     [set ?score = ?max]
     
-    In ScoreFragment Frag ?frag Score ?score [Paragraph]
-[end]
-SearchAndScoreValidPaths ?frag ?score:
-    [> ^CurDepth ^MaxDepth] # We're at the furthest we can go (base case)
-    Base Case ?frag
-    [Effects ?frag]
-    [Value ?frag ?score]
-[end]
-SearchAndScoreValidPaths ?frag ?score:
-    [Value ?frag ?score]
-    Default ?frag
-    [Paragraph]
-[end]
+#     In ScoreFragment Frag ?frag Score ?score [Paragraph]
+# [end]
+# SearchAndScoreValidPaths ?frag ?score:
+#     [> ^CurDepth ^MaxDepth] # We're at the furthest we can go (base case)
+#     Base Case ?frag
+#     [Effects ?frag]
+#     [ValueHeuristic ?frag ?score]
+# [end]
+# SearchAndScoreValidPaths ?frag ?score:
+#     [ValueHeuristic ?frag ?score]
+#     Default ?frag
+#     [Paragraph]
+# [end]
 # SearchAndScoreValidPaths ?frag ?score:
 #     Error, unavailable fragment ?frag
 # [end]
 
 # This is the hard part
 [predicate]
-Value ?fragment ?value:
+ValueHeuristic ?fragment ?value:
     [Fragment ?fragment ?scene] # get the scene
     [CompleteStorySpec ?scene]
     [= ?value ^MaxValue]
 [end]
-# Value not_on_the_path ?value: [= ?value 1]
-# Value on_the_path ?value: [= ?value 2]
-# Value hard ?value: [= ?value 3]
-Value ?fragment ?value: [Fragment ?fragment ?scene] [= ?value 0]
+Value not_on_the_path ?value: [= ?value 1]
+Value on_the_path ?value: [= ?value 2]
+Value hard ?value: [= ?value 3]
+ValueHeuristic ?fragment ?value: [Fragment ?fragment ?scene] [= ?value 0]
