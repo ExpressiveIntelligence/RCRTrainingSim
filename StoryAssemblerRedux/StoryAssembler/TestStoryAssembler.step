@@ -106,6 +106,23 @@ TestBestGoToFrag:
     Best Choice Spec Fragment: FAIL
 [end]
 
+TestWantConditions:
+    [SetupTestScene]
+    [= ?want some_respite]
+    [EffectMakesWantTrue ?frag ?want] 
+    ?frag/Write ?want
+[end]
 
-
-
+TestSetAdd:
+    [set A = empty]
+    [set B = empty]
+    [add 1 A]
+    [add 2 A]
+    [add 3 A]
+    [add 1 B]
+    [add 4 B]
+    [add 5 B]
+    ^A ^B
+    [SetUnion ^A ^B ?c]
+    Result ?c
+[end]

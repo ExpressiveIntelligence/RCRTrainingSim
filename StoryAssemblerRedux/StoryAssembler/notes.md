@@ -86,3 +86,12 @@ PrimitiveTests
 # # Fulfilled dropped_knowledge: 
 # #     [>= ^DroppedKnowledge 2]
 # # [end]
+
+
+
+# How does bestPath.js work?
+
+* retrieve all possible paths (not just paths that fulfill the storyspec)
+* remove ones that don't satisfy wishlish order field (we don't have this yet)
+* rank them based on number of satisfied wants
+* current speaker is scored higher
