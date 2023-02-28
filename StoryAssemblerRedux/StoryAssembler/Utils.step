@@ -29,9 +29,9 @@ Cat ?l1 ?l2 ?result:
 
 # A helper function to add an element to a list
 Add ?element ?list ?new_list:
-    [set ^LTemp = ?list]
-    [add ?element ^LTemp]
-    [= ?new_list ^LTemp]
+    [set ^AddTemp = empty]
+    [AddHelperAdd ?element]
+    [= ?new_list ^AddTemp]
 [end]
 
 SetUnion ?l1 ?l2 ?union:
@@ -39,6 +39,12 @@ SetUnion ?l1 ?l2 ?union:
     [ForEach [Member ?x ?l1] [AddHelperAdd ?x]]
     [ForEach [Member ?y ?l2] [Not [Member ?y ?l1]] [AddHelperAdd ?y]]
     [= ?union ^AddTemp]
+[end]
+
+SetIntersection ?l1 ?l2 ?int:
+    [set ^AddTemp = empty]
+    [ForEach [Member ?x ?l1] [Member ?x ?l2] [AddHelperAdd ?x]]
+    [= ?int ^AddTemp]
 [end]
 
 AddHelperAdd ?element:
