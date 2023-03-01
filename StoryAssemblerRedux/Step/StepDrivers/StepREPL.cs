@@ -16,10 +16,13 @@ namespace StepDrivers
             };
 
             Module module = LoadModule();
-      
+            State state = State.Empty;
+            Boolean useState = false;
+
             while (true)
             {
-                Console.WriteLine("Enter Step code or type 'q' to exit, 'r' to reload:");
+                String onOff = useState ? "off" : "on";
+                Console.WriteLine("Enter Step code or type 'q' to exit, 'r' to reload, 's' to turn " + onOff + " stateful interaaction");
                 string input = Console.ReadLine();
                 if (input == null)
                 {
@@ -32,26 +35,49 @@ namespace StepDrivers
                 else if (input.ToLower() == "r")
                 {
                     module = LoadModule();
+                    state = State.Empty;
                 }
-                try
+                else if (input.ToLower() == "s")
                 {
-                    ExecuteStep(input, module);
-                }
-                catch (Exception ex)
+                    useState = !useState;
+                    state = State.Empty;
+                    Console.WriteLine("Saving State: " + useState + ". State reset.");
+                } 
+                else 
                 {
-                    Console.WriteLine("An error occurred: " + ex.Message);
+                    try
+                    {
+                        if (useState)
+                        {
+                            state = ExecuteWithState(input, module, state);
+                        }
+                        else
+                        {
+                            ExecuteStep(input, module);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("An error occurred: " + ex.Message);
+                    }
                 }
             }
         }
 
-            static void ExecuteStep(string input, Module module)
+            static void ExecuteStep(string code, Module module)
             {
-                var result = module.ParseAndExecute(input);
-                Console.WriteLine("Result");
-                Console.WriteLine(result);
+                var result = module.ParseAndExecute(code);
+                Console.WriteLine("Result: " + result);
             }
-            
-            static Module LoadModule()
+
+            static State ExecuteWithState(string code, Module module, State state)
+            {
+                (string result, State newState) = module.ParseAndExecute(code, state);
+                Console.WriteLine("Result: " + result);
+                return newState;
+            }
+
+        static Module LoadModule()
             {
                 Module module = null;
                 while (module == null) {
