@@ -57,6 +57,11 @@ Reverse ?list ?reversed:
     [= ?reversed ^AddTemp]
 [end]
 
+[predicate]
+ToTuple ?a ?b ?tuple:
+    [= ?tuple [?a ?b]]
+[end]
+
 # Custom max check
 [predicate]
 MaxOf ?x ?y ?max: [< ?x ?y] [set ?max = ?y]

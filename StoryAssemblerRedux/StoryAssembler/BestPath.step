@@ -3,7 +3,7 @@ initially:
     [set CurDepth = 0]
     [set MaxValue = 100]
     [set PathList = empty]
-    [set AllPaths = empty]
+    [set ^AllPaths = empty]
 [end]
 
 predicate TopFrag ?fragments ?frag ?score. 
@@ -51,10 +51,10 @@ AlternateAllSatisfiableChoices ?source_frag ?satisfying_frag_list: # Need to tes
     [FindAll ?satisfying_frag [SatisfyableChoiceSpec ?source_frag ?choice_id ?satisfying_frag] ?satisfying_frag_list]
 [end]
 
-[predicate]
-AllAvailableTopLevelFragments ?fragments:
-    [FindAll ?frag [AvailableTopLevelFragment ?frag] ?fragments]
-[end]
+# [predicate]
+# AllAvailableTopLevelFragments ?fragments:
+#     [FindAll ?frag [AvailableTopLevelFragment ?frag] ?fragments]
+# [end]
 
 [predicate]
 AvailableTopLevelFragment ?frag:
@@ -77,7 +77,18 @@ AvailableGoTo ?source_frag ?target_frag:
     [Conditions ?target_frag]
 [end]
 
-# Find all outgoing paths from ?frag
+[predicate]
+AllPathsFrom ?source_frag ?paths:
+    [set ^AllPaths = empty]
+    [FindPaths ?source_frag empty]
+    [= ?paths ^AllPaths]
+[end]
+
+# Find all outgoing paths from ?frag and store them in the ^AllPaths global variable
+# The wrapper for this Task is AllPathsFrom
+# Example usage: [AllPathsFrom root ?paths]
+# # Before running this, should reset ^AllPaths to empty
+# TODO: should not return a top level fragment if there are available GoTo's or ChoiceSpecs
 [predicate]
 FindPaths ?frag ?path:
     [Length ?path ?depth]
@@ -86,46 +97,52 @@ FindPaths ?frag ?path:
 [end]
 FindPaths ?frag ?path:
     [case ?frag] [Different root] : [Visit ?frag] [else] [end]
-    [NotAny [SelectAvailableFragment ?frag ?new_node]]
+    [NotAny [AvailableNextFragment ?frag ?next]]
     [add ?path ^AllPaths]
 [end]
 FindPaths ?frag ?path:
     [case ?frag] [Different root] : [Visit ?frag] [else]  [end]
-    [FindUnique ?child [SelectAvailableFragment ?frag ?child] ?all_children]
-    [ForEach [Member ?member ?all_children] [Add ?member ?path ?new_path] [FindPaths ?member ?new_path]]
+    [FindUnique ?next [AvailableNextFragment ?frag ?next] ?all_possible_next_frags]
+    [ForEach [Member ?member ?all_possible_next_frags] [Add ?member ?path ?new_path] [FindPaths ?member ?new_path]]
 [end]
 
-# RankPaths ?paths:
-#     # [FindUnique ?path [Member ?path ?paths] ?unique_paths]
-#     # [DoAll [Member ?path ?paths] [ScorePath ?path ?value]]
-#     [ArgMax ?path ?value [Member ?path ?paths] [ScorePath ?path ?value]]
-# [end]
+RankPaths ?paths ?scored_paths:
+    [set ^RankedPaths = empty]
+    [ForEach [Member ?path ?paths] [ScorePath ?path ?value] [AddToRankedPaths ?path ?value]]
+    [= ?scored_paths ^RankedPaths]
+[end]
+AddToRankedPaths ?path ?value:
+    [ToTuple ?path ?value ?scored_path]
+    [add ?scored_path ^RankedPaths]
+[end]
 
-ScorePath ?list ?value: [Length ?list 0] [StateHeuristic ?value]
-ScorePath ?list ?value: [RemoveNext ?frag ?list ?new_list] [Visit ?frag] [ScorePath ?new_list]
+ScorePath ?path ?value: 
+    [LengthValue ?path ?length_value] 
+    [SatisficationValue ?path ?satisfied_value] 
+    [set ^Value = ?length_value + ?satisfied_value] 
+    [= ?value ^Value]
+[end]
 
+# Returns a posible next fragment from the current fragment ?source_frag
+[predicate]
+AvailableNextFragment ?source_frag ?target_frag: [AvailableGoTo ?source_frag ?target_frag]
+AvailableNextFragment ?source_frag ?target_frag: [SatisfyableChoiceSpec ?source_frag ?choice_id ?target_frag]
+AvailableNextFragment ?source_frag ?target_frag: # TODO this is really slow because of the checks and could probably be sped up
+    [NotAny [AvailableGoTo ?source_frag ?]] 
+    [NotAny [SatisfyableChoiceSpec ?source_frag ?choice_id ?]] 
+    [AvailableTopLevelFragment ?target_frag]
+[end]
 
 [predicate]
-SelectAvailableFragment ?source_frag ?target_frag: [AvailableGoTo ?source_frag ?target_frag]
-SelectAvailableFragment ?source_frag ?target_frag: [SatisfyableChoiceSpec ?source_frag ?choice_id ?target_frag]
-SelectAvailableFragment ?source_frag ?target_frag: [AvailableTopLevelFragment ?target_frag]
-
-[predicate]
-AllAvailableFragments root ?fragments:      [AllAvailableTopLevelFragments ?fragments]
-AllAvailableFragments ?cur_frag ?fragments: [AllAvailableHelper ?cur_frag ?available_base_frags] [CheckAvailableOrGoRoot ?available_base_frags ?fragments]
-
-AllAvailableHelper ?cur_frag ?fragments: [AllSatisfiableChoices ?cur_frag ?choices] [AllGoToChoices ?cur_frag ?gotos] [SetUnion ?choices ?gotos ?fragments]
-CheckAvailableOrGoRoot ?available_base_frags ?fragments: [= ?available_base_frags empty] [AllAvailableTopLevelFragments ?fragments]
-CheckAvailableOrGoRoot ?available_base_frags ?fragments: [= ?fragments ?available_base_frags]
-
-[predicate]
-PathValue ?path ?value:
+LengthValue ?path ?value:
     [Reverse ?path ?in_order]
-    [Length ?path ?depth]
-    [CountAttempts ?count] [removeNext ?frag ?path] [Visit ?frag] [= ?count ?depth] # Do this for each path
+    [Length ?in_order ?depth]
+    [set ^Value = -?depth]
+    [= ?value ^Value]
 [end]
 
-AA: >
+
+ScorePath ?list ?value: [RemoveNext ?frag ?lis ?new_list] [Visit ?frag] [ScorePath ?new_list]
 
 # This is the hard part
 [predicate]
