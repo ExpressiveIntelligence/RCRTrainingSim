@@ -64,6 +64,17 @@ TestBestFrag:
     Best Fragment: ?best ?score
 [end]
 
+TestForEachAvailable:
+    [SetupTestScene]
+    [Visit disastrous_date]
+    [Visit apology]
+    [Visit unapologetic]
+    [Visit respite]
+    [FindUnique ?frag [SelectAvailableFragment disastrous_date ?frag] ?all_children]
+    [ForEach [Member ?cur_frag ?all_children] [Write ?cur_frag]]
+    # [ForEach [SelectAvailableFragment ?cur_frag ?frag] [Write ?frag]]
+[end]
+
 TestExpanded:
     [SetupTestScene]
     [AllAvailableTopLevelFragments ?f]
@@ -126,3 +137,4 @@ TestSetAdd:
     [SetUnion ^A ^B ?c]
     Result ?c
 [end]
+

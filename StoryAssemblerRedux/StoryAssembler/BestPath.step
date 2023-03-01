@@ -1,8 +1,9 @@
 initially: 
-    [set MaxDepth = 3]
+    [set MaxDepth = 5]
     [set CurDepth = 0]
     [set MaxValue = 100]
     [set PathList = empty]
+    [set AllPaths = empty]
 [end]
 
 predicate TopFrag ?fragments ?frag ?score. 
@@ -33,7 +34,7 @@ AllSatisfiableChoices ?source_frag ?satisfying_frag_list: # TODO this doesn't re
 # Returns true if ?satisfying_frag satisfies ?source_frag's choice ?choice_id
 [predicate]
 SatisfyableChoiceSpec ?source_frag ?choice_id ?satisfying_frag: 
-    [ChoiceLabel ?satisfying_frag]        # the new fragment must have a choice label
+    [ExistsChoiceLabel ?satisfying_frag]        # the new fragment must have a choice label
     [Conditions ?satisfying_frag]
     [Effects ?satisfying_frag]            # apply the effects of the new frag
     [ChoiceSpec ?source_frag ?choice_id]  # see if they satisfy the choice spec of the source frag
@@ -42,7 +43,7 @@ SatisfyableChoiceSpec ?source_frag ?choice_id ?satisfying_frag:
 
 [predicate]
 AlternateAllSatisfiableChoices ?source_frag ?satisfying_frag_list: # Need to test the speed of this one... faster?
-    [ChoiceLabel ?satisfying_frag]        # the new fragment must have a choice label
+    [ExistsChoiceLabel ?satisfying_frag]        # the new fragment must have a choice label
     [Conditions ?satisfying_frag]
     [Effects ?satisfying_frag]            # apply the effects of the new frag
     [ChoiceSpec ?source_frag ?choice_id]  # see if they satisfy the choice spec of the source frag
@@ -76,89 +77,55 @@ AvailableGoTo ?source_frag ?target_frag:
     [Conditions ?target_frag]
 [end]
 
+# Find all outgoing paths from ?frag
 [predicate]
-BestFrag root ?frag ?score:
-    [AllAvailableTopLevelFragments ?top_level_frags]
-    [TopFrag ?top_level_frags ?frag ?score]
+FindPaths ?frag ?path:
+    [Length ?path ?depth]
+    [>= ?depth ^MaxDepth]
+    [add ?path ^AllPaths]
 [end]
-BestFrag ?cur_frag ?path ?score:
-    [AllSatisfiableChoices ?cur_frag ?fragments] # TODO this should fail if there is no choice
-    [TopFrag ?fragments ?next_frag ?score]
+FindPaths ?frag ?path:
+    [case ?frag] [Different root] : [Visit ?frag] [else] [end]
+    [NotAny [SelectAvailableFragment ?frag ?new_node]]
+    [add ?path ^AllPaths]
 [end]
-# BestFrag ?cur_frag ?path ?score:
-#     [AllAvailableTopLevelFragments ?top_level_frags] # TODO this should fail if there is no choice
-#     [TopFrag ?top_level_frags ?next_frag ?score]
-# [end]
-# BestFrag ?cur_frag ?path ?score: # No available top level fragments or satisfiable choices
-#     [ValueHeuristic ?cur_frag ?score]
-#     # TODO what to do with the path?
-# [end]
-
-TopFrag ?fragments ?frag ?score:
-    [Member ?frag ?fragments]
-    [= ?score 0]
-    # [Max ?score [Member ?frag ?fragments] [ValueHeuristic ?frag ?score]]
+FindPaths ?frag ?path:
+    [case ?frag] [Different root] : [Visit ?frag] [else]  [end]
+    [FindUnique ?child [SelectAvailableFragment ?frag ?child] ?all_children]
+    [ForEach [Member ?member ?all_children] [Add ?member ?path ?new_path] [FindPaths ?member ?new_path]]
 [end]
 
-# [predicate]
-# ScoreFragment ?frag ?score:
-#     # Get an avilable fragment in the scene
-#     [AvailableUnexploredFragment ?frag ^CurrentScene] 
-#     ?frag
-
-#     # Apply the fragment's effects
-#     [now [Expanded ?frag]]
-#     [Effects ?frag]
-
-#     # Score the current fragment
-#     [SearchAndScoreValidPaths ?frag ?score]
-# [end]
-# ScoreFragent none 0: 
-#     # Not sure this does anything useful
-#     No available fragment.
+# RankPaths ?paths:
+#     # [FindUnique ?path [Member ?path ?paths] ?unique_paths]
+#     # [DoAll [Member ?path ?paths] [ScorePath ?path ?value]]
+#     [ArgMax ?path ?value [Member ?path ?paths] [ScorePath ?path ?value]]
 # [end]
 
-# [predicate]
-# SearchAndScoreValidPaths ?frag ?score:
-#     # Don't need to keep recursing if we're at the max value
-#     [ValueHeuristic ?frag ?score]
-#     [>= ?score ^MaxValue]
-#     Frag ?frag at max value ?score
-# [end]
-# SearchAndScoreValidPaths ?frag ?score:
-#     # Called after applying the fragment's effects
+ScorePath ?list ?value: [Length ?list 0] [StateHeuristic ?value]
+ScorePath ?list ?value: [RemoveNext ?frag ?list ?new_list] [Visit ?frag] [ScorePath ?new_list]
 
-#     # Enforce recursion limit
-#     [>= ^MaxDepth ^CurDepth]
-#     [inc ^CurDepth]
 
-#     [ValueHeuristic ?frag ?cur_frag_value] # get the value of our current state
+[predicate]
+SelectAvailableFragment ?source_frag ?target_frag: [AvailableGoTo ?source_frag ?target_frag]
+SelectAvailableFragment ?source_frag ?target_frag: [SatisfyableChoiceSpec ?source_frag ?choice_id ?target_frag]
+SelectAvailableFragment ?source_frag ?target_frag: [AvailableTopLevelFragment ?target_frag]
 
-#     Frag ?Frag
+[predicate]
+AllAvailableFragments root ?fragments:      [AllAvailableTopLevelFragments ?fragments]
+AllAvailableFragments ?cur_frag ?fragments: [AllAvailableHelper ?cur_frag ?available_base_frags] [CheckAvailableOrGoRoot ?available_base_frags ?fragments]
 
-#     # Recursively call BestPath to get the best outgoing path
-#     [BestPath ?new_frag ?chain_value]
-#     # Get the value of this fragment
-#     [set ?score = ?cur_frag_value + ?chain_value]
-#     # [MaxOf ?cur_frag_value ?chain_value ?max]
-#     [set ?score = ?max]
-    
-#     In ScoreFragment Frag ?frag Score ?score [Paragraph]
-# [end]
-# SearchAndScoreValidPaths ?frag ?score:
-#     [> ^CurDepth ^MaxDepth] # We're at the furthest we can go (base case)
-#     Base Case ?frag
-#     [Effects ?frag]
-#     [ValueHeuristic ?frag ?score]
-# [end]
-# SearchAndScoreValidPaths ?frag ?score:
-#     [ValueHeuristic ?frag ?score]
-#     Default ?frag
-#     [Paragraph]
-# [end]
-# SearchAndScoreValidPaths ?frag ?score:
-#     Error, unavailable fragment ?frag
-# [end]
+AllAvailableHelper ?cur_frag ?fragments: [AllSatisfiableChoices ?cur_frag ?choices] [AllGoToChoices ?cur_frag ?gotos] [SetUnion ?choices ?gotos ?fragments]
+CheckAvailableOrGoRoot ?available_base_frags ?fragments: [= ?available_base_frags empty] [AllAvailableTopLevelFragments ?fragments]
+CheckAvailableOrGoRoot ?available_base_frags ?fragments: [= ?fragments ?available_base_frags]
+
+[predicate]
+PathValue ?path ?value:
+    [Reverse ?path ?in_order]
+    [Length ?path ?depth]
+    [CountAttempts ?count] [removeNext ?frag ?path] [Visit ?frag] [= ?count ?depth] # Do this for each path
+[end]
+
+AA: >
 
 # This is the hard part
 [predicate]

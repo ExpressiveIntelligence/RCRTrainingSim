@@ -13,42 +13,48 @@ RunStory ?frag:
 
 initially:
     [set ^CurrentScene = test]
-    [set ^CatTemp = empty]
+    [set ^AddTemp = empty]
 [end]
 
 RunStoryWrap: [RunStory ?frag]
 
 # Custom list operations
-Cat ?l1 ?l2 ?result:
-    [set ^CatTemp = empty]
-    [add 1 CatTemp]
-    # [DoAll [Member ?x ?l1] [add 1 CatTemp]]
-    # [DoAll [Member ?x ?l2] [add 1 ^CatTemp]]
-    [= ?result ^CatTemp]
-[end]
 
-# A helper function to add an element to a list
+# Add an element to a list
 Add ?element ?list ?new_list:
-    [set ^AddTemp = empty]
-    [AddHelperAdd ?element]
+    [set ^AddTemp = ?list]
+    [AddHelper ?element]
     [= ?new_list ^AddTemp]
 [end]
 
 SetUnion ?l1 ?l2 ?union:
     [set ^AddTemp = empty]
-    [ForEach [Member ?x ?l1] [AddHelperAdd ?x]]
-    [ForEach [Member ?y ?l2] [Not [Member ?y ?l1]] [AddHelperAdd ?y]]
+    [ForEach [Member ?x ?l1] [AddHelper ?x]]
+    [ForEach [Member ?y ?l2] [Not [Member ?y ?l1]] [AddHelper ?y]]
     [= ?union ^AddTemp]
 [end]
 
 SetIntersection ?l1 ?l2 ?int:
     [set ^AddTemp = empty]
-    [ForEach [Member ?x ?l1] [Member ?x ?l2] [AddHelperAdd ?x]]
+    [ForEach [Member ?x ?l1] [Member ?x ?l2] [AddHelper ?x]]
     [= ?int ^AddTemp]
 [end]
 
-AddHelperAdd ?element:
+Cat ?l1 ?l2 ?cat:
+    [set ^AddTemp = empty]
+    [ForEach [Member ?x ?l1] [AddHelper ?x]]
+    [ForEach [Member ?y ?l2] [AddHelper ?y]]
+    [= ?cat ^AddTemp]
+[end]
+
+AddHelper ?element:
     [add ?element ^AddTemp]
+[end]
+
+Reverse ?list ?reversed:
+    [set ^AddTemp = empty]
+    [ForEach [Member ?x ?list] [AddHelper ?x]]
+    [= ?reversed ^AddTemp]
 [end]
 
 # Custom max check

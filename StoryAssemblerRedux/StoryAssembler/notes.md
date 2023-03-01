@@ -95,3 +95,26 @@ PrimitiveTests
 * remove ones that don't satisfy wishlish order field (we don't have this yet)
 * rank them based on number of satisfied wants
 * current speaker is scored higher
+
+* get all paths
+
+find_path(cur_path, cur_frag)
+    if cur_frag != root: expand(cur_frag)
+    findunique available_frag
+        find_path(cur_path + available_frag, available_frag)
+    if no available_frag
+        paths += cur_path
+
+find_path(empty, root)
+
+FindPath ?cur_path ?cur_frag:
+    [case ?cur_path] [= root] : [else] [Expand ?cur_frag] [end]
+    [ForEach [SelectAvailableFragment ?cur_frag ?new_node] [Add ?cur_frag ?cur_path ?new_path] [FindPath ?new_path ?new_node]]
+[end]
+FindPath ?cur_path ?cur_frag:
+    [case ?cur_path] [= root] : [Expand ?cur_frag] [else] [end]
+    [Not [SelectAvailableFragment ?cur_frag ?new_node]]
+    [add ?cur_path ^AllPaths]
+[end]
+
+[case ?cur_frag] [= root] : hi [else] body [end]

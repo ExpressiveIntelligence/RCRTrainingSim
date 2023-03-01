@@ -13,8 +13,8 @@ predicate Conditions ?frag.
 predicate Content ?frag.
 predicate Speaker ?frag ?speaker.
 predicate ChoiceLabel ?frag.
-task ChoiceSpec ?frag ?choice_id.
-task GoToChoice ?frag ?target_frag.
+predicate ChoiceSpec ?frag ?choice_id.
+predicate GoToChoice ?frag ?target_frag.
 
 # Fragment fluents set during execution
 fluent Expanded ?fragment.
@@ -24,20 +24,18 @@ AddWishListItem ?fragment. # TODO https://github.com/LudoNarrative/StoryAssemble
 
 Request ?fragment. # TODO https://github.com/LudoNarrative/StoryAssembler/wiki/Authoring-Patterns#fragment-available-both-as-choice-and-dynamically
 
-TopLevelFragment ?frag: [Fragment ?frag ?] [Not [ChoiceLabel ?frag]] # If it has a choice label it is not a top level fragment
+TopLevelFragment ?frag: [Fragment ?frag ?] [Not [ExistsChoiceLabel ?frag]] # If it has a choice label it is not a top level fragment
 
 [predicate]
 RenderFragment ?frag:
     Rendered: ?frag
 [end]
 
-# [predicate]
-# AvailableFragment ?fragment ?scene: [Fragment ?fragment ?scene] [Conditions ?fragment]
-# [predicate]
-# AvailableUnexploredFragment ?fragment ?scene: [AvailableFragment ?fragment ?scene] [Not [Expanded ?fragment]]
+[predicate]
+ExistsChoiceLabel ?frag: [IgnoreOutput [ChoiceLabel ?frag]]
 
 [predicate]
-# Available ?fragment: [Reusable ?fragment]
+Available ?fragment: [Reusable ?fragment]
 Available ?fragment: [Not [Expanded ?fragment]]
 
 # Scene stuff
@@ -106,7 +104,7 @@ CompleteStorySpec ?scene:
 
 # might want to count how many are true and then purposely fail
 [predicate]
-EffectMakesWantTrue ?fragment ?want: 
+EffectMakesWantTrue ?fragment ?want_id: 
     [Want ?scene ?want_id]
     [Not [Fulfilled ?want_id]]
     [Effects ?fragment]
