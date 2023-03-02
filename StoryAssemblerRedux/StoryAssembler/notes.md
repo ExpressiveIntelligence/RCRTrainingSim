@@ -1,5 +1,4 @@
 # headers
-
 [remembered]
 States that when the task is called, its results (arguments and text output) should be cached.  Subsequent calls should be unified with the remembered arguments; when a match is found the remembered text, if any, should be printed and the task should complete.
 [fluent]
@@ -48,44 +47,6 @@ PrimitiveTests
 
 # Old reference code
 
-# [randomly]
-# Want intro_mechanics test.
-# # Want establish_specialty_info.
-# # Want establish_setting.
-# # Want establish_ally_backstory.
-# # Want establish_protag_regrets.
-# # Want establish_protag_backstory.
-# # Want provoke_confidence_choice.
-# # Want ally_reassures_protag.
-# # Want dropped_knowledge.
-
-# Fulfilled intro_mechanics: 
-#     [= ^IntroMechanics true]
-# [end]
-# # Fulfilled establish_specialty_info: 
-# #     [= ^EstablishSpecialtyInfo true]
-# # [end]
-# # Fulfilled establish_setting: 
-# #     [= ^EstablishSetting true]
-# # [end]
-# # Fulfilled establish_ally_backstory: 
-# #     [= ^EstablishAllyBackstory true]
-# # [end]
-# # Fulfilled establish_protag_regrets: 
-# #     [= ^EstablishProtagRegrets true]
-# # [end]
-# # Fulfilled establish_protag_backstory: 
-# #     [= ^EstablishProtagBackstory true]
-# # [end]
-# # Fulfilled provoke_confidence_choice: 
-# #     [= ^ProvokeConfidenceChoice true]
-# # [end]
-# # Fulfilled ally_reassures_protag: 
-# #     [= ^AllyReassuresProtag true]
-# # [end]
-# # Fulfilled dropped_knowledge: 
-# #     [>= ^DroppedKnowledge 2]
-# # [end]
 
 
 

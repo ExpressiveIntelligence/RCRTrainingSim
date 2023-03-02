@@ -1,23 +1,9 @@
 initially: 
     [set MaxDepth = 10]
-    [set CurDepth = 0]
-    [set PathList = empty]
-    [set ^AllPaths = empty]
 [end]
 
-predicate TopFrag ?fragments ?frag ?score. 
-predicate AllSatisfiableChoices ?source ?satisfying_frags.
-
-# Mention ?x: [Write ?x]
-
-# There are three types of choices: 
-# 1. GoTo: 
-#       Go to a specific fragment based on its id
-# 2. ChoiceSpec: 
-#       Find a fragment that satisfies the choice spec 
-#       Each choice must have a choice label
-# 3. TopLevel: 
-#       Find a fragment that does not have a choice label
+# Exposed funcion headers
+predicate AllPathsFrom ?source_frag ?paths.
 
 [predicate]
 AllPathsFrom ?source_frag ?paths: [FindPaths ?source_frag empty ?paths]
@@ -65,8 +51,7 @@ FindPathsForChild ?child ?current ?current_path ?paths_from_child:
 ScorePath ?path ?scored_path: [ScoreCalculation ?path ?value] [= ?scored_path [?path ?value]]
 
 ScoreCalculation ?path ?value: 
-    [LengthValue ?path ?length_value] # [= ?length_value 0]
-    
+    [LengthValue ?path ?length_value]
     [SatisfactionValue ?path ?satisfied_value] 
     [set ^Value = ?length_value + MaxDepth * ?satisfied_value] 
     [= ?value ^Value]

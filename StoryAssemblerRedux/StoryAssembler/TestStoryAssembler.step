@@ -1,17 +1,5 @@
 # initially: [set ^TestCounter = 0]
 
-# Test ?executable ?n:
-#     [set ^TestCounter = 0]
-#     [DoAll [Counter ?a ?n] [Write [?a ^TestCounter]]]
-# [end]
-
-# Counter ?a ?n:
-#     [< ^TestCounter ?n]
-#     [Write [hi ?n]]
-#     [inc ^TestCounter]
-#     [Write [^TestCounter]]
-# [end]
-
 TestStart ?f1:
     [SetupTestScene]
     [Start ?f1] [Paragraph]
@@ -30,25 +18,6 @@ TestContinue ?f:
     [SetupTestScene]
     [Start ?f] [Paragraph]
     [Continue ?f ?new] [Paragraph]
-[end]
-
-TestX:
-    [SetupTestScene]
-    [BestFrag root ?frag ?score]
-    [Visit ?frag]
-
-    # [BestFrag root ?frag2 ?score]
-    # [Visit ?frag2]
-    # ?frag2/Write
-    # [BestFrag root ?frag3 ?score]
-    # [Visit ?frag3]
-    # ?frag3/Write
-    # [BestFrag root ?frag4 ?score]
-    # [Visit ?frag4]
-    # ?frag4/Write
-    # [BestFrag root ?frag5 ?score]
-    # [Visit ?frag5]
-    # ?frag5/Write
 [end]
 
 

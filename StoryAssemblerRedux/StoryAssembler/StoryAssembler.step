@@ -2,6 +2,7 @@ Author: Alex
 
 # Original StoryAssembler example frag: https://github.com/LudoNarrative/StoryAssembler/wiki/Creating-Scene-Content
 
+# Mention ?x: [Write ?x]
 
 ## Define the fragment attributes ##
 
@@ -16,34 +17,23 @@ predicate Speaker ?frag ?speaker.
 predicate ChoiceLabel ?frag.
 predicate ChoiceSpec ?frag ?choice_id.
 predicate GoToChoice ?frag ?target_frag.
+predicate ExistsChoiceLabel ?frag.
 
 # Fragment fluents set during execution
 fluent Expanded ?fragment.
 fluent Reusable ?fragment.
+predicate Available ?fragment.
 
 ## End fragment attributes ##
 
-# TODO Functions
-AddWishListItem ?fragment. # TODO https://github.com/LudoNarrative/StoryAssembler/wiki/Authoring-Patterns
-Request ?fragment. # TODO https://github.com/LudoNarrative/StoryAssembler/wiki/Authoring-Patterns#fragment-available-both-as-choice-and-dynamically
+# Additional tasks and predicates
+task RenderFragment ?fragment.
+predicate TopLevelFragment ?fragment.
 
-TopLevelFragment ?frag: [Fragment ?frag ?] [Not [ExistsChoiceLabel ?frag]] # If it has a choice label it is not a top level fragment
 
-[predicate]
-RenderFragment ?frag:
-    Rendered: ?frag
-[end]
-
-[predicate]
-ExistsChoiceLabel ?frag: [IgnoreOutput [ChoiceLabel ?frag]]
-
-[predicate]
-Available ?fragment: [Reusable ?fragment]
-Available ?fragment: [Not [Expanded ?fragment]]
-
-# Scene stuff
+# Scene attributes and functions
 predicate Scene ?scene.
-predicate InitScene ?scene.
+task InitScene ?scene.
 predicate StartState ?scene.
 
 # # A Want is an element in a story spec 
@@ -59,7 +49,23 @@ predicate UnFulfilledWant ?scene ?want_id.
 # Is a story spec finished? (all wants fulfilled)
 predicate CompleteStorySpec ?scene.
 # Or is it incomplete?
-predicate InCompleteStorySpec ?scene.
+predicate IncompleteStorySpec ?scene.
+
+# TODO Functions
+AddWishListItem ?fragment. # TODO https://github.com/LudoNarrative/StoryAssembler/wiki/Authoring-Patterns
+Request ?fragment. # TODO https://github.com/LudoNarrative/StoryAssembler/wiki/Authoring-Patterns#fragment-available-both-as-choice-and-dynamically
+
+TopLevelFragment ?frag: [Fragment ?frag ?] [Not [ExistsChoiceLabel ?frag]] # If it has a choice label it is not a top level fragment
+
+RenderFragment ?frag:
+    Rendered: ?frag
+[end]
+
+ExistsChoiceLabel ?frag: [IgnoreOutput [ChoiceLabel ?frag]]
+
+Available ?fragment: [Reusable ?fragment]
+Available ?fragment: [Not [Expanded ?fragment]]
+
 
 [predicate]
 PrintFinishState ?scene:
@@ -67,39 +73,34 @@ PrintFinishState ?scene:
     Congrats you're done.
 [end]
 PrintFinishState ?scene:
-    [InCompleteStorySpec ?scene]
+    [IncompleteStorySpec ?scene]
     You are not done.
 [end]
 PrintFinishState ?scene:
     Error with finish state check...
 [end]
 
-[predicate]
 InitScene ?scene:
     [InitialSceneState ?scene]
 [end]
 
-[predicate]
 UnFulfilledWant ?scene ?want:
     [Want ?scene ?want]
     [Not [Fulfilled ?want]]
 [end]
 
-[predicate]
 FulfilledWant ?scene ?want:
     [Want ?scene ?want]
     [Fulfilled ?want]
 [end]
 
-[predicate]
-InCompleteStorySpec ?scene:
+IncompleteStorySpec ?scene:
     [UnFulfilledWant ?scene ?want]
 [end]
 
-[predicate]
 CompleteStorySpec ?scene:
     [Scene ?scene] # find a scene with at least one attached want (ask michael about why this line is necessary, although it is intuitive)
-    [Not [InCompleteStorySpec ?scene]]
+    [Not [IncompleteStorySpec ?scene]]
 [end]
 
 # might want to count how many are true and then purposely fail
@@ -116,6 +117,15 @@ Visit ?frag:
     [now [Expanded ?frag]]
     [Effects ?frag]
 [end]
+
+# There are three types of choices: 
+# 1. GoTo: 
+#       Go to a specific fragment based on its id
+# 2. ChoiceSpec: 
+#       Find a fragment that satisfies the choice spec 
+#       Each choice must have a choice label
+# 3. TopLevel: 
+#       Find a fragment that does not have a choice label
 
 # Returns a posible next fragment from the current fragment ?source_frag
 # Side Effect: SatisfiableChoiceSpec will apply the effects of the new fragment
