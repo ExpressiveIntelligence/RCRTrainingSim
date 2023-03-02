@@ -124,6 +124,12 @@ TestWantConditions:
     ?frag/Write ?want
 [end]
 
+TestRanking:
+    [SetupTestScene]
+    [AllPathsFrom root ?paths]
+    ?paths
+[end]
+
 TestSetAdd:
     [set A = empty]
     [set B = empty]

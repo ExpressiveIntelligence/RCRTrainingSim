@@ -1,8 +1,9 @@
 Author: Alex
 
-## Define the Fragment attributes ##
-
 # Original StoryAssembler example frag: https://github.com/LudoNarrative/StoryAssembler/wiki/Creating-Scene-Content
+
+
+## Define the fragment attributes ##
 
 # Required predicates
 predicate Fragment ?frag ?scene. 
@@ -20,8 +21,10 @@ predicate GoToChoice ?frag ?target_frag.
 fluent Expanded ?fragment.
 fluent Reusable ?fragment.
 
-AddWishListItem ?fragment. # TODO https://github.com/LudoNarrative/StoryAssembler/wiki/Authoring-Patterns
+## End fragment attributes ##
 
+# TODO Functions
+AddWishListItem ?fragment. # TODO https://github.com/LudoNarrative/StoryAssembler/wiki/Authoring-Patterns
 Request ?fragment. # TODO https://github.com/LudoNarrative/StoryAssembler/wiki/Authoring-Patterns#fragment-available-both-as-choice-and-dynamically
 
 TopLevelFragment ?frag: [Fragment ?frag ?] [Not [ExistsChoiceLabel ?frag]] # If it has a choice label it is not a top level fragment
@@ -99,9 +102,6 @@ CompleteStorySpec ?scene:
     [Not [InCompleteStorySpec ?scene]]
 [end]
 
-# MyList = empty
-# [add MyList [thing]]
-
 # might want to count how many are true and then purposely fail
 [predicate]
 EffectMakesWantTrue ?fragment ?want_id: 
@@ -117,25 +117,48 @@ Visit ?frag:
     [Effects ?frag]
 [end]
 
-# Algorithms
-Start ?frag:
-    [BestFrag root ?frag ?score]
-    [Visit ?frag]
-    # [RenderFragment ?frag]
-    ?frag/Write
-[end]
-Start ?frag:
-    Error
+# Returns a posible next fragment from the current fragment ?source_frag
+# Side Effect: SatisfiableChoiceSpec will apply the effects of the new fragment
+[predicate]
+AvailableNextFragment ?source_frag ?target_frag: [AvailableGoTo ?source_frag ?target_frag]
+AvailableNextFragment ?source_frag ?target_frag: [SatisfiableChoiceSpec ?source_frag ?choice_id ?target_frag]
+AvailableNextFragment ?source_frag ?target_frag: # TODO this is really slow because of the checks and could probably be sped up
+    [NotAny [AvailableGoTo ?source_frag ?]] 
+    [NotAny [SatisfiableChoiceSpec ?source_frag ? ?]] 
+    [AvailableTopLevelFragment ?target_frag]
 [end]
 
-Continue ?cur_frag ?next_frag:
-    [BestFrag ?cur_frag ?path ?score]
-    [Visit ?next_frag]
-    [RenderFragment ?next_frag]
+# Returns true if ?satisfying_frag satisfies ?source_frag's choice ?choice_id
+[predicate]
+SatisfiableChoiceSpec ?source_frag ?choice_id ?satisfying_frag: 
+    [ExistsChoiceLabel ?satisfying_frag]        # the new fragment must have a choice label
+    [Conditions ?satisfying_frag]
+    [Effects ?satisfying_frag]            # apply the effects of the new frag
+    [ChoiceSpec ?source_frag ?choice_id]  # see if they satisfy the choice spec of the source frag
+    [Available ?satisfying_frag]          # TODO I can't put this at the top even though it would speedup
 [end]
-Continue ?cur_frag ?next_frag: 
-    [Start ?next_frag]
+
+[predicate]
+AvailableTopLevelFragment ?frag:
+    [TopLevelFragment ?frag]    # must not have a choice label
+    [Available ?frag]
+    [Conditions ?frag]
 [end]
-Continue ?cur_frag ?next_frag:
-    Error
+
+[predicate]
+AvailableGoTo ?source_frag ?target_frag:
+    [GoToChoice ?source_frag ?target_frag]
+    [Available ?target_frag]
+    [Conditions ?target_frag]
 [end]
+
+# PrintAllSatisfiableChoices ?source_frag:
+#     [AllSatisfiableChoices ?source_frag ?specs]
+#     Potential choices from ?source_frag: ?specs
+# [end]
+
+# AllSatisfiableChoices root empty. # there is no source frag
+# AllSatisfiableChoices ?source_frag ?satisfying_frag_list: # TODO this doesn't return the choice_id. Do we need this?
+#     [Different ?source_frag root]
+#     [FindAll ?frag [SatisfiableChoiceSpec ?source_frag ?choice_id ?frag] ?satisfying_frag_list]
+# [end]

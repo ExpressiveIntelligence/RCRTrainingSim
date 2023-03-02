@@ -1,7 +1,6 @@
 initially: 
-    [set MaxDepth = 5]
+    [set MaxDepth = 10]
     [set CurDepth = 0]
-    [set MaxValue = 100]
     [set PathList = empty]
     [set ^AllPaths = empty]
 [end]
@@ -20,63 +19,6 @@ predicate AllSatisfiableChoices ?source ?satisfying_frags.
 # 3. TopLevel: 
 #       Find a fragment that does not have a choice label
 
-PrintAllSatisfiableChoices ?source_frag:
-    [AllSatisfiableChoices ?source_frag ?specs]
-    Potential choices from ?source_frag: ?specs
-[end]
-
-AllSatisfiableChoices root empty. # there is no source frag
-AllSatisfiableChoices ?source_frag ?satisfying_frag_list: # TODO this doesn't return the choice_id. Do we need this?
-    [Different ?source_frag root]
-    [FindAll ?frag [SatisfyableChoiceSpec ?source_frag ?choice_id ?frag] ?satisfying_frag_list]
-[end]
-
-# Returns true if ?satisfying_frag satisfies ?source_frag's choice ?choice_id
-[predicate]
-SatisfyableChoiceSpec ?source_frag ?choice_id ?satisfying_frag: 
-    [ExistsChoiceLabel ?satisfying_frag]        # the new fragment must have a choice label
-    [Conditions ?satisfying_frag]
-    [Effects ?satisfying_frag]            # apply the effects of the new frag
-    [ChoiceSpec ?source_frag ?choice_id]  # see if they satisfy the choice spec of the source frag
-    [Available ?satisfying_frag]          # TODO I can't put this at the top even though it would speedup
-[end]
-
-[predicate]
-AlternateAllSatisfiableChoices ?source_frag ?satisfying_frag_list: # Need to test the speed of this one... faster?
-    [ExistsChoiceLabel ?satisfying_frag]        # the new fragment must have a choice label
-    [Conditions ?satisfying_frag]
-    [Effects ?satisfying_frag]            # apply the effects of the new frag
-    [ChoiceSpec ?source_frag ?choice_id]  # see if they satisfy the choice spec of the source frag
-    [Available ?satisfying_frag]          # TODO I can't put this at the top even though it would speedup
-    [FindAll ?satisfying_frag [SatisfyableChoiceSpec ?source_frag ?choice_id ?satisfying_frag] ?satisfying_frag_list]
-[end]
-
-# [predicate]
-# AllAvailableTopLevelFragments ?fragments:
-#     [FindAll ?frag [AvailableTopLevelFragment ?frag] ?fragments]
-# [end]
-
-[predicate]
-AvailableTopLevelFragment ?frag:
-    [TopLevelFragment ?frag]    # must not have a choice label
-    [Available ?frag]
-    [Conditions ?frag]
-[end]
-
-[predicate]
-AllGoToChoices root empty.  # there is no source frag
-AllGoToChoices ?source_frag ?fragments:
-    [Different ?source_frag root]
-    [FindAll ?frag [AvailableGoTo ?source_frag ?frag] ?fragments]
-[end]
-
-[predicate]
-AvailableGoTo ?source_frag ?target_frag:
-    [GoToChoice ?source_frag ?target_frag]
-    [Available ?target_frag]
-    [Conditions ?target_frag]
-[end]
-
 [predicate]
 AllPathsFrom ?source_frag ?paths:
     [set ^AllPaths = empty]
@@ -88,70 +30,54 @@ AllPathsFrom ?source_frag ?paths:
 # The wrapper for this Task is AllPathsFrom
 # Example usage: [AllPathsFrom root ?paths]
 # # Before running this, should reset ^AllPaths to empty
-# TODO: should not return a top level fragment if there are available GoTo's or ChoiceSpecs
 [predicate]
+# TODO check additional unbound path case
 FindPaths ?frag ?path:
-    [Length ?path ?depth]
-    [>= ?depth ^MaxDepth]
-    [add ?path ^AllPaths]
+    [Length ?path ^MaxDepth]
+    [ScorePath ?path ?scored_path]
+    [add ?scored_path ^AllPaths]
 [end]
 FindPaths ?frag ?path:
     [case ?frag] [Different root] : [Visit ?frag] [else] [end]
     [NotAny [AvailableNextFragment ?frag ?next]]
-    [add ?path ^AllPaths]
+    [ScorePath ?path ?scored_path]
+    [add ?scored_path ^AllPaths]
 [end]
 FindPaths ?frag ?path:
     [case ?frag] [Different root] : [Visit ?frag] [else]  [end]
     [FindUnique ?next [AvailableNextFragment ?frag ?next] ?all_possible_next_frags]
-    [ForEach [Member ?member ?all_possible_next_frags] [Add ?member ?path ?new_path] [FindPaths ?member ?new_path]]
+    [ForEach [Member ?member ?all_possible_next_frags] 
+        [Add ?member ?path ?new_path]
+        [FindPaths ?member ?new_path]
+    ]
 [end]
 
-RankPaths ?paths ?scored_paths:
-    [set ^RankedPaths = empty]
-    [ForEach [Member ?path ?paths] [ScorePath ?path ?value] [AddToRankedPaths ?path ?value]]
-    [= ?scored_paths ^RankedPaths]
-[end]
-AddToRankedPaths ?path ?value:
-    [ToTuple ?path ?value ?scored_path]
-    [add ?scored_path ^RankedPaths]
-[end]
+ScorePath ?path ?scored_path: [ScoreCalculation ?path ?value] [= ?scored_path [?path ?value]]
 
-ScorePath ?path ?value: 
-    [LengthValue ?path ?length_value] 
-    [SatisficationValue ?path ?satisfied_value] 
-    [set ^Value = ?length_value + ?satisfied_value] 
+ScoreCalculation ?path ?value: 
+    [LengthValue ?path ?length_value] # [= ?length_value 0]
+    
+    [SatisfactionValue ?path ?satisfied_value] 
+    [set ^Value = ?length_value + MaxDepth * ?satisfied_value] 
     [= ?value ^Value]
-[end]
-
-# Returns a posible next fragment from the current fragment ?source_frag
-[predicate]
-AvailableNextFragment ?source_frag ?target_frag: [AvailableGoTo ?source_frag ?target_frag]
-AvailableNextFragment ?source_frag ?target_frag: [SatisfyableChoiceSpec ?source_frag ?choice_id ?target_frag]
-AvailableNextFragment ?source_frag ?target_frag: # TODO this is really slow because of the checks and could probably be sped up
-    [NotAny [AvailableGoTo ?source_frag ?]] 
-    [NotAny [SatisfyableChoiceSpec ?source_frag ?choice_id ?]] 
-    [AvailableTopLevelFragment ?target_frag]
 [end]
 
 [predicate]
 LengthValue ?path ?value:
     [Reverse ?path ?in_order]
     [Length ?in_order ?depth]
-    [set ^Value = -?depth]
-    [= ?value ^Value]
+    [set ^Value = -?depth] [= ?value ^Value]
 [end]
 
+SatisfactionValue ?path ?value: [Length ?path 0] [= ?value 0]
+SatisfactionValue ?path ?value: [WantsSatisfied ?value]
 
-ScorePath ?list ?value: [RemoveNext ?frag ?lis ?new_list] [Visit ?frag] [ScorePath ?new_list]
-
-# This is the hard part
-[predicate]
-ValueHeuristic ?fragment ?value:
-    [Fragment ?fragment ?scene] # get the scene
-    [CompleteStorySpec ?scene]
-    [= ?value ^MaxValue]
+WantsSatisfied ?count:
+    [FindAll ?want_id [FulfilledInScene ?want_id] ?satisfied_wants]
+    [Length ?satisfied_wants ?count]
 [end]
-Value not_on_the_path ?value: [= ?value 1]
-Value on_the_path ?value: [= ?value 2]
-Value hard ?value: [= ?value 3]
-ValueHeuristic ?fragment ?value: [Fragment ?fragment ?scene] [= ?value 0]
+
+FulfilledInScene ?want_id:
+    [Want ^CurrentScene ?want_id]
+    [Fulfilled ?want_id]
+[end]
