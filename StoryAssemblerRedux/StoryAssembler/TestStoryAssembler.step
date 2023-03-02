@@ -130,6 +130,19 @@ TestRanking:
     ?paths
 [end]
 
+TestBacktrack:
+    [set ^A = good]
+    [Backtrack [SetA bad] ?result]
+    Backtrack result: ?result [Paragraph]
+    A: ^A
+[end]
+
+SetA ?arg ?result:
+    [set ^A = bad]
+    [= ?result result]
+    Shouldn't see this: ?arg
+[end]
+
 TestSetAdd:
     [set A = empty]
     [set B = empty]

@@ -20,11 +20,7 @@ predicate AllSatisfiableChoices ?source ?satisfying_frags.
 #       Find a fragment that does not have a choice label
 
 [predicate]
-AllPathsFrom ?source_frag ?paths:
-    [set ^AllPaths = empty]
-    [FindPaths ?source_frag empty]
-    [= ?paths ^AllPaths]
-[end]
+AllPathsFrom ?source_frag ?paths: [FindPaths ?source_frag empty ?paths]
 
 # Find all outgoing paths from ?frag and store them in the ^AllPaths global variable
 # The wrapper for this Task is AllPathsFrom
@@ -32,24 +28,38 @@ AllPathsFrom ?source_frag ?paths:
 # # Before running this, should reset ^AllPaths to empty
 [predicate]
 # TODO check additional unbound path case
-FindPaths ?frag ?path:
+FindPaths ?frag ?path ?found_paths:
     [Length ?path ^MaxDepth]
     [ScorePath ?path ?scored_path]
-    [add ?scored_path ^AllPaths]
+    [= ?found_paths [?scored_path]]
 [end]
-FindPaths ?frag ?path:
+FindPaths ?frag ?path ?found_paths:
     [case ?frag] [Different root] : [Visit ?frag] [else] [end]
     [NotAny [AvailableNextFragment ?frag ?next]]
     [ScorePath ?path ?scored_path]
-    [add ?scored_path ^AllPaths]
+    [= ?found_paths [?scored_path]]
 [end]
-FindPaths ?frag ?path:
+FindPaths ?frag ?path ?paths_from_children:
     [case ?frag] [Different root] : [Visit ?frag] [else]  [end]
-    [FindUnique ?next [AvailableNextFragment ?frag ?next] ?all_possible_next_frags]
-    [ForEach [Member ?member ?all_possible_next_frags] 
-        [Add ?member ?path ?new_path]
-        [FindPaths ?member ?new_path]
-    ]
+    # All possible next fragments that can be selected are 'children' of the current fragment
+    [FindUnique ?next [AvailableNextFragment ?frag ?next] ?children_frags]
+    [FindAll ?paths_from_child [FindAllPathsFromAChildOf ?children_frags ?frag ?path ?paths_from_child] ?list_of_paths_from_children]
+    [Flatten2D ?list_of_paths_from_children ?paths_from_children]
+[end]
+
+[predicate]
+FindAllPathsFromAChildOf ?children ?current ?current_path ?paths_from_child:
+    [Not [Length ?children empty]]
+    [Member ?child ?children] # Select a child from ?children
+    [FindPathsForChild ?child ?current ?current_path ?paths_from_child]
+[end]
+[predicate]
+FindPathsForChild ?child ?current ?current_path ?paths_from_child:
+    # Construct the path to the child (not including the child)
+    [Add ?current ?current_path ?child_path]       
+    # Findall the paths from the child, store the result, and undo the state changes
+    # This line does not Fail unless FindPaths fails
+    [Backtrack [FindPaths ?child ?child_path] ?paths_from_child]
 [end]
 
 ScorePath ?path ?scored_path: [ScoreCalculation ?path ?value] [= ?scored_path [?path ?value]]

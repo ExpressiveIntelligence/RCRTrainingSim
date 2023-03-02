@@ -26,6 +26,20 @@ Add ?element ?list ?new_list:
     [AddHelper ?element]
     [= ?new_list ^AddTemp]
 [end]
+AddHelper ?element:
+    [add ?element ^AddTemp]
+[end]
+
+# Call ?call one time and return the result but reset variables and text output
+# Example usage: [Backtrack [SetA ?args] ?result] would call 
+# [SetA ?args ?result]
+# exactly one time and bind the the final argument to ?result
+Backtrack ?call ?result:
+    [FindAll ?intermediate_result [BacktrackHelper ?call ?intermediate_result] [?result]]
+[end]
+BacktrackHelper ?call ?result:
+    [ExactlyOnce [Call ?call ?result]]
+[end]
 
 SetUnion ?l1 ?l2 ?union:
     [set ^AddTemp = empty]
@@ -47,8 +61,11 @@ Cat ?l1 ?l2 ?cat:
     [= ?cat ^AddTemp]
 [end]
 
-AddHelper ?element:
-    [add ?element ^AddTemp]
+Flatten2D ?list ?flattened:
+    [FindAll ?member [InnerMember ?member ?list] ?flattened]
+[end]
+InnerMember ?m ?list:
+    [Member ?sublist ?list] [Member ?m ?sublist]
 [end]
 
 Reverse ?list ?reversed:
