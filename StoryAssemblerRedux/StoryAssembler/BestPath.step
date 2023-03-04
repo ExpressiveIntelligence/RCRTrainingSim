@@ -14,29 +14,29 @@ AllPathsFrom ?source_frag ?paths: [FindPaths ?source_frag empty ?paths]
 # # Before running this, should reset ^AllPaths to empty
 [predicate]
 # TODO check additional unbound path case
-FindPaths ?frag ?path ?found_paths:
+FindPaths [?frag ?choice_id] ?path ?found_paths:
     [Length ?path ^MaxDepth]
     [ScorePath ?path ?scored_path]
     [= ?found_paths [?scored_path]]
 [end]
-FindPaths ?frag ?path ?found_paths:
+FindPaths [?frag ?choice_id] ?path ?found_paths:
     [case ?frag] [Different root] : [Visit ?frag] [else] [end]
-    [NotAny [AvailableNextFragment ?frag ?next]]
+    [NotAny [AvailableNextFragment ?frag ?next_choice]]
     [ScorePath ?path ?scored_path]
     [= ?found_paths [?scored_path]]
 [end]
-FindPaths ?frag ?path ?paths_from_children:
+FindPaths [?frag ?choice_id] ?path ?paths_from_children:
     [case ?frag] [Different root] : [Visit ?frag] [else]  [end]
     # All possible next fragments that can be selected are 'children' of the current fragment
-    [FindUnique ?next [AvailableNextFragment ?frag ?next] ?children_frags]
-    [FindAll ?paths_from_child [FindAllPathsFromAChildOf ?children_frags ?frag ?path ?paths_from_child] ?list_of_paths_from_children]
+    [FindUnique ?next_choice [AvailableNextFragment ?frag ?next_choice] ?potential_choices]
+    [FindAll ?paths_from_child [FindAllPathsFromAChildOf ?potential_choices [?frag ?choice_id] ?path ?paths_from_child] ?list_of_paths_from_children]
     [Flatten2D ?list_of_paths_from_children ?paths_from_children]
 [end]
 
 [predicate]
-FindAllPathsFromAChildOf ?children ?current ?current_path ?paths_from_child:
-    [Not [Length ?children empty]]
-    [Member ?child ?children] # Select a child from ?children
+FindAllPathsFromAChildOf ?choices ?current ?current_path ?paths_from_child:
+    [Not [Length ?choices empty]]
+    [Member ?child ?choices] # select a choice from the potential choices 
     [FindPathsForChild ?child ?current ?current_path ?paths_from_child]
 [end]
 [predicate]
@@ -48,7 +48,12 @@ FindPathsForChild ?child ?current ?current_path ?paths_from_child:
     [Backtrack [FindPaths ?child ?child_path] ?paths_from_child]
 [end]
 
-ScorePath ?path ?scored_path: [ScoreCalculation ?path ?value] [= ?scored_path [?path ?value]]
+# Score a path
+# Also reverse it to put make it a FIFO list (it arrives in reversed order)
+ScorePath ?path ?scored_path: [Reverse ?path ?ordered_path] [ScoreCalculation ?ordered_path ?value] [ScoredPath ?ordered_path ?value ?scored_path]
+
+## The data structure of a path that has been scored
+ScoredPath ?path ?score ?scored_path: [= ?scored_path [?path ?score]] [Number ?score]
 
 ScoreCalculation ?path ?value: 
     [LengthValue ?path ?length_value]
@@ -59,8 +64,7 @@ ScoreCalculation ?path ?value:
 
 [predicate]
 LengthValue ?path ?value:
-    [Reverse ?path ?in_order]
-    [Length ?in_order ?depth]
+    [Length ?path ?depth]
     [set ^Value = -?depth] [= ?value ^Value]
 [end]
 

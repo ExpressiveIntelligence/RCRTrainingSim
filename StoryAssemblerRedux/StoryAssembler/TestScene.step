@@ -91,12 +91,14 @@ Conditions overthinking.
 Want test initialized.
 Want test characters_dating.
 Want test some_respite.
+Want test married.
 # [ [Want Test initialized] [Want test characters_dating] ]. # aspirational syntax
 
 [randomly]
 Fulfilled initialized: [= ^Initialized true]
 Fulfilled characters_dating: [Dating ally protagonist]
 Fulfilled some_respite: [Respite]
+Fulfilled married: [Married ally protagonist]
 
 # Another scene
 # ... with an incomplete storyspec

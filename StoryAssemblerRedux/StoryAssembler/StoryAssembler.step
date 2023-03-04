@@ -129,10 +129,13 @@ Visit ?frag:
 
 # Returns a posible next fragment from the current fragment ?source_frag
 # Side Effect: SatisfiableChoiceSpec will apply the effects of the new fragment
+# choice_id: will be null unless there is an associated choice_id, ie the choice type is a ChoiceSpec
+predicate AvailableNextFragment ?source_frag ?choice. # a choice is a [?target_frag ?choice_id] tuple
+
 [predicate]
-AvailableNextFragment ?source_frag ?target_frag: [AvailableGoTo ?source_frag ?target_frag]
-AvailableNextFragment ?source_frag ?target_frag: [SatisfiableChoiceSpec ?source_frag ?choice_id ?target_frag]
-AvailableNextFragment ?source_frag ?target_frag: # TODO this is really slow because of the checks and could probably be sped up
+AvailableNextFragment ?source_frag [?target_frag null]: [AvailableGoTo ?source_frag ?target_frag]
+AvailableNextFragment ?source_frag [?target_frag ?choice_id]: [SatisfiableChoiceSpec ?source_frag ?choice_id ?target_frag]
+AvailableNextFragment ?source_frag [?target_frag null]: # TODO this is really slow because of the checks and could probably be sped up
     [NotAny [AvailableGoTo ?source_frag ?]] 
     [NotAny [SatisfiableChoiceSpec ?source_frag ? ?]] 
     [AvailableTopLevelFragment ?target_frag]
