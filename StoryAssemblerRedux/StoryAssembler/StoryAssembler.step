@@ -159,19 +159,26 @@ AvailableTopLevelFragment ?frag:
 [end]
 
 [predicate]
+AllAvailableTopLevelFragments ?fragments:
+    [FindAll ?frag [AvailableTopLevelFragment ?frag] ?fragments]
+[end]
+
+[predicate]
 AvailableGoTo ?source_frag ?target_frag:
     [GoToChoice ?source_frag ?target_frag]
     [Available ?target_frag]
     [Conditions ?target_frag]
 [end]
 
-# PrintAllSatisfiableChoices ?source_frag:
-#     [AllSatisfiableChoices ?source_frag ?specs]
-#     Potential choices from ?source_frag: ?specs
-# [end]
+[predicate]
+AllGoToChoices root empty.  # there is no source frag
+AllGoToChoices ?source_frag ?fragments:
+    [Different ?source_frag root]
+    [FindAll ?frag [AvailableGoTo ?source_frag ?frag] ?fragments]
+[end]
 
-# AllSatisfiableChoices root empty. # there is no source frag
-# AllSatisfiableChoices ?source_frag ?satisfying_frag_list: # TODO this doesn't return the choice_id. Do we need this?
-#     [Different ?source_frag root]
-#     [FindAll ?frag [SatisfiableChoiceSpec ?source_frag ?choice_id ?frag] ?satisfying_frag_list]
-# [end]
+AllSatisfiableChoices root empty. # there is no source frag
+AllSatisfiableChoices ?source_frag ?satisfying_frag_list: # TODO this doesn't return the choice_id. Do we need this?
+    [Different ?source_frag root]
+    [FindAll ?frag [SatisfiableChoiceSpec ?source_frag ?choice_id ?frag] ?satisfying_frag_list]
+[end]

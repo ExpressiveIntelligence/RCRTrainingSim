@@ -4,9 +4,55 @@ initially:
 
 # Exposed funcion headers
 predicate AllPathsFrom ?source_frag ?paths.
+predicate BestChoices ?source_frag ?choice_frags.
 
 [predicate]
-AllPathsFrom ?source_frag ?paths: [FindPaths ?source_frag empty ?paths]
+AllPathsFrom ?source_frag ?paths: [FindPaths [?source_frag null] empty ?paths] 
+
+[predicate]
+# BestChoices ?frag ?choices: [Fragment ?frag] [AllPathsFrom ?frag ?paths] [BestChoices ?paths ?choices]
+BestChoices ?frag ?choices: 
+    [AllGoToChoices ?frag ?goto_frags]
+    # [SatisfiableChoiceSpec ?frag ? ?] # Don't need to run the search if it doesn't have a dynamic link - this will change with requests
+    [AllPathsFrom ?frag ?paths]
+    [BestChoiceSpecChoices ?frag ?paths ?choice_spec_frags]
+    [Cat ?goto_frags ?choice_spec_frags ?running_choices]
+    [TopLevelFragsIfNoOtherOption ?running_choices ?top_level_frags]
+    [Cat ?running_choices ?top_level_frags ?choices]
+[end]
+
+[predicate]
+BestChoiceSpecChoices ?frag ?paths ?choices:
+    [set ^PathsToCheck = ?paths]
+    [set ^Choices = empty]
+    [Member ?m ?paths] [ScoredPath ? ? ?m] # Assert that we have a list of paths
+    [ForEach [ChoiceSpec ?frag ?choice_id] [AddNextBestChoice ?choice_id]]
+    [= ?choices ^Choices]
+[end]
+BestChoiceSpecChoices ?frag ?paths empty.
+
+AddNextBestChoice ?choice_id:
+    [Max ?value 
+        [Member ?top_path ^PathsToCheck] 
+        [ScoredPath ?value ?top_path] 
+        [NextStepFulfillsChoice ?choice_id ?top_path ?best_frag]
+    ]
+    [add ?best_frag Choices]    
+
+    # For the next round of searching, don't include the one we selected
+    [RemoveFromList ^Path ^PathsToCheck ?new_paths]
+    [set ^PathsToCheck = ?new_paths]
+[end]
+
+NextStepFulfillsChoice ?fulfilled_choice ?path ?target_frag:
+    [set ^Path = ?path]
+    [removeNext [?cur_frag ?] ^Path] [removeNext [?target_frag ?fulfilled_choice] ^Path]
+[end]
+
+
+[predicate]
+TopLevelFragsIfNoOtherOption ?other_choices ?choices: [Length ?other_choices 0] [AllAvailableTopLevelFragments ?choices]
+TopLevelFragsIfNoOtherOption ?other_choices empty. 
 
 # Find all outgoing paths from ?frag and store them in the ^AllPaths global variable
 # The wrapper for this Task is AllPathsFrom

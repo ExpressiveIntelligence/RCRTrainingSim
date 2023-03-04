@@ -1,33 +1,11 @@
-RunStory ?frag:
-    [StoryAssembler ?]
-    # [Paragraph]
-    # [StoryAssembler ?]
-    # [Paragraph]
-    # [StoryAssembler ?]
-    # [Paragraph]
-    # [StoryAssembler ?]
-    # [Paragraph]
-    # [StoryAssembler ?]
-    # [Paragraph]
-[end]
-
 initially:
     [set ^CurrentScene = test]
     [set ^AddTemp = empty]
 [end]
 
-RunStoryWrap: [RunStory ?frag]
-
-# Custom list operations
-
-# Add an element to a list
-Add ?element ?list ?new_list:
-    [set ^AddTemp = ?list]
-    [AddHelper ?element]
-    [= ?new_list ^AddTemp]
-[end]
-AddHelper ?element:
-    [add ?element ^AddTemp]
+SetupTestScene:
+    [set CurrentScene = test]
+    [InitScene ^CurrentScene]
 [end]
 
 # Call ?call one time and return the result but reset variables and text output
@@ -39,6 +17,18 @@ Backtrack ?call ?result:
 [end]
 BacktrackHelper ?call ?result:
     [ExactlyOnce [Call ?call ?result]]
+[end]
+
+# Custom list operations
+
+# Add an element to a list
+Add ?element ?list ?new_list:
+    [set ^AddTemp = ?list]
+    [AddHelper ?element]
+    [= ?new_list ^AddTemp]
+[end]
+AddHelper ?element:
+    [add ?element ^AddTemp]
 [end]
 
 SetUnion ?l1 ?l2 ?union:
@@ -61,6 +51,14 @@ Cat ?l1 ?l2 ?cat:
     [= ?cat ^AddTemp]
 [end]
 
+Cat3 ?l1 ?l2 ?l3 ?cat:
+    [set ^AddTemp = empty]
+    [ForEach [Member ?x ?l1] [AddHelper ?x]]
+    [ForEach [Member ?y ?l2] [AddHelper ?y]]
+    [ForEach [Member ?z ?l3] [AddHelper ?z]]
+    [= ?cat ^AddTemp]
+[end]
+
 Flatten2D ?list ?flattened:
     [FindAll ?member [InnerMember ?member ?list] ?flattened]
 [end]
@@ -79,12 +77,11 @@ ToTuple ?a ?b ?tuple:
     [= ?tuple [?a ?b]]
 [end]
 
+RemoveFromList ?m ?list ?without:
+    [FindAll ?n [Member ?n ?list] [Different ?m ?n] ?without]
+[end]
+
 # Custom max check
 [predicate]
 MaxOf ?x ?y ?max: [< ?x ?y] [set ?max = ?y]
 MaxOf ?x ?y ?max: [set ?max = ?x]
-
-SetupTestScene:
-    [set CurrentScene = test]
-    [InitScene ^CurrentScene]
-[end]

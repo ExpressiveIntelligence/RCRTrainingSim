@@ -99,6 +99,39 @@ TestRanking:
     ?paths
 [end]
 
+TestBestCInternals:
+    [SetupTestScene]
+    [AllGoToChoices ?frag ?goto_frags]
+    [AllPathsFrom ?frag ?paths]
+    [BestChoiceSpecChoices ?frag ?paths ?choice_spec_frags]
+    # [BestChoices root ?paths]
+    ?paths [Paragraph]
+    [Cat ?goto_frags ?choice_spec_frags ?running_choices]
+    Running: ?running_choices
+    [TopLevelFragsIfNoOtherOption ?running_choices ?top_level_frags]
+    [Length ?running_choices ?l] Length: ?l
+    Top Level: ?top_level_frags
+    [Cat ?running_choices ?top_level_frags ?choices]
+    ?choices
+[end]
+
+
+TestBestChoices:
+    [SetupTestScene]
+    [BestChoices root ?choices]
+    ?choices
+[end]
+
+TestNextStepFulfillsChoice:
+    [SetupTestScene]
+    [BestChoices root ?paths]
+    [Member ?path ?paths]
+    [NextStepFulfillsChoice ?choice ?path ?target_frag]
+    ?paths [Paragraph]
+    ?choice ?path ?target_frag
+[end]
+
+
 TestBacktrack:
     [set ^A = good]
     [Backtrack [SetA bad] ?result]
