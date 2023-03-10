@@ -4,6 +4,7 @@ Scene test.
 # Declare all storylets (fragments)
 [randomly]
 Fragment disastrous_date test.
+Fragment necessary test.
 Fragment on_the_path test.
 Fragment not_on_the_path test.
 Fragment hard test.
@@ -13,18 +14,27 @@ Fragment unapologetic test.
 Fragment apology test.
 Fragment respite test.
 Fragment overthinking test. 
+Fragment dynamic test.
 
 # Scene specific predicates
 fluent Dating ?person1 ?person2.
 fluent Dislikes ?person1 ?person2.
 fluent Married ? ?.
 fluent Respite.
+fluent ExtraPoints.
 
 InitialSceneState test:
     [set ^Initialized = true]
     [now [Not [Dating ally protagonist]]]
     [now [Not [Respite]]]
+    [now [Not [ExtraPoints]]]
 [end]
+
+Content necessary: You must get here
+Effects necessary.
+Conditions necessary.
+GoToChoice necessary disastrous_date.
+GoToChoice necessary dynamic.
 
 Content disastrous_date: Ally and protagonist go to a high end restaurant. Ally orders a $100 bottle of wine. Protagonist is offended. 
 Conditions disastrous_date:
@@ -65,6 +75,11 @@ Effects respite:
 [end]
 Conditions respite.
 
+Request dynamic goto not_on_the_path.
+Conditions dynamic.
+Effects dynamic: [now [ExtraPoints]]
+[randomly] ChoiceLabel dynamic: Look outward.
+
 Content not_on_the_path: "In another town, someone else is dating"
 Effects not_on_the_path:
     [now [Dating someone_else another_person]]
@@ -79,7 +94,13 @@ Conditions hard:
     [Dating ally protagonist]
 [end]
 
-Content bad: "bad"
+
+# [randomly] ChoiceLabel dynamic2: Look outward.
+# Request dynamic condition [request condition].
+# Conditions dynamic.
+# Effects dynamic.
+
+Content bad: "should not be able to get here"
 Effects bad.
 
 Content overthinking: What is happening?? I'm overthinking this. I need to take a break.
@@ -91,14 +112,16 @@ Conditions overthinking.
 Want test initialized.
 Want test characters_dating.
 Want test some_respite.
+Want test extra_points.
 Want test married.
-# [ [Want Test initialized] [Want test characters_dating] ]. # aspirational syntax
+# # [ [Want Test initialized] [Want test characters_dating] ]. # aspirational syntax
 
 [randomly]
 Fulfilled initialized: [= ^Initialized true]
 Fulfilled characters_dating: [Dating ally protagonist]
 Fulfilled some_respite: [Respite]
 Fulfilled married: [Married ally protagonist]
+Fulfilled extra_points: [ExtraPoints]
 
 # Another scene
 # ... with an incomplete storyspec

@@ -12,6 +12,7 @@ from collections import Counter
 
 want_tracker = Counter()
 choice_tracker = Counter()
+all_globals = set()
 
 # Translations between StoryAssembler.js and Step conditionals
 condition_translations = {
@@ -53,9 +54,13 @@ InitialSceneState {scene}:
 [randomly]
 {fulfillments}"""
 
+def escape(s):
+    return re.subn(r"([\|])", r"\\\1", s)[0]
+
 def format_content(val):
     if type(val) == list:
         val = " ".join(val)
+    val = escape(val)
     return val.strip().replace("\n", "")
 
 def format_global(var):
@@ -82,6 +87,7 @@ def format_condition(cond):
     tokens = cond.split()
     
     var = format_global(tokens[0])
+    all_globals.add(var)
     conditional = condition_translations[tokens[1]]
     value = format_value(tokens[2])
     return f"[{conditional} {var} {value}]", var
@@ -97,7 +103,10 @@ def format_set(text):
     eq = " =" if set == "set" else ""
     var = format_global(tokens[1])
     value = format_value(tokens[2])
-    return f"[{set} {var}{eq} {value}]"
+    return f"[{set} {var}{eq} {value}]", var # TODO infer var type
+
+def initialize(var):
+    return f"[set {var} = 0]"
 
 def characters(json_chars):
     step_chars = ""
@@ -116,8 +125,14 @@ def story_spec(scene, wishlist):
 
 def initial_scene_state(start):
     step_start = []
+    initialized_vars = set()
     for text in start:
-        step_start.append("\t" + format_set(text))
+        initial, var = format_set(text)
+        step_start.append("\t" + initial)
+        initialized_vars.add(var)
+    step_start.append("\t# The following variables may have incorrect types (TODO infer types)")
+    for var in all_globals - initialized_vars:
+        step_start.append("\t" + initialize(var))
 
     return "\n".join(step_start)
 
@@ -145,7 +160,7 @@ def format_fragment(id, json_frag):
             if val:
                 frag += f"Effects {id}:\n"
                 for effect in val:
-                    frag += f"\t{format_set(effect)} \n"
+                    frag += f"\t{format_set(effect)[0]} \n"
                 frag += "[end]\n"
         elif var == "conditions":
             if val:
@@ -154,8 +169,15 @@ def format_fragment(id, json_frag):
                     frag += f"\t{format_condition(cond)[0]} \n"
                 frag += "[end]\n"
         elif var == "request":
-            # TODO
-            pass
+            for type, args in val.items():
+                if type == "condition":
+                    f_args = format_condition(args)[0]
+                elif type == "gotoId":
+                    type = "goto"
+                    f_args = format_literal(args)
+                else:
+                    raise Exception(f"Request type {type} not recognized")
+                frag += f"Request {id} {type} {f_args}.\n"
         elif var == "choices":
             for choice in val:
                 frag += format_choice(id, choice) + "\n"
