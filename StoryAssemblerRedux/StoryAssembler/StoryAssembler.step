@@ -17,19 +17,31 @@ predicate Speaker ?frag ?speaker.
 predicate ChoiceLabel ?frag.
 predicate ChoiceSpec ?frag ?choice_id.
 predicate GoToChoice ?frag ?target_frag.
-predicate ExistsChoiceLabel ?frag.
+
+# A request is TODO
+# A request may be a conditional request or a goto request
+predicate Request ?frag ?request_type ?go_to_or_condition.
 
 # Fragment fluents set during execution
+
+# TODO Document
 fluent Expanded ?fragment.
+# TODO Document & test
 fluent Reusable ?fragment.
+
+# Check if a fragment is available to be visited. 
+# The conditions to be avialiable is that the fragment must be reusable or not expanded 
 predicate Available ?fragment.
 
 ## End fragment attributes ##
 
 # Additional tasks and predicates
+
+# Check if a fragment has a choice label, but does not print the text of the choice label
+predicate ExistsChoiceLabel ?frag.
+
 task RenderFragment ?fragment.
 predicate TopLevelFragment ?fragment.
-
 
 # Scene attributes and functions
 predicate Scene ?scene.
@@ -52,8 +64,9 @@ predicate CompleteStorySpec ?scene.
 predicate IncompleteStorySpec ?scene.
 
 # TODO Functions
-AddWishListItem ?fragment. # TODO https://github.com/LudoNarrative/StoryAssembler/wiki/Authoring-Patterns
-Request ?fragment. # TODO https://github.com/LudoNarrative/StoryAssembler/wiki/Authoring-Patterns#fragment-available-both-as-choice-and-dynamically
+predicate AddWishListItem ?fragment. # TODO https://github.com/LudoNarrative/StoryAssembler/wiki/Authoring-Patterns
+# TODO document
+predicate Request ?fragment ?request_type ?go_to_or_condition.
 
 TopLevelFragment ?frag: [Fragment ?frag ?] [Not [ExistsChoiceLabel ?frag]] # If it has a choice label it is not a top level fragment
 
@@ -65,7 +78,6 @@ ExistsChoiceLabel ?frag: [IgnoreOutput [ChoiceLabel ?frag]]
 
 Available ?fragment: [Reusable ?fragment]
 Available ?fragment: [Not [Expanded ?fragment]]
-
 
 [predicate]
 PrintFinishState ?scene:
@@ -103,7 +115,7 @@ CompleteStorySpec ?scene:
     [Not [IncompleteStorySpec ?scene]]
 [end]
 
-# might want to count how many are true and then purposely fail
+# TODO unused 
 [predicate]
 EffectMakesWantTrue ?fragment ?want_id: 
     [Want ?scene ?want_id]
@@ -128,22 +140,90 @@ Visit ?frag:
 #       Find a fragment that does not have a choice label
 
 # Returns a posible next fragment from the current fragment ?source_frag
-# Side Effect: SatisfiableChoiceSpec will apply the effects of the new fragment
-# choice_id: will be null unless there is an associated choice_id, ie the choice type is a ChoiceSpec
+# Side Effect: AvailableConditionalChoice will apply the effects of the new fragment
+# choice_id: will be false unless there is an associated choice_id, ie the choice type is a ChoiceSpec
 predicate AvailableNextFragment ?source_frag ?choice. # a choice is a [?target_frag ?choice_id] tuple
+# TODO if source_frag is not ground yet, ?args, rtype will not be either
+# TODOO if we apply the effects here, it will be slow since it will grab all possible effects
+[predicate]
+AvailableNextFragment ?source_frag [?target ?choice_id]:
+    [AvailableNextHelper ?source_frag [?target ?choice_id]]
+[end]
+AvailableNextFragment ?source_frag [?target_frag false]:
+    # DODO do we need the notany checks?
+    [AvailableTopLevelFragment ?target_frag]
+[end]
 
 [predicate]
-AvailableNextFragment ?source_frag [?target_frag null]: [AvailableGoTo ?source_frag ?target_frag]
-AvailableNextFragment ?source_frag [?target_frag ?choice_id]: [SatisfiableChoiceSpec ?source_frag ?choice_id ?target_frag]
-AvailableNextFragment ?source_frag [?target_frag null]: # TODO this is really slow because of the checks and could probably be sped up
-    [NotAny [AvailableGoTo ?source_frag ?]] 
-    [NotAny [SatisfiableChoiceSpec ?source_frag ? ?]] 
-    [AvailableTopLevelFragment ?target_frag]
+AvailableNextHelper ?source_frag [?target ?choice_id]:
+    # If the source fragment is a dynamic node, then we need to make a request for a satisfying fragment 
+    # and begin the search from the fragment that completes the request. 
+    # AssembleRequest will also apply the effects of the new fragment
+    # If the source fragment is not a dynamic node, then we can begin the search from the source fragment 
+    [AssembleRequest ?source_frag ?search_origin] 
+    [AvailableChoice ?search_origin [?target ?choice_id]]
+    # [Throw ?choice_id]
+[end]
+
+# All goto and conditional choices
+[predicate]
+AvailableChoice ?origin [?target_frag false]:
+    [AvailableGoTo ?origin ?target_frag]
+[end]
+[predicate]
+AvailableChoice ?origin [?target_frag ?choice_id]:
+    [AvailableConditionalChoice ?origin ?choice_id ?target_frag]
+[end]
+
+# Check that the ?source frag is a dynamic node
+# If so, execute a request for a satisfying fragment
+# and apply its effects
+# Otherwise, return the source fragment
+predicate AssembleRequest ?source_frag ?response.
+AssembleRequest ?source_frag ?response:
+    [Request ?source_frag ?request_type ?args]
+    # Make the request for a completion node and apply its effects
+    [MakeRequest ?source_frag ?request_type ?args ?response]
+[end]
+AssembleRequest ?source_frag ?source_frag: [Fragment ?source_frag ^CurrentScene] [NotAny [Request ?source_frag ? ?]]
+
+# SIDE EFFECT: potentially applies the Effects of ?response
+[predicate]
+MakeRequest ?source goto ?go_to_frag ?go_to_frag:
+    # If we've reached here we know we have a dynamic fragment with a goto request
+    [AvailableForRequest ?source ?go_to_frag]
+[end]
+MakeRequest ?source condition ?search_condition ?response:
+    [AvailableForRequest ?source ?response]
+    [Effects ?response]
+    [Call ?search_condition] # Check the necessary condition
+[end]
+
+[predicate]
+AvailableForRequest ?requesting ?response:
+    [NotAny [Request ?response ? ?]] # TODO I don't think we want to chain responses? If not, we can get rid of the difference check
+    [Conditions ?response]
+    [Available ?response]
+    # [Different ?requesting ?response]
+[end]
+
+[predicate]
+AvailableGoTo ?source_frag ?target_frag:
+    [GoToChoice ?source_frag ?target_frag]
+    [Available ?target_frag]
+    [Conditions ?target_frag]
+[end]
+
+[predicate]
+AllGoToChoices root empty.  # there is no source frag
+AllGoToChoices ?source_frag ?fragments:
+    [Different ?source_frag root]
+    [FindAll ?frag [AvailableGoTo ?source_frag ?frag] ?fragments]
 [end]
 
 # Returns true if ?satisfying_frag satisfies ?source_frag's choice ?choice_id
 [predicate]
-SatisfiableChoiceSpec ?source_frag ?choice_id ?satisfying_frag: 
+AvailableConditionalChoice ?source_frag ?choice_id ?satisfying_frag: 
     [ExistsChoiceLabel ?satisfying_frag]        # the new fragment must have a choice label
     [Conditions ?satisfying_frag]
     [Effects ?satisfying_frag]            # apply the effects of the new frag
@@ -161,24 +241,4 @@ AvailableTopLevelFragment ?frag:
 [predicate]
 AllAvailableTopLevelFragments ?fragments:
     [FindAll ?frag [AvailableTopLevelFragment ?frag] ?fragments]
-[end]
-
-[predicate]
-AvailableGoTo ?source_frag ?target_frag:
-    [GoToChoice ?source_frag ?target_frag]
-    [Available ?target_frag]
-    [Conditions ?target_frag]
-[end]
-
-[predicate]
-AllGoToChoices root empty.  # there is no source frag
-AllGoToChoices ?source_frag ?fragments:
-    [Different ?source_frag root]
-    [FindAll ?frag [AvailableGoTo ?source_frag ?frag] ?fragments]
-[end]
-
-AllSatisfiableChoices root empty. # there is no source frag
-AllSatisfiableChoices ?source_frag ?satisfying_frag_list: # TODO this doesn't return the choice_id. Do we need this?
-    [Different ?source_frag root]
-    [FindAll ?frag [SatisfiableChoiceSpec ?source_frag ?choice_id ?frag] ?satisfying_frag_list]
 [end]
