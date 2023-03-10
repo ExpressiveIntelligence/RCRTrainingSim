@@ -3,6 +3,11 @@ Scene dinner.
 
 # Declare all storylets (fragments)
 [randomly]
+Fragment emma_science_fair dinner.
+Fragment shrimp_danger dinner.
+Fragment coral_danger dinner.
+Fragment lobster_danger dinner.
+Fragment clathrates_danger dinner.
 Fragment eat_food dinner.
 Fragment whatscalled dinner.
 Fragment thanksbringing dinner.
@@ -44,17 +49,62 @@ InitialSceneState dinner:
 	[set ^Career = 0]
 	[set ^Confidence = 0]
 	# The following variables may have incorrect types (TODO infer types)
-	[set ^ProvokeConfidenceChoice = 0]
-	[set ^EstablishEmmaBackstory = 0]
-	[set ^EstablishDinnerWithFriend = 0]
-	[set ^EstablishFriendBackstory = 0]
-	[set ^FriendReassuresEmma = 0]
-	[set ^EstablishEmmaRegrets = 0]
-	[set ^EstablishSpecialtyInfo = 0]
-	[set ^IntroMechanics = 0]
+	[set ^DroppedKnowledge = 0]
+	[set ^GotoWhatspeciality = false]
+	[set ^EstablishAllyBackstory = false]
+	[set ^ResolveArgument = false]
+	[set ^EstablishProtagBackstory = false]
+	[set ^EstablishFriendBackstory = false]
+	[set ^ProvokeConfidenceChoice = false]
+	[set ^FriendReassuresEmma = false]
+	[set ^Argue = false]
+	[set ^EstablishSpecialtyInfo = false]
+	[set ^IntroMechanics = false]
+	[set ^EstablishDinnerWithFriend = false]
+	[set ^EstablishSetting = false]
+	[set ^EstablishEmmaRegrets = false]
+	[set ^ProvokeArgument = false]
+	[set ^AllyReassuresProtag = false]
+	[set ^EstablishProtagRegrets = false]
+	[set ^EstablishEmmaBackstory = false]
 [end]
 
 # Fragments
+Speaker emma_science_fair emma.
+Content emma_science_fair: 4th grade? Mrs. Anderson? Oh my god, that diorama. I remember it was <i>huge</i>...it took forever for you to set up. You spent <i>ages</i> on that. What was it about again?.
+
+Content shrimp_danger: {convoMode\|dialogue\|You're always saying, like "Ooh,\|}{convoMode\|monologue\|"In places like Maine,\|} the ocean temperature is rising so fast it's all but eliminated the shrimp supply{convoMode\|dialogue\|! Oh no!"\|}{convoMode\|monologue\| already."\|}.
+Conditions shrimp_danger:
+	[= ^Career shrimp] 
+[end]
+Effects shrimp_danger:
+	[inc ^DroppedKnowledge 1] 
+	[set ^EstablishSpecialtyInfo = true] 
+[end]
+
+Content coral_danger: {convoMode\|dialogue\|You're always saying, like "Wooo, there's\|}{convoMode\|monologue\|There's\|} already been widespread bleaching reported of the Great Barrier Reef{convoMode\|dialogue\|...everything's gonna die!"\|}{convoMode\|monologue\|, and a lot of the species living there are dying currently out.\|}.
+Conditions coral_danger:
+	[= ^Career coral] 
+[end]
+Effects coral_danger:
+	[inc ^DroppedKnowledge 1] 
+	[set ^EstablishSpecialtyInfo = true] 
+[end]
+
+Content lobster_danger: {convoMode\|dialogue\|Aren't they like, dying from weird illnesses now or something? Guess\|}{convoMode\|monologue\|There have been a bunch of new diseases that are decimating lobster populations up in Maine. Seems\|} the warmer oceans agree with viruses, at least..
+Conditions lobster_danger:
+	[= ^Career lobster] 
+[end]
+Effects lobster_danger:
+	[inc ^DroppedKnowledge 1] 
+	[set ^EstablishSpecialtyInfo = true] 
+[end]
+
+Content clathrates_danger: Have you heard of clathrates? They're basically frozen methane...some people call it 'fire ice'. Anyway, methane is much worse a greenhouse gas than CO2. If the planet warms up enough that the clathrates start releasing it into the atmosphere, we could be looking at a runaway feedback loop..
+Effects clathrates_danger:
+	[inc ^DroppedKnowledge 1] 
+[end]
+
 Speaker eat_food ally.
 Content eat_food: {name\|protagonist}. Seriously, girl. This stew is not going to eat itself..
 ChoiceSpec eat_food establish_setting_0: [= ^EstablishSetting true]

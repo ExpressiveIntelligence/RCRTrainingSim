@@ -12,7 +12,7 @@ from collections import Counter
 
 want_tracker = Counter()
 choice_tracker = Counter()
-all_globals = set()
+all_globals = {}
 
 # Translations between StoryAssembler.js and Step conditionals
 condition_translations = {
@@ -28,6 +28,8 @@ set_translations = {
     "incr": "inc",
     "decr": "dec"
 }
+
+
 
 step_template = \
 """# Declare the scene
@@ -66,7 +68,8 @@ def format_content(val):
 def format_global(var):
     # snake or camel case to pascal case
     var = var.strip().replace("?", "")
-    return '^' + sc.pascalcase(var) 
+    global_var = '^' + sc.pascalcase(var) 
+    return global_var
 
 def format_literal(var):
     # camel case to snake case
@@ -77,19 +80,28 @@ def format_local(var):
     return f"?{string.snakecase(var.strip().replace('^', ''))}"
 
 def format_value(value):
+    default = "0"
     if value in ["true", "false"]:
-        return value
+        value = value
+        default = "false"
     elif value.replace(".", "").isnumeric():
-        return value
-    return format_literal(value)
+        value = value
+        default = "0"
+    else:
+        value = format_literal(value)
+        default = "none"
+    return value, default
+
+def parse_global(var, value=None):
+    global_var = format_global(var)
+    value, type = format_value(value)
+    all_globals[global_var] = type
+    return global_var, value, type
 
 def format_condition(cond):
     tokens = cond.split()
-    
-    var = format_global(tokens[0])
-    all_globals.add(var)
+    var, value, _ = parse_global(tokens[0], tokens[2])
     conditional = condition_translations[tokens[1]]
-    value = format_value(tokens[2])
     return f"[{conditional} {var} {value}]", var
 
 def make_want(want):
@@ -101,12 +113,11 @@ def format_set(text):
     tokens = text.split()
     set = set_translations[tokens[0]]
     eq = " =" if set == "set" else ""
-    var = format_global(tokens[1])
-    value = format_value(tokens[2])
+    var, value, _ = parse_global(tokens[1], tokens[2])
     return f"[{set} {var}{eq} {value}]", var # TODO infer var type
 
-def initialize(var):
-    return f"[set {var} = 0]"
+def initialize(var, default):
+    return f"[set {var} = {default}]"
 
 def characters(json_chars):
     step_chars = ""
@@ -131,8 +142,8 @@ def initial_scene_state(start):
         step_start.append("\t" + initial)
         initialized_vars.add(var)
     step_start.append("\t# The following variables may have incorrect types (TODO infer types)")
-    for var in all_globals - initialized_vars:
-        step_start.append("\t" + initialize(var))
+    for var in set(all_globals.keys()) - initialized_vars:
+        step_start.append("\t" + initialize(var, all_globals[var]))
 
     return "\n".join(step_start)
 
@@ -199,9 +210,11 @@ def convert_json_to_step(json_scene, json_fragments):
     scene = list(json_scene.keys())[0]
     json_scene = json_scene[scene]
     wants, fulfillments = story_spec(scene, json_scene["wishlist"])
-    initial_state = initial_scene_state(json_scene["startState"])
 
     fragment_declarations, fragments = format_fragments(scene, json_fragments)
+
+    # uses a global variable populated in format_fragments
+    initial_state = initial_scene_state(json_scene["startState"])
 
     predicates = ""
 
@@ -230,9 +243,16 @@ if __name__ == "__main__":
     with open(js_game_path, "r") as js_file:
         js_game = json.load(js_file)
 
-    with open(js_scene_path, "r") as js_file:
-        js_scene = json.load(js_file)
-        
+    js_scene = [] 
+    # Detect if it is a directory (multiple libaries that need to be concatenated)
+    if os.path.isdir(js_scene_path):
+        for file in os.listdir(js_scene_path):
+            with open(os.path.join(js_scene_path, file), "r") as js_file:
+                js_scene += json.load(js_file)
+    else:
+        with open(js_scene_path, "r") as js_file:
+            js_scene = json.load(js_file)
+
     # Convert the json scene to a step scene
     step_scene = convert_json_to_step(js_game, js_scene)
 
