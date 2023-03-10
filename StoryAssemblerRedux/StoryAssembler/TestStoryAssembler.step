@@ -1,36 +1,32 @@
 # initially: [set ^TestCounter = 0]
-
-TestStart ?f1:
-    [SetupTestScene]
-    [Start ?f1] [Paragraph]
-    [Start ?] [Paragraph]
-    [Start ?] [Paragraph]
-    [Start ?] [Paragraph]
-    [Start ?] [Paragraph]
-    [Start ?] [Paragraph]
-    [Start ?] [Paragraph]
-    [Start ?] [Paragraph]
-    [Start ?] [Paragraph]
-    [Start ?] [Paragraph]
+TestTranspiled:
+    [SetupScene dinner]
+    [AllPathsFrom root ?paths]
 [end]
 
-TestContinue ?f:
-    [SetupTestScene]
-    [Start ?f] [Paragraph]
-    [Continue ?f ?new] [Paragraph]
+[predicate]
+Nope ?x: [Number ?x] [Fail]
+
+TestNotAny ?f:
+    [Not [Nope ?x]]
 [end]
 
+TestAvailableNextFragment:
+    [SetupTestScene]
+    
+    [AvailableNextFragment root [?b ?n1]]
+    root ?b ?n1
+    [Visit ?b] [Paragraph]
+    [AvailableNextFragment ?b [?c ?n2]]
+    ?b ?c ?n2
+    [Visit ?c]
+    # [AvailableNextFragment ?c ?d]
+    # ?c ?d
+[end]
 
 TestAllSatisfiableChoices:
     [SetupTestScene]
     [DoAll [AllSatisfiableChoices ?frag ?list] [Write ?frag][Write ?list]]
-[end]
-
-TestBestFrag:
-    [SetupTestScene]
-    [BestFrag root ?best ?score]
-    [Visit ?best]
-    Best Fragment: ?best ?score
 [end]
 
 TestForEachAvailable:
@@ -93,10 +89,25 @@ TestWantConditions:
     ?frag/Write ?want
 [end]
 
+Y:
+    [X root false empty ?x]
+    ?x
+[end]
+
+X ?frag ?choice_id ?path ?paths_from_children:
+    [SetupTestScene]
+
+    [case ?frag] [Different root] : [Visit ?frag] [else]  [end]
+    # All possible next fragments that can be selected are 'children' of the current fragment. Should backtrack all calls.
+    [FindUnique ?next_choice [AvailableNextFragment ?frag ?next_choice] ?potential_choices]
+    [FindAll ?paths_from_child [FindAllPathsFromAChildOf ?potential_choices [?frag ?choice_id] ?path ?paths_from_child] ?list_of_paths_from_children]
+    [Flatten2D ?list_of_paths_from_children ?paths_from_children]
+[end]
+
 TestRanking:
     [SetupTestScene]
     [AllPathsFrom root ?paths]
-    ?paths
+    [ForEach [Member ?path ?paths] [Paragraph] [Write ?path]]
 [end]
 
 TestBestCInternals:
@@ -127,7 +138,7 @@ TestNextStepFulfillsChoice:
     [BestChoices root ?paths]
     [Member ?path ?paths]
     [NextStepFulfillsChoice ?choice ?path ?target_frag]
-    ?paths [Paragraph]
+     ?paths [Paragraph]
     ?choice ?path ?target_frag
 [end]
 

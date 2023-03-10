@@ -1,5 +1,5 @@
 initially: 
-    [set MaxDepth = 10]
+    [set MaxDepth = 10] # The maximum depth of the search tree
 [end]
 
 # Exposed funcion headers
@@ -7,29 +7,28 @@ predicate AllPathsFrom ?source_frag ?paths.
 predicate BestChoices ?source_frag ?choice_frags.
 
 [predicate]
-AllPathsFrom ?source_frag ?paths: [FindPaths [?source_frag null] empty ?paths] 
+AllPathsFrom ?source_frag ?paths: [FindPaths [?source_frag false] empty ?paths] 
 
 [predicate]
-# BestChoices ?frag ?choices: [Fragment ?frag] [AllPathsFrom ?frag ?paths] [BestChoices ?paths ?choices]
 BestChoices ?frag ?choices: 
     [AllGoToChoices ?frag ?goto_frags]
-    # [SatisfiableChoiceSpec ?frag ? ?] # Don't need to run the search if it doesn't have a dynamic link - this will change with requests
+    # [AvailableConditionalChoice ?frag ? ?] # Don't need to run the search if it doesn't have a dynamic link - this will change with requests
     [AllPathsFrom ?frag ?paths]
-    [BestChoiceSpecChoices ?frag ?paths ?choice_spec_frags]
+    [BestConditionalChoices ?frag ?paths ?choice_spec_frags]
     [Cat ?goto_frags ?choice_spec_frags ?running_choices]
     [TopLevelFragsIfNoOtherOption ?running_choices ?top_level_frags]
     [Cat ?running_choices ?top_level_frags ?choices]
 [end]
 
 [predicate]
-BestChoiceSpecChoices ?frag ?paths ?choices:
+BestConditionalChoices ?frag ?paths ?choices:
     [set ^PathsToCheck = ?paths]
     [set ^Choices = empty]
     [Member ?m ?paths] [ScoredPath ? ? ?m] # Assert that we have a list of paths
     [ForEach [ChoiceSpec ?frag ?choice_id] [AddNextBestChoice ?choice_id]]
     [= ?choices ^Choices]
 [end]
-BestChoiceSpecChoices ?frag ?paths empty.
+BestConditionalChoices ?frag ?paths empty.
 
 AddNextBestChoice ?choice_id:
     [Max ?value 
@@ -57,9 +56,15 @@ TopLevelFragsIfNoOtherOption ?other_choices empty.
 # Find all outgoing paths from ?frag and store them in the ^AllPaths global variable
 # The wrapper for this Task is AllPathsFrom
 # Example usage: [AllPathsFrom root ?paths]
-# # Before running this, should reset ^AllPaths to empty
 [predicate]
-# TODO check additional unbound path case
+FindPaths [?frag ?choice_id] ?path ?found_paths:
+    [Var ?frag]
+    [Throw FindPaths called with unbound frag]
+[end]
+FindPaths [?frag ?choice_id] ?path ?found_paths:
+    [Var ?choice_id]
+    [Throw FindPaths called with unbound choice_id]
+[end]
 FindPaths [?frag ?choice_id] ?path ?found_paths:
     [Length ?path ^MaxDepth]
     [ScorePath ?path ?scored_path]
@@ -73,7 +78,7 @@ FindPaths [?frag ?choice_id] ?path ?found_paths:
 [end]
 FindPaths [?frag ?choice_id] ?path ?paths_from_children:
     [case ?frag] [Different root] : [Visit ?frag] [else]  [end]
-    # All possible next fragments that can be selected are 'children' of the current fragment
+    # All possible next fragments that can be selected are 'children' of the current fragment. Should backtrack all calls.
     [FindUnique ?next_choice [AvailableNextFragment ?frag ?next_choice] ?potential_choices]
     [FindAll ?paths_from_child [FindAllPathsFromAChildOf ?potential_choices [?frag ?choice_id] ?path ?paths_from_child] ?list_of_paths_from_children]
     [Flatten2D ?list_of_paths_from_children ?paths_from_children]
@@ -81,14 +86,16 @@ FindPaths [?frag ?choice_id] ?path ?paths_from_children:
 
 [predicate]
 FindAllPathsFromAChildOf ?choices ?current ?current_path ?paths_from_child:
-    [Not [Length ?choices empty]]
+    # TODO double check that we are actually getting all children and not just the first 
+    [Not [Length ?choices 0]] # TODO the 0 was 'empty' and it seemed to work before...
     [Member ?child ?choices] # select a choice from the potential choices 
     [FindPathsForChild ?child ?current ?current_path ?paths_from_child]
 [end]
+
 [predicate]
 FindPathsForChild ?child ?current ?current_path ?paths_from_child:
     # Construct the path to the child (not including the child)
-    [Add ?current ?current_path ?child_path]       
+    [Add ?current ?current_path ?child_path]  
     # Findall the paths from the child, store the result, and undo the state changes
     # This line does not Fail unless FindPaths fails
     [Backtrack [FindPaths ?child ?child_path] ?paths_from_child]
@@ -99,8 +106,13 @@ FindPathsForChild ?child ?current ?current_path ?paths_from_child:
 ScorePath ?path ?scored_path: [Reverse ?path ?ordered_path] [ScoreCalculation ?ordered_path ?value] [ScoredPath ?ordered_path ?value ?scored_path]
 
 ## The data structure of a path that has been scored
-ScoredPath ?path ?score ?scored_path: [= ?scored_path [?path ?score]] [Number ?score]
+ScoredPath ?path ?score ?scored_path: [= ?scored_path [?path ?score]] # [Number ?score]
 
+ScoreCalculation ?path 0:
+    # Paths ending with a request (dynamic node) are not allowed should not be considered
+    [Last [?last ?] ?path]
+    [Request ?last ? ?]
+[end]
 ScoreCalculation ?path ?value: 
     [LengthValue ?path ?length_value]
     [SatisfactionValue ?path ?satisfied_value] 
@@ -121,7 +133,9 @@ WantsSatisfied ?count:
     [FindAll ?want_id [FulfilledInScene ?want_id] ?satisfied_wants]
     [Length ?satisfied_wants ?count]
 [end]
+WantsSatisfied 0.
 
+[predicate]
 FulfilledInScene ?want_id:
     [Want ^CurrentScene ?want_id]
     [Fulfilled ?want_id]

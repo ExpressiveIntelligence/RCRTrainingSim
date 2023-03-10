@@ -3,6 +3,11 @@ initially:
     [set ^AddTemp = empty]
 [end]
 
+SetupScene ?scene:
+    [set ^CurrentScene = ?scene]
+    [InitScene ^CurrentScene]
+[end]
+
 SetupTestScene:
     [set CurrentScene = test]
     [InitScene ^CurrentScene]
@@ -51,14 +56,7 @@ Cat ?l1 ?l2 ?cat:
     [= ?cat ^AddTemp]
 [end]
 
-Cat3 ?l1 ?l2 ?l3 ?cat:
-    [set ^AddTemp = empty]
-    [ForEach [Member ?x ?l1] [AddHelper ?x]]
-    [ForEach [Member ?y ?l2] [AddHelper ?y]]
-    [ForEach [Member ?z ?l3] [AddHelper ?z]]
-    [= ?cat ^AddTemp]
-[end]
-
+Flatten2D ?list empty: [Length ?list 0]
 Flatten2D ?list ?flattened:
     [FindAll ?member [InnerMember ?member ?list] ?flattened]
 [end]
@@ -81,7 +79,17 @@ RemoveFromList ?m ?list ?without:
     [FindAll ?n [Member ?n ?list] [Different ?m ?n] ?without]
 [end]
 
+Last ?last ?list:
+    [Reverse ?list ?reversed]
+    [set ^Reversed = ?reversed]
+    [removeNext ?last ^Reversed]
+[end]
+
+
 # Custom max check
 [predicate]
 MaxOf ?x ?y ?max: [< ?x ?y] [set ?max = ?y]
 MaxOf ?x ?y ?max: [set ?max = ?x]
+
+[predicate]
+Exists ?var.
