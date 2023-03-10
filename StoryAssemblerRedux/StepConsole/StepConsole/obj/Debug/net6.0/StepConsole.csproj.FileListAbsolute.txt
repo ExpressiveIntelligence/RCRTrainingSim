@@ -32,9 +32,6 @@
 \\Mac\code\retl\InStep\StoryAssemblerRedux\StepConsole\StepConsole\bin\Debug\net6.0\StepConsole.dll
 \\Mac\code\retl\InStep\StoryAssemblerRedux\StepConsole\StepConsole\bin\Debug\net6.0\StepConsole.pdb
 \\Mac\code\retl\InStep\StoryAssemblerRedux\StepConsole\StepConsole\bin\Debug\net6.0\Step.dll
-\\Mac\code\retl\InStep\StoryAssemblerRedux\StepConsole\StepConsole\bin\Debug\net6.0\Step.pdb
-\\Mac\code\retl\InStep\StoryAssemblerRedux\StepConsole\StepConsole\bin\Debug\net6.0\Step.xml
-\\Mac\code\retl\InStep\StoryAssemblerRedux\StepConsole\StepConsole\bin\Debug\net6.0\Step.dll.config
 \\Mac\code\retl\InStep\StoryAssemblerRedux\StepConsole\StepConsole\obj\Debug\net6.0\StepConsole.csproj.CopyComplete
 \\Mac\code\retl\InStep\StoryAssemblerRedux\StepConsole\StepConsole\obj\Debug\net6.0\StepConsole.genruntimeconfig.cache
 \\Mac\code\retl\InStep\StoryAssemblerRedux\StepConsole\StepConsole\obj\Debug\net6.0\ref\StepConsole.dll

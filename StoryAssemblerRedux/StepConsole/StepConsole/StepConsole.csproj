@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <Reference Include="Step">
-      <HintPath>..\..\Step\Step\bin\Debug\Step.dll</HintPath>
+      <HintPath>Resources\Step.dll</HintPath>
     </Reference>
   </ItemGroup>
 
