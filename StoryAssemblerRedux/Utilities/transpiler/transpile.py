@@ -57,7 +57,7 @@ InitialSceneState {scene}:
 {fulfillments}"""
 
 def escape(s):
-    return re.subn(r"([\|])", r"\\\1", s)[0]
+    return re.subn(r"([\|\{\}])", r"\\\1", s)[0]
 
 def format_content(val):
     if type(val) == list:
@@ -73,6 +73,7 @@ def format_global(var):
 
 def format_literal(var):
     # camel case to snake case
+    var = var.replace("'", "")
     var = var.strip().replace("^", "")
     return sc.snakecase(var)
 
@@ -84,8 +85,11 @@ def format_value(value):
     if value in ["true", "false"]:
         value = value
         default = "false"
-    elif value.replace(".", "").isnumeric():
+    elif value.isnumeric():
         value = value
+        default = "0"
+    elif value.replace(".", "").isnumeric():
+        value = str(float(value))
         default = "0"
     else:
         value = format_literal(value)
@@ -100,6 +104,9 @@ def parse_global(var, value=None):
 
 def format_condition(cond):
     tokens = cond.split()
+    # if tokens[0] == "state:":
+    #     print("condition", cond)
+    #     return "TODO: conditional state set", "" 
     var, value, _ = parse_global(tokens[0], tokens[2])
     conditional = condition_translations[tokens[1]]
     return f"[{conditional} {var} {value}]", var
@@ -114,7 +121,7 @@ def format_set(text):
     set = set_translations[tokens[0]]
     eq = " =" if set == "set" else ""
     var, value, _ = parse_global(tokens[1], tokens[2])
-    return f"[{set} {var}{eq} {value}]", var # TODO infer var type
+    return f"[{set} {var}{eq} {value}]", var 
 
 def initialize(var, default):
     return f"[set {var} = {default}]"
@@ -129,6 +136,8 @@ def characters(json_chars):
 def story_spec(scene, wishlist):
     wants = fulfillments = ""
     for want in wishlist:
+        if "hoverText" in want.keys():
+            continue # weird UI things
         want_id, want = make_want(want["condition"])
         wants += f"Want {scene} {want_id}.\n"
         fulfillments += f"Fulfilled {want_id}: {want}\n"
@@ -141,7 +150,7 @@ def initial_scene_state(start):
         initial, var = format_set(text)
         step_start.append("\t" + initial)
         initialized_vars.add(var)
-    step_start.append("\t# The following variables may have incorrect types (TODO infer types)")
+    step_start.append("\t# The following variables have had types inferred and should be reviewed.")
     for var in set(all_globals.keys()) - initialized_vars:
         step_start.append("\t" + initialize(var, all_globals[var]))
 
@@ -152,7 +161,8 @@ def format_choice(id, json_choice):
         goto = json_choice['gotoId']
         return f"GoToChoice {id} {format_literal(goto)}." # TODO add speaker choice
     elif 'condition' in json_choice.keys():
-        condition, var = format_condition(json_choice['condition'])
+        condition = json_choice['condition']
+        condition, var = format_condition(condition)
         choice_name = f"{format_literal(var)}_{str(choice_tracker[var])}"
         return f"ChoiceSpec {id} {choice_name}: {condition}"
     else:
@@ -205,10 +215,9 @@ def format_fragments(scene, json_fragments):
 
     return "\n".join(declarations), "\n".join(fragments)
                    
-
 def convert_json_to_step(json_scene, json_fragments):
-    scene = list(json_scene.keys())[0]
-    json_scene = json_scene[scene]
+    scene = json_scene["id"]
+    scene = format_literal(scene)
     wants, fulfillments = story_spec(scene, json_scene["wishlist"])
 
     fragment_declarations, fragments = format_fragments(scene, json_fragments)

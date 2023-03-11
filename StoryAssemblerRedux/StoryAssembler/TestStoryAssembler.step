@@ -1,18 +1,20 @@
-# initially: [set ^TestCounter = 0]
-TestTranspiled:
-    [SetupScene dinner]
+# Test the transpiled dinner scene.
+TestDinner:
+    [SetupScene final_dinner]
+    Testing ^CurrentScene
     [AllPathsFrom root ?paths]
+    ?paths
 [end]
 
+# Sanity check that NotAny behaves as expected.
 [predicate]
 Nope ?x: [Number ?x] [Fail]
-
 TestNotAny ?f:
     [Not [Nope ?x]]
 [end]
 
 TestAvailableNextFragment:
-    [SetupTestScene]
+    [SetupScene test]
     
     [AvailableNextFragment root [?b ?n1]]
     root ?b ?n1
@@ -25,12 +27,12 @@ TestAvailableNextFragment:
 [end]
 
 TestAllSatisfiableChoices:
-    [SetupTestScene]
+    [SetupScene test]
     [DoAll [AllSatisfiableChoices ?frag ?list] [Write ?frag][Write ?list]]
 [end]
 
 TestForEachAvailable:
-    [SetupTestScene]
+    [SetupScene test]
     [Visit disastrous_date]
     [Visit apology]
     [Visit unapologetic]
@@ -41,7 +43,7 @@ TestForEachAvailable:
 [end]
 
 TestExpanded:
-    [SetupTestScene]
+    [SetupScene test]
     [AllAvailableTopLevelFragments ?f]
     [Length ?f ?len] Length: ?len/Write
     ?f/Write
@@ -51,14 +53,8 @@ TestExpanded:
     ?f2/Write
 [end]
 
-TestBest3ChoiceTypes:
-    [TestBestTopLevelFrag] [Paragraph]
-    [TestBestSatisfiableFrag] [Paragraph]
-    [TestBestGoToFrag] [Paragraph]
-[end]
-
 TestBestTopLevelFrag:
-    [SetupTestScene]
+    [SetupScene test]
     [AllAvailableTopLevelFragments ?f] [TopFrag ?f ?frag ?score]
     Best Top Level Fragment: ?frag ?score
 [end]
@@ -66,7 +62,7 @@ TestBestTopLevelFrag:
     Best Top Level Fragment: FAIL
 [end]
 TestBestSatisfiableFrag:
-    [SetupTestScene]
+    [SetupScene test]
     [AllSatisfiableChoices ?source ?fs] [TopFrag ?fs ?frag ?score]
     Best Choice Spec Fragment: ?frag ?score
 [end]
@@ -74,7 +70,7 @@ TestBestSatisfiableFrag:
     Best Choice Spec Fragment: FAIL
 [end]
 TestBestGoToFrag:
-    [SetupTestScene]
+    [SetupScene test]
     [AllGoToChoices ?source ?fs] [TopFrag ?fs ?frag ?score]
     Best Choice Spec Fragment: ?frag ?score
 [end]
@@ -83,7 +79,7 @@ TestBestGoToFrag:
 [end]
 
 TestWantConditions:
-    [SetupTestScene]
+    [SetupScene test]
     [= ?want some_respite]
     [EffectMakesWantTrue ?frag ?want] 
     ?frag/Write ?want
@@ -95,7 +91,7 @@ Y:
 [end]
 
 X ?frag ?choice_id ?path ?paths_from_children:
-    [SetupTestScene]
+    [SetupScene test]
 
     [case ?frag] [Different root] : [Visit ?frag] [else]  [end]
     # All possible next fragments that can be selected are 'children' of the current fragment. Should backtrack all calls.
@@ -105,13 +101,13 @@ X ?frag ?choice_id ?path ?paths_from_children:
 [end]
 
 TestRanking:
-    [SetupTestScene]
+    [SetupScene test]
     [AllPathsFrom root ?paths]
     [ForEach [Member ?path ?paths] [Paragraph] [Write ?path]]
 [end]
 
 TestBestCInternals:
-    [SetupTestScene]
+    [SetupScene test]
     [AllGoToChoices ?frag ?goto_frags]
     [AllPathsFrom ?frag ?paths]
     [BestChoiceSpecChoices ?frag ?paths ?choice_spec_frags]
@@ -128,13 +124,13 @@ TestBestCInternals:
 
 
 TestBestChoices:
-    [SetupTestScene]
+    [SetupScene test]
     [BestChoices root ?choices]
     ?choices
 [end]
 
 TestNextStepFulfillsChoice:
-    [SetupTestScene]
+    [SetupScene test]
     [BestChoices root ?paths]
     [Member ?path ?paths]
     [NextStepFulfillsChoice ?choice ?path ?target_frag]
@@ -142,7 +138,7 @@ TestNextStepFulfillsChoice:
     ?choice ?path ?target_frag
 [end]
 
-
+# Test that the custom Backtack function works as expected.
 TestBacktrack:
     [set ^A = good]
     [Backtrack [SetA bad] ?result]
@@ -156,7 +152,8 @@ SetA ?arg ?result:
     Shouldn't see this: ?arg
 [end]
 
-TestSetAdd:
+# Test Utils.SetUnion
+TestSetUnion:
     [set A = empty]
     [set B = empty]
     [add 1 A]

@@ -8,11 +8,6 @@ SetupScene ?scene:
     [InitScene ^CurrentScene]
 [end]
 
-SetupTestScene:
-    [set CurrentScene = test]
-    [InitScene ^CurrentScene]
-[end]
-
 # Call ?call one time and return the result but reset variables and text output
 # Example usage: [Backtrack [SetA ?args] ?result] would call 
 # [SetA ?args ?result]
