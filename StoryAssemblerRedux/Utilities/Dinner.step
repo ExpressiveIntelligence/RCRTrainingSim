@@ -1,0 +1,289 @@
+# Declare the scene
+Scene dinner.
+
+# Declare all storylets (fragments)
+[randomly]
+Fragment eat_food dinner.
+Fragment whatscalled dinner.
+Fragment thanksbringing dinner.
+Fragment stuffed dinner.
+Fragment stuffed2 dinner.
+Fragment stomach_nerves dinner.
+Fragment too_much_trouble dinner.
+Fragment iguess dinner.
+Fragment iknowright dinner.
+Fragment in_spain dinner.
+Fragment quals dinner.
+Fragment stilljealous dinner.
+Fragment wishcouldgo dinner.
+Fragment regrets dinner.
+Fragment loveocean dinner.
+Fragment whatspecialty dinner.
+Fragment pick_shrimp dinner.
+Fragment pick_lobsters dinner.
+Fragment pick_coral dinner.
+Fragment howufeel_choicetext1 dinner.
+Fragment howufeel_choicetext2 dinner.
+Fragment howufeel dinner.
+Fragment howufeel_arg dinner.
+Fragment a_joke dinner.
+Fragment nothing dinner.
+Fragment outburst_resolve dinner.
+Fragment sure_path dinner.
+Fragment unsure_path dinner.
+Fragment future_worry dinner.
+Fragment thanks_have_some_wine_label dinner.
+Fragment thanks_have_some_wine dinner.
+
+# Scene specific predicates
+
+
+InitialSceneState dinner: 
+	[set ^Initialized = true]
+	[set ^FriendName = emma]
+	[set ^Career = 0]
+	[set ^Confidence = 0]
+[end]
+
+# Fragments
+Speaker eat_food ally.
+Content eat_food: {name|protagonist}. Seriously, girl. This stew is not going to eat itself..
+ChoiceSpec eat_food establish_setting_0: [= ^EstablishSetting true]
+ChoiceSpec eat_food provoke_confidence_choice_0: [= ^ProvokeConfidenceChoice true]
+ChoiceSpec eat_food establish_setting_0: [= ^EstablishSetting true]
+
+ChoiceLabel whatscalled: Thanks. What's it called again?
+Speaker whatscalled ally.
+Content whatscalled: <i>Cocido</i>, chica. Figured comfort food would be good the night before my best friend's dissertation defense..
+Effects whatscalled:
+	[set ^EstablishSetting = true] 
+[end]
+
+ChoiceLabel thanksbringing: It's so good. You made this?
+Speaker thanksbringing ally.
+Content thanksbringing: Don't look at me like that! I'm a better cook than you. And it's not like I'm going to let my best friend defend her dissertation after a night of takeout..
+Effects thanksbringing:
+	[set ^EstablishSetting = true] 
+[end]
+
+ChoiceLabel stuffed: No thanks, Z. I'm stuffed.
+Content stuffed: Are you kidding me? You've hardly had anything. Nervous about your dissertation defense tomorrow, huh?.
+GoToChoice stuffed iguess.
+Effects stuffed:
+	[dec ^Confidence 1] 
+	[set ^ProvokeConfidenceChoice = true] 
+[end]
+
+ChoiceLabel stuffed2: No, I'm good. This is too much! You shouldn't have gone through the trouble.
+Content stuffed2: What? C'mon, Em. You know I love any chance to cook. Hey...what's really going on, huh? You're usually not this quiet..
+Effects stuffed2:
+	[dec ^Confidence 1] 
+	[set ^ProvokeConfidenceChoice = true] 
+[end]
+Conditions stuffed2:
+	[= ^Confidence 4] 
+[end]
+
+ChoiceLabel stomach_nerves: Sorry, no appetite. Guess it must be my nerves.
+Content stomach_nerves: C'mon. Don't let your intellectual pursuits interfere with enjoying some of my famous <i>cocido</i>..
+Effects stomach_nerves:
+	[dec ^Confidence 1] 
+	[set ^ProvokeConfidenceChoice = true] 
+	[set ^EstablishSetting = true] 
+[end]
+
+ChoiceLabel too_much_trouble: I can't believe this spread. You went to too much trouble for me.
+Content too_much_trouble: Are you kidding me? What are friends for? <br><br>Sounds like something else is going on here..
+Effects too_much_trouble:
+	[dec ^Confidence 1] 
+	[set ^ProvokeConfidenceChoice = true] 
+[end]
+
+ChoiceLabel iguess: I guess.
+
+ChoiceLabel iknowright: I know, right?
+
+Content in_spain: You would not believe how much of this stuff I ate in Spain. This recipe's okay, if I do say so myself, but only half as good as when you get it there..
+GoToChoice in_spain stilljealous.
+GoToChoice in_spain quals.
+GoToChoice in_spain wishcouldgo.
+Conditions in_spain:
+	[= ^EstablishSetting true] 
+[end]
+Effects in_spain:
+	[set ^EstablishAllyBackstory = true] 
+[end]
+
+ChoiceLabel quals: I was busy that year taking quals, if I recall.
+Speaker quals ally.
+Content quals: And now you're reaping the sweet rewards of that wise decision. Tomorrow you'll be Dr. Emma Richards, marine biologist. I'll just be some chick who ate too much <i>cocido</i>. Speaking of which, could you, uh, pass that back...?.
+
+ChoiceLabel stilljealous: Still jealous you got to spend six months there.
+
+ChoiceLabel wishcouldgo: Wish I could have come with you.
+
+Speaker regrets ally.
+Content regrets: Oh, come on. Don't beat yourself up. I'm pretty sure you made the right decision. Tomorrow you'll be Dr. Emma Richards, marine biologist. And I'll just be some chick who ate too much <i>cocido</i>..
+Conditions regrets:
+	[= ^EstablishAllyBackstory true] 
+[end]
+Effects regrets:
+	[dec ^Confidence 1] 
+	[set ^EstablishProtagRegrets = true] 
+[end]
+
+Speaker loveocean ally.
+Content loveocean: Look, Em. I've known you as long as anyone. And you've <i>always</i> wanted this. You've been in love with the oceans since we were kids. Remember 4th grade? Mrs. Anderson? Oh my god, that diorama. You spent <i>ages</i> on that..
+GoToChoice loveocean whatspecialty.
+Conditions loveocean:
+	[= ^EstablishProtagRegrets true] 
+[end]
+Effects loveocean:
+	[set ^EstablishProtagBackstory = true] 
+[end]
+
+ChoiceLabel whatspecialty: I wanted it to be... perfect.
+Speaker whatspecialty ally.
+Content whatspecialty: You're kind of still working on it. It's just a 400 page brick of a dissertation now. What are they called again, your little buddies?.
+GoToChoice whatspecialty pick_shrimp.
+GoToChoice whatspecialty pick_lobsters.
+GoToChoice whatspecialty pick_coral.
+Effects whatspecialty:
+	[set ^GotoWhatspeciality = true] 
+[end]
+
+ChoiceLabel pick_shrimp: <i>Lysmata amboinensis.</i> Pacific cleaner shrimp.
+Speaker pick_shrimp ally.
+Content pick_shrimp: Right. Lysmata amoeba ninnies. Thingies. I invited some to dinner, but turned out they're a more expensive date than I thought. Seafood is ex<i>pennnn</i>sive..
+Effects pick_shrimp:
+	[set ^Career = shrimp] 
+	[set ^EstablishSpecialtyInfo = true] 
+[end]
+
+ChoiceLabel pick_lobsters: <i>Homarus americanus.</i> Lobsters.
+Speaker pick_lobsters ally.
+Content pick_lobsters: Right. I tried to invite old Homarus to dinner, but turns out he's a more expensive date than I thought. Seafood's getting ex<i>pennnn</i>sive..
+Effects pick_lobsters:
+	[set ^Career = lobster] 
+	[set ^EstablishSpecialtyInfo = true] 
+[end]
+
+ChoiceLabel pick_coral: <i>Octocorallia.</i> Backbone of the coral reefs.
+Speaker pick_coral ally.
+Content pick_coral: Right. Octo-coro-lala-rama-dingdong. I tried to invite ol' Octo Lala to dinner, but turns out he was too busy getting registered on the endangered species list to attend..
+Effects pick_coral:
+	[set ^Career = coral] 
+	[set ^EstablishSpecialtyInfo = true] 
+[end]
+
+ChoiceLabel howufeel_choicetext1: Don't blame me, I just work here.
+
+ChoiceLabel howufeel_choicetext2: Very funny.
+
+Speaker howufeel ally.
+Content howufeel: Hey. What's up? Oh, don't give me that look. You're quiet, and it's not just nerves. What's on your mind?.
+GoToChoice howufeel sure_path.
+GoToChoice howufeel unsure_path.
+GoToChoice howufeel future_worry.
+Conditions howufeel:
+	[= ^EstablishProtagBackstory true] 
+	[= ^Argue false] 
+[end]
+Effects howufeel:
+	[set ^ProvokeConfidenceChoice = true] 
+[end]
+
+Speaker howufeel_arg ally.
+Content howufeel_arg: Hey. What's up? You've got that look. What's going on?.
+GoToChoice howufeel_arg a_joke.
+GoToChoice howufeel_arg nothing.
+GoToChoice howufeel_arg future_worry.
+Conditions howufeel_arg:
+	[= ^EstablishProtagBackstory true] 
+	[= ^Argue true] 
+[end]
+Effects howufeel_arg:
+	[set ^ProvokeArgument = true] 
+	[set ^ProvokeConfidenceChoice = true] 
+[end]
+
+ChoiceLabel a_joke: What, do you think this is some kind of joke? That if we just laugh the {ifState|career|shrimp|shrimp|}{ifState|career|lobster|lobsters|}{ifState|career|coral|coral reefs|} are gonna be just fine?
+Speaker a_joke ally.
+Content a_joke: Woah. Hey, I'm sorry. I'm just trying to make you feel better. Are we good?.
+Effects a_joke:
+	[inc ^Confidence 1] 
+[end]
+ChoiceSpec a_joke resolve_argument_0: [= ^ResolveArgument true]
+
+ChoiceLabel nothing: Nothing. Let's just eat.
+Speaker nothing ally.
+Content nothing: Hey, was it what I said, about the {ifState|career|shrimp|shrimp|}{ifState|career|lobster|lobster|}{ifState|career|coral|coral reef|}? Look I didn't mean anything by it...I was just trying to cheer you up..
+ChoiceSpec nothing resolve_argument_0: [= ^ResolveArgument true]
+Effects nothing:
+	[inc ^Confidence 1] 
+[end]
+
+ChoiceLabel outburst_resolve: It's ok. Sorry Z, I guess I'm just really on edge.
+Speaker outburst_resolve ally.
+Content outburst_resolve: It's ok. You're gonna knock 'em out of the park, Em. I just know it..
+Effects outburst_resolve:
+	[set ^ResolveArgument = true] 
+[end]
+
+ChoiceLabel sure_path: I'm just excited to be starting my career.
+Speaker sure_path ally.
+Content sure_path: Heh. You're gonna knock 'em out of the park, Em. {ifState|career|shrimp|Those amoeba shrimp|}{ifState|career|lobster|Your Homarus Lobstarus buddies|}{ifState|career|coral|Your octo-coral-reefie pals|} have got a new superhero..
+Effects sure_path:
+	[inc ^Confidence 1] 
+[end]
+GoToChoice sure_path thanks_have_some_wine_label.
+
+ChoiceLabel unsure_path: I'm just wondering if it was worth it.
+Speaker unsure_path ally.
+Content unsure_path: Worth it? Are you kidding? You're about to start a career doing everything you love. Emma Richards, defender of {ifState|career|shrimp|the amoeba shrimp!|}{ifState|career|lobster|Homarus Lobstarus!|}{ifState|career|coral|the octo-coral-reefies!|} You're going places. I can feel it..
+Effects unsure_path:
+	[dec ^Confidence 1] 
+[end]
+GoToChoice unsure_path thanks_have_some_wine_label.
+
+ChoiceLabel future_worry: I'm just worried about the future.
+Speaker future_worry ally.
+Content future_worry: Look at you, always freaking out when things go too well. Look, Emma. You've fought hard to get here. From what I've seen, you're an amazing scientist and a good teacher. Now if I can just get you to take an evening off and go on a date, you'll pretty much have it all..
+Effects future_worry:
+	[dec ^Confidence 1] 
+[end]
+GoToChoice future_worry thanks_have_some_wine_label.
+
+ChoiceLabel thanks_have_some_wine_label: Thanks.
+
+Speaker thanks_have_some_wine ally.
+Content thanks_have_some_wine: Now seriously. I am not joking about this. Have some damn wine. Relax with your friends. The future can take care of itself..
+Conditions thanks_have_some_wine:
+	[= ^ProvokeConfidenceChoice true] 
+[end]
+Effects thanks_have_some_wine:
+	[set ^AllyReassuresProtag = true] 
+[end]
+
+
+# Declare the StorySpec
+[randomly]
+Want dinner intro_mechanics_0.
+Want dinner establish_specialty_info_0.
+Want dinner establish_dinner_with_friend_0.
+Want dinner establish_friend_backstory_0.
+Want dinner establish_emma_regrets_0.
+Want dinner establish_emma_backstory_0.
+Want dinner provoke_confidence_choice_0.
+Want dinner friend_reassures_emma_0.
+
+
+[randomly]
+Fulfilled intro_mechanics_0: [= ^IntroMechanics true]
+Fulfilled establish_specialty_info_0: [= ^EstablishSpecialtyInfo true]
+Fulfilled establish_dinner_with_friend_0: [= ^EstablishDinnerWithFriend true]
+Fulfilled establish_friend_backstory_0: [= ^EstablishFriendBackstory true]
+Fulfilled establish_emma_regrets_0: [= ^EstablishEmmaRegrets true]
+Fulfilled establish_emma_backstory_0: [= ^EstablishEmmaBackstory true]
+Fulfilled provoke_confidence_choice_0: [= ^ProvokeConfidenceChoice true]
+Fulfilled friend_reassures_emma_0: [= ^FriendReassuresEmma true]
