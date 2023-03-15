@@ -164,7 +164,7 @@ def format_choice(id, json_choice):
         condition = json_choice['condition']
         condition, var = format_condition(condition)
         choice_name = f"{format_literal(var)}_{str(choice_tracker[var])}"
-        return f"ChoiceSpec {id} {choice_name}: {condition}"
+        return f"ConditionalChoice {id} {choice_name}: {condition}"
     else:
         raise Exception("Choice is not a goto or conditional choice")
 
@@ -202,6 +202,11 @@ def format_fragment(id, json_frag):
         elif var == "choices":
             for choice in val:
                 frag += format_choice(id, choice) + "\n"
+
+    if "conditions" not in json_frag.keys():
+        frag += f"Conditions {id}.\n"
+    if "effects" not in json_frag.keys():
+        frag += f"Effects {id}.\n"
 
     return frag
 

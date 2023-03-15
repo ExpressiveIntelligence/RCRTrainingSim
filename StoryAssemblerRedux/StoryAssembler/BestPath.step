@@ -1,5 +1,5 @@
 initially: 
-    [set MaxDepth = 10] # The maximum depth of the search tree
+    [set MaxDepth = 3] # The maximum depth of the search tree
 [end]
 
 # Exposed funcion headers
@@ -10,9 +10,14 @@ predicate BestChoices ?source_frag ?choice_frags.
 AllPathsFrom ?source_frag ?paths: [FindPaths [?source_frag false] empty ?paths] 
 
 [predicate]
-BestChoices ?frag ?choices: 
+# TODO request best choices
+# BestChoices ?frag ?choices:
+#     [Request ?frag ?request_type ?args]  
+#     [AllPathsFrom ?frag ?paths]
+# [end]
+BestChoices ?frag ?choices:
     [AllGoToChoices ?frag ?goto_frags]
-    # [AvailableConditionalChoice ?frag ? ?] # Don't need to run the search if it doesn't have a dynamic link - this will change with requests
+    # [AvailableConditionalChoice ?frag ? ?] # TODO Don't need to run the search if it doesn't have a dynamic link - this will change with requests
     [AllPathsFrom ?frag ?paths]
     [BestConditionalChoices ?frag ?paths ?choice_spec_frags]
     [Cat ?goto_frags ?choice_spec_frags ?running_choices]
@@ -25,7 +30,7 @@ BestConditionalChoices ?frag ?paths ?choices:
     [set ^PathsToCheck = ?paths]
     [set ^Choices = empty]
     [Member ?m ?paths] [ScoredPath ? ? ?m] # Assert that we have a list of paths
-    [ForEach [ChoiceSpec ?frag ?choice_id] [AddNextBestChoice ?choice_id]]
+    [ForEach [ConditionalChoice ?frag ?choice_id] [AddNextBestChoice ?choice_id]]
     [= ?choices ^Choices]
 [end]
 BestConditionalChoices ?frag ?paths empty.
@@ -47,7 +52,6 @@ NextStepFulfillsChoice ?fulfilled_choice ?path ?target_frag:
     [set ^Path = ?path]
     [removeNext [?cur_frag ?] ^Path] [removeNext [?target_frag ?fulfilled_choice] ^Path]
 [end]
-
 
 [predicate]
 TopLevelFragsIfNoOtherOption ?other_choices ?choices: [Length ?other_choices 0] [AllAvailableTopLevelFragments ?choices]
@@ -71,16 +75,45 @@ FindPaths [?frag ?choice_id] ?path ?found_paths:
     [= ?found_paths [?scored_path]]
 [end]
 FindPaths [?frag ?choice_id] ?path ?found_paths:
+    # The current fragment is the top of a dynamic fragment and there are available fragments to complete it
+    [Request ?frag ?request_type ?args] 
+    [Visit ?frag]
+    [FindUnique ?response [MakeRequest ?frag ?request_type ?args ?response] ?responses]
+    [Add [?frag ?choice_id] ?path ?response_path]
+    [FindAll ?paths_from_response
+        [Begin 
+            [Member ?response ?responses]
+            [FindPaths [?response false] ?response_path ?paths_from_response]
+        ]
+        ?paths_from_responses
+    ]
+    [Flatten2D ?paths_from_responses ?found_paths]
+[end]
+FindPaths [?frag ?choice_id] ?path ?found_paths:
+    # Handle the case where the current fragment is dynamic but there are no 
+    # available fragments to complete it. This is a dead end, but its parent is a valid path.
+    [Request ?frag ?type ?args]
+    [Visit ?frag]
+    [NotAny [MakeRequest ?frag ?type ?args ?response]] 
+    [ScorePath ?path ?scored_path]
+    [= ?found_paths [?scored_path]]
+[end]
+FindPaths [?frag ?choice_id] ?path ?found_paths:
+    [NotAny [Request ?frag ? ?]] # The current frag is not a request
     [case ?frag] [Different root] : [Visit ?frag] [else] [end]
-    [NotAny [AvailableNextFragment ?frag ?next_choice]]
+    [NotAny [AvailableNextFragment ?frag ?next_choice]] 
     [ScorePath ?path ?scored_path]
     [= ?found_paths [?scored_path]]
 [end]
 FindPaths [?frag ?choice_id] ?path ?paths_from_children:
+    [NotAny [Request ?frag ? ?]] # The current frag is not a request
     [case ?frag] [Different root] : [Visit ?frag] [else]  [end]
     # All possible next fragments that can be selected are 'children' of the current fragment. Should backtrack all calls.
     [FindUnique ?next_choice [AvailableNextFragment ?frag ?next_choice] ?potential_choices]
-    [FindAll ?paths_from_child [FindAllPathsFromAChildOf ?potential_choices [?frag ?choice_id] ?path ?paths_from_child] ?list_of_paths_from_children]
+    [FindAll ?paths_from_child 
+        [FindAllPathsFromAChildOf ?potential_choices [?frag ?choice_id] ?path ?paths_from_child] 
+        ?list_of_paths_from_children
+    ]
     [Flatten2D ?list_of_paths_from_children ?paths_from_children]
 [end]
 

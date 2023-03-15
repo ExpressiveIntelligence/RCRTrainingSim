@@ -52,9 +52,11 @@ Cat ?l1 ?l2 ?cat:
 [end]
 
 Flatten2D ?list empty: [Length ?list 0]
+Flastten2D ?list empty: [NotAny [InnerMember ?m ?list]]
 Flatten2D ?list ?flattened:
     [FindAll ?member [InnerMember ?member ?list] ?flattened]
 [end]
+[predicate]
 InnerMember ?m ?list:
     [Member ?sublist ?list] [Member ?m ?sublist]
 [end]
@@ -80,11 +82,7 @@ Last ?last ?list:
     [removeNext ?last ^Reversed]
 [end]
 
-
 # Custom max check
 [predicate]
 MaxOf ?x ?y ?max: [< ?x ?y] [set ?max = ?y]
 MaxOf ?x ?y ?max: [set ?max = ?x]
-
-[predicate]
-Exists ?var.

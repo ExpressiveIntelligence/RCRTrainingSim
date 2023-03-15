@@ -6,6 +6,20 @@ TestDinner:
     ?paths
 [end]
 
+TestRanking:
+    [SetupScene test]
+    [AllPathsFrom root ?paths]
+    [ForEach [Member ?path ?paths] [Paragraph] [Write ?path]]
+[end]
+
+TestFindPaths:
+    [SetupScene test]
+    [FindPaths [root false] empty ?paths]
+    ?paths
+[end]
+
+
+
 # Sanity check that NotAny behaves as expected.
 [predicate]
 Nope ?x: [Number ?x] [Fail]
@@ -100,17 +114,11 @@ X ?frag ?choice_id ?path ?paths_from_children:
     [Flatten2D ?list_of_paths_from_children ?paths_from_children]
 [end]
 
-TestRanking:
-    [SetupScene test]
-    [AllPathsFrom root ?paths]
-    [ForEach [Member ?path ?paths] [Paragraph] [Write ?path]]
-[end]
-
 TestBestCInternals:
     [SetupScene test]
     [AllGoToChoices ?frag ?goto_frags]
     [AllPathsFrom ?frag ?paths]
-    [BestChoiceSpecChoices ?frag ?paths ?choice_spec_frags]
+    [BestConditionalChoices ?frag ?paths ?choice_spec_frags]
     # [BestChoices root ?paths]
     ?paths [Paragraph]
     [Cat ?goto_frags ?choice_spec_frags ?running_choices]

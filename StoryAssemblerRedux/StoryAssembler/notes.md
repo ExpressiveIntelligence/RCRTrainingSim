@@ -10,9 +10,9 @@
     # requesting frag will have effects
     # response frag will have effects, conditions, choices, choice_label
     request (choice_label, x conditions, x effects)
-    response (go_to_choices, choicespecs, x conditions, x effects)
+    response (go_to_choices, ConditionalChoices, x conditions, x effects)
 
-    base (choice_label, x conditions, x effects, go_to_choices, choicespecs)
+    base (choice_label, x conditions, x effects, go_to_choices, ConditionalChoices)
 
 
     # get go to if satisifies source or is a request

@@ -8,6 +8,7 @@ Author: Alex
 
 # Required predicates
 predicate Fragment ?frag ?scene. 
+predicate ApplyEffects ?frag.
 predicate Effects ?frag.
 predicate Conditions ?frag.
 
@@ -15,7 +16,7 @@ predicate Conditions ?frag.
 predicate Content ?frag.
 predicate Speaker ?frag ?speaker.
 predicate ChoiceLabel ?frag.
-predicate ChoiceSpec ?frag ?choice_id.
+predicate ConditionalChoice ?frag ?choice_id.
 predicate GoToChoice ?frag ?target_frag.
 
 # A request is TODO
@@ -25,9 +26,9 @@ predicate Request ?frag ?request_type ?go_to_or_condition.
 # Fragment fluents set during execution
 
 # TODO Document
-fluent Expanded ?fragment.
+fluent Expanded ?fragment ?scene.
 # TODO Document & test
-fluent Reusable ?fragment.
+fluent Reusable ?fragment ?scene.
 
 # Check if a fragment is available to be visited. 
 # The conditions to be avialiable is that the fragment must be reusable or not expanded 
@@ -68,29 +69,36 @@ predicate AddWishListItem ?fragment. # TODO https://github.com/LudoNarrative/Sto
 # TODO document
 predicate Request ?fragment ?request_type ?go_to_or_condition.
 
-TopLevelFragment ?frag: [Fragment ?frag ?] [Not [ExistsChoiceLabel ?frag]] # If it has a choice label it is not a top level fragment
+TopLevelFragment ?frag: [Fragment ?frag ^CurrentScene] [Not [ExistsChoiceLabel ?frag]] # If it has a choice label it is not a top level fragment
 
 RenderFragment ?frag:
     Rendered: ?frag
 [end]
 
-ExistsChoiceLabel ?frag: [IgnoreOutput [ChoiceLabel ?frag]]
-
-Available ?fragment: [Reusable ?fragment]
-Available ?fragment: [Not [Expanded ?fragment]]
+[predicate]
+ExistsChoiceLabel ?frag: [Fragment ?frag ^CurrentScene] [IgnoreOutput [ChoiceLabel ?frag]]
 
 [predicate]
-PrintFinishState ?scene:
-    [CompleteStorySpec ?scene]
-    Congrats you're done.
+SatisfiesConditionalChoice ?frag ?choice_id:
+    [ConditionalChoice ?frag ?choice_id]
+    [Fragment ?frag ^CurrentScene]
 [end]
-PrintFinishState ?scene:
-    [IncompleteStorySpec ?scene]
-    You are not done.
-[end]
-PrintFinishState ?scene:
-    Error with finish state check...
-[end]
+
+Available ?fragment: [Reusable ?fragment ^CurrentScene]
+Available ?fragment: [Not [Expanded ?fragment ^CurrentScene]]
+
+# [predicate]
+# PrintFinishState ?scene:
+#     [CompleteStorySpec ?scene]
+#     Congrats you're done.
+# [end]
+# PrintFinishState ?scene:
+#     [IncompleteStorySpec ?scene]
+#     You are not done.
+# [end]
+# PrintFinishState ?scene:
+#     Error with finish state check...
+# [end]
 
 InitScene ?scene:
     [InitialSceneState ?scene]
@@ -115,25 +123,37 @@ CompleteStorySpec ?scene:
     [Not [IncompleteStorySpec ?scene]]
 [end]
 
+[predicate]
+ApplyEffects ?frag:
+    [Fragment ?frag ^CurrentScene]
+    [Effects ?frag]
+[end]
+
+[predicate]
+TestConditions ?frag:
+    [Fragment ?frag ^CurrentScene]
+    [Conditions ?frag]
+[end]
+
 # TODO unused 
 [predicate]
 EffectMakesWantTrue ?fragment ?want_id: 
     [Want ?scene ?want_id]
     [Not [Fulfilled ?want_id]]
-    [Effects ?fragment]
+    [ApplyEffects ?fragment]
     [Fulfilled ?want_id]
 [end]
 
 Visit ?frag:
-    [Fragment ?frag ?]      # without this line, ?frag may not be ground...
-    [now [Expanded ?frag]]
-    [Effects ?frag]
+    [Fragment ?frag ^CurrentScene]      # without this line, ?frag may not be ground...
+    [now [Expanded ?frag ^CurrentScene]] # TODO: this is a side effect, but it is necessary for the planner to work
+    [ApplyEffects ?frag]
 [end]
 
 # There are three types of choices: 
 # 1. GoTo: 
 #       Go to a specific fragment based on its id
-# 2. ChoiceSpec: 
+# 2. ConditionalChoice: 
 #       Find a fragment that satisfies the choice spec 
 #       Each choice must have a choice label
 # 3. TopLevel: 
@@ -141,7 +161,7 @@ Visit ?frag:
 
 # Returns a posible next fragment from the current fragment ?source_frag
 # Side Effect: AvailableConditionalChoice will apply the effects of the new fragment
-# choice_id: will be false unless there is an associated choice_id, ie the choice type is a ChoiceSpec
+# choice_id: will be false unless there is an associated choice_id, ie the choice type is a ConditionalChoice
 predicate AvailableNextFragment ?source_frag ?choice. # a choice is a [?target_frag ?choice_id] tuple
 # TODO if source_frag is not ground yet, ?args, rtype will not be either
 # TODOO if we apply the effects here, it will be slow since it will grab all possible effects
@@ -162,7 +182,6 @@ AvailableNextHelper ?source_frag [?target ?choice_id]:
     # If the source fragment is not a dynamic node, then we can begin the search from the source fragment 
     [AssembleRequest ?source_frag ?search_origin] 
     [AvailableChoice ?search_origin [?target ?choice_id]]
-    # [Throw ?choice_id]
 [end]
 
 # All goto and conditional choices
@@ -195,14 +214,14 @@ MakeRequest ?source goto ?go_to_frag ?go_to_frag:
 [end]
 MakeRequest ?source condition ?search_condition ?response:
     [AvailableForRequest ?source ?response]
-    [Effects ?response]
-    [Call ?search_condition] # Check the necessary condition
+    [ApplyEffects ?response]
+    [Call ?search_condition] # Check the necessary condition # TODO make sure this is checking using the CheckCondition rather than Condition
 [end]
 
 [predicate]
 AvailableForRequest ?requesting ?response:
     [NotAny [Request ?response ? ?]] # TODO I don't think we want to chain responses? If not, we can get rid of the difference check
-    [Conditions ?response]
+    [TestConditions ?response]
     [Available ?response]
     # [Different ?requesting ?response]
 [end]
@@ -211,7 +230,7 @@ AvailableForRequest ?requesting ?response:
 AvailableGoTo ?source_frag ?target_frag:
     [GoToChoice ?source_frag ?target_frag]
     [Available ?target_frag]
-    [Conditions ?target_frag]
+    [TestConditions ?target_frag]
 [end]
 
 [predicate]
@@ -225,9 +244,9 @@ AllGoToChoices ?source_frag ?fragments:
 [predicate]
 AvailableConditionalChoice ?source_frag ?choice_id ?satisfying_frag: 
     [ExistsChoiceLabel ?satisfying_frag]        # the new fragment must have a choice label
-    [Conditions ?satisfying_frag]
-    [Effects ?satisfying_frag]            # apply the effects of the new frag
-    [ChoiceSpec ?source_frag ?choice_id]  # see if they satisfy the choice spec of the source frag
+    [TestConditions ?satisfying_frag]
+    [ApplyEffects ?satisfying_frag]            # apply the effects of the new frag
+    [SatisfiesConditionalChoice ?source_frag ?choice_id]  # see if they satisfy the choice spec of the source frag
     [Available ?satisfying_frag]          # TODO I can't put this at the top even though it would speedup
 [end]
 
@@ -235,7 +254,7 @@ AvailableConditionalChoice ?source_frag ?choice_id ?satisfying_frag:
 AvailableTopLevelFragment ?frag:
     [TopLevelFragment ?frag]    # must not have a choice label
     [Available ?frag]
-    [Conditions ?frag]
+    [TestConditions ?frag]
 [end]
 
 [predicate]

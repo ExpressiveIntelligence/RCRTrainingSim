@@ -273,7 +273,7 @@
 	  "content": "Right. Been awhile since I've seen one of those!",
 	  "effects": [
 		"set career lobster",
-		"establishSpecialtyInfo eq true"
+		"set establishSpecialtyInfo true"
 	  ]
 	},
 	{
@@ -283,7 +283,7 @@
 	  "content": "Right. Octo-coro-lala-rama-dingdong.",
 	  "effects": [
 		"set career coral",
-		"establishSpecialtyInfo eq true"
+		"set establishSpecialtyInfo true"
 	  ]
 	},
 	{
