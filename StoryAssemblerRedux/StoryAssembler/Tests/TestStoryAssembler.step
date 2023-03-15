@@ -18,7 +18,57 @@ TestFindPaths:
     ?paths
 [end]
 
+TestBestChoices:
+    [SetupScene test]
+    [BestChoices root ?choices]
+    Best Choices: ?choices
+[end]
 
+
+TestAllGoToChoices:
+    [SetupScene test]
+    Empty: [AllGoToChoices root ?goto_frags] ?goto_frags
+    # TODO
+[end]
+
+TestAllPathsFrom:
+    [SetupScene test]
+    [AllPathsFrom root ?paths] 
+    ?paths
+    # TODO
+[end]
+
+TestBestConditionalChoices:
+    [SetupScene test]
+    [AllPathsFrom root ?paths] 
+    [BestConditionalChoices ?frag ?paths ?choice_spec_frags]
+    Empty: ?choice_spec_frags
+
+    # TODO
+[end]
+
+TestTopLevelChoicesIfNoOtherOption:
+    [SetupScene test]
+    [AllPathsFrom root ?paths] 
+    [TopLevelChoicesIfNoOtherOption empty ?top_level]
+    ?top_level
+
+    # TODO
+[end]
+
+TestCat:
+    [Cat empty empty ?empty]
+    Empty ?empty
+    [set ^A = empty]
+    [add 1 ^A]
+    [add 2 ^A]
+    [Br]
+    [Cat ^A empty ?a]
+    ^A ?a
+    [Br]
+    [Cat ^A ^A ?b]
+    ^A x2 ?b
+[end]
 
 # Sanity check that NotAny behaves as expected.
 [predicate]
@@ -58,18 +108,18 @@ TestForEachAvailable:
 
 TestExpanded:
     [SetupScene test]
-    [AllAvailableTopLevelFragments ?f]
+    [AllAvailableTopLevelChoices ?f]
     [Length ?f ?len] Length: ?len/Write
     ?f/Write
     [Member ?x ?f][Visit ?x]
-    [AllAvailableTopLevelFragments ?f2]
+    [AllAvailableTopLevelChoices ?f2]
     [Length ?f2 ?len2] Length: ?len2/Write
     ?f2/Write
 [end]
 
 TestBestTopLevelFrag:
     [SetupScene test]
-    [AllAvailableTopLevelFragments ?f] [TopFrag ?f ?frag ?score]
+    [AllAvailableTopLevelChoices ?f] [TopFrag ?f ?frag ?score]
     Best Top Level Fragment: ?frag ?score
 [end]
 TestBestTopLevelFrag:
@@ -123,7 +173,7 @@ TestBestCInternals:
     ?paths [Paragraph]
     [Cat ?goto_frags ?choice_spec_frags ?running_choices]
     Running: ?running_choices
-    [TopLevelFragsIfNoOtherOption ?running_choices ?top_level_frags]
+    [TopLevelChoicesIfNoOtherOption ?running_choices ?top_level_frags]
     [Length ?running_choices ?l] Length: ?l
     Top Level: ?top_level_frags
     [Cat ?running_choices ?top_level_frags ?choices]

@@ -1,0 +1,70 @@
+# Scene attributes and functions
+predicate Scene ?scene.
+task InitScene ?scene.
+predicate StartState ?scene.
+
+predicate Character ?id ?scene ?name.
+fluent function CharacterAsset ?id ?scene ?asset_path.
+fluent function CharacterLocation ?id ?scene [?x ?y].
+
+PrintName ?char_id ?scene: [Character ?char_id ?scene ?name] ?name
+PrintAsset ?char_id ?scene: [CharacterAsset ?char_id ?scene ?path] ?path
+PrintAsset ?char_id ?scene: No asset path for ?char_id/Write
+PrintLocation ?char_id ?scene: [CharacterLocation ?char_id ?scene [?x ?y]] ?x ?y
+PrintLocation ?char_id ?scene: No location for ?char_id/Write
+
+PrintCharacter ?char_id ?scene:
+    [PrintName ?char_id ?scene] [Br]
+    [PrintAsset ?char_id ?scene] [Br]
+    [PrintLocation ?char_id ?scene] [Br]
+[end]
+
+InitScene ?scene:
+    [InitialSceneState ?scene]
+[end]
+
+CompleteStorySpec ?scene:
+    [Scene ?scene]
+    [Not [IncompleteStorySpec ?scene]]
+[end]
+
+SetupScene ?scene:
+    [set ^CurrentScene = ?scene]
+    [InitScene ^CurrentScene]
+[end]
+
+# # A Want is an element in a story spec 
+# A Want is attached to a scene, and can be fulfilled
+# or unfullfilled
+fluent Want ?scene ?want_id.
+predicate Fulfilled ?want_id.
+
+# Functions for retreiving wants
+predicate FulfilledWant ?scene ?want_id.
+predicate UnFulfilledWant ?scene ?want_id.
+
+UnFulfilledWant ?scene ?want:
+    [Want ?scene ?want]
+    [Not [Fulfilled ?want]]
+[end]
+
+FulfilledWant ?scene ?want:
+    [Want ?scene ?want]
+    [Fulfilled ?want]
+[end]
+
+# Is a story spec finished? (all wants fulfilled)
+predicate CompleteStorySpec ?scene.
+# Or is it incomplete?
+predicate IncompleteStorySpec ?scene.
+
+IncompleteStorySpec ?scene:
+    [UnFulfilledWant ?scene ?want]
+[end]
+
+GetSceneData ?scene:
+    
+[end]
+
+# TODO Functions
+predicate AddWishListItem ?fragment. # TODO https://github.com/LudoNarrative/StoryAssembler/wiki/Authoring-Patterns

@@ -3,10 +3,7 @@ initially:
     [set ^AddTemp = empty]
 [end]
 
-SetupScene ?scene:
-    [set ^CurrentScene = ?scene]
-    [InitScene ^CurrentScene]
-[end]
+Br: [Paragraph]
 
 # Call ?call one time and return the result but reset variables and text output
 # Example usage: [Backtrack [SetA ?args] ?result] would call 
