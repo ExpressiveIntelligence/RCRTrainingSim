@@ -3,7 +3,7 @@ initially:
 [end]
 
 # Exposed function headers
-task BestChoices ?source_frag ?choice_frags.
+task BestChoices ?source_frag ?choices.
 
 [predicate]
 AllPathsFrom ?source_frag ?paths: [FindPaths [?source_frag false] empty ?paths] 
@@ -13,7 +13,7 @@ AllPathsFrom ?source_frag ?paths: [FindPaths [?source_frag false] empty ?paths]
 # BestChoices ?frag ?choices:
 #     [Request ?frag ?request_type ?args]  
 #     [AllPathsFrom ?frag ?paths]
-# [end]r
+# [end]
 BestChoices ?frag ?choices:
     # The case that there are no conditional choices.
     # We don't need to do a search, either return the GoTo choices
@@ -24,7 +24,6 @@ BestChoices ?frag ?choices:
     [Cat ?goto_frags ?top_level_frags ?choices]
 [end]
 BestChoices ?frag ?choices:
-    bye
     [AllGoToChoices ?frag ?goto_frags]
     [AllPathsFrom ?frag ?paths]
     [BestConditionalChoices ?frag ?paths ?choice_spec_frags]

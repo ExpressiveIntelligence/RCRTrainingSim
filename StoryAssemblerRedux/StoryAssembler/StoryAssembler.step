@@ -1,6 +1,10 @@
-initially:
+Initialize ?scene: 
     [set ^CurrentFragment = root]
-    [set ^NextBestChoices = empty]
+    [set ^CurrentScene = ?scene]
+    [InitScene ^CurrentScene]
+    [BestChoices ^CurrentFragment ?next_best]
+    [set ^NextBestChoices = ?next_best]
+    Initial Scene State: ^CurrentFragment ^CurrentScene [Br] # ^NextBestChoices
 [end]
 
 MakeChoice ?choice_id:
@@ -20,18 +24,23 @@ MakeChoice ?choice_id:
 MakeChoice ?choice_id:
     [GoToChoice ^CurrentFragment ?choice_id]
     [Fragment ?choice_id ^CurrentScene]
-    [Not [TestConditions ?fragment_id]]
-    [Throw "Conditions not met for " ?fragment_id]
+    [Not [TestConditions ?choice_id]]
+    [Throw "Conditions not met for " ?choice_id]
 [end]
 MakeChoice ?choice_id:
     [GoToChoice ^CurrentFragment ?choice_id]
     [Fragment ?choice_id ^CurrentScene] # TODO no fragment case
+    [UpdateCurrentFragment ?choice_id]
+[end]
+MakeChoice ?choice_id:
+    [ConditionalChoice ^CurrentFragment ?choice_id] # TODO I think this logic needs to be thought through
+    [GetFromNextBestChoices ?fragment_id ?choice_id]
     [UpdateCurrentFragment ?fragment_id]
 [end]
 MakeChoice ?choice_id:
-    [ConditionalChoice ^CurrentFragment ?choice_id]
-    [GetFromNextBestChoices ?fragment_id ?choice_id]
-    [UpdateCurrentFragment ?fragment_id]
+    [AvailableTopLevelFragment ?choice_id] # TODO I think this logic needs to be thought through
+    [GetFromNextBestChoices ?choice_id false]
+    [UpdateCurrentFragment ?choice_id]
 [end]
 
 UpdateCurrentFragment ?fragment_id:
@@ -47,44 +56,41 @@ UpdateCurrentFragment ?fragment_id:
 [end]
 
 GetFromNextBestChoices ?next_fragment ?choice_id:
-    [Member [?next_fragment ?choice_id] ^NextBestChoices]
+    [ChoiceInList [?next_fragment ?choice_id] ^NextBestChoices]
 [end]
 GetFromNextBestChoices ?next_fragment ?choice_id:
     [Length ^NextBestChoices 0]
     [Throw "Next best choices is empty..."]
 [end]
 GetFromNextBestChoices ?next_fragment ?choice_id:
-    [Not [Member [?next_fragment ?choice_id] ^NextBestChoices]]
-    [Throw [?next_fragment ?choice_id] "is not a valid choice for" ^CurrentFragment Next best choices are ^NextBestChoices]
+    [Not [ChoiceInList [?next_fragment ?choice_id] ^NextBestChoices]]
+    [Throw ?next_fragment ?choice_id]
+    # [Throw [?next_fragment ?choice_id] "is not a valid choice for" ^CurrentFragment Next best choices are ^NextBestChoices]
 [end]
 
-
 Render:
-    [RenderScene ^CurrentScene]
-    [RenderFragment ^CurrentFragment]
+    [RenderScene ^CurrentScene][Br]
+    [RenderFragment ^CurrentFragment][Br]
     [RenderChoices ?frag ^NextBestChoices]
 [end]
 
 RenderScene ?scene:
-    Scene ?scene/Write [Br]
-    Characters: [Br]
-    [DoAll [Character ?id ?scene ?name] [PrintCharacter ?id ?scene]] [Br]
+    You see: [DoAll [PrintCharacter ?id ?scene]]
 [end]
 
-RenderFragment ?frag: [= ?frag root] No fragment selected
+RenderFragment ?frag: [= ?frag root] Not viewing a fragment (at root).
 RenderFragment ?frag:
     [Different ?frag root]
-    Content: [Content ?frag]
+    [Content ?frag]
 [end]
 
 RenderChoices ?frag ?choices:
-    Choices: [Br]
-    [DoAll [Member ?c ?choices] [RenderChoice ?c]]
+    [Length ?choices ?l] ?l Choices: [Br] [DoAll [Member ?c ?choices] [RenderChoice ?c]]
 [end]
 
-RenderChoice ?frag:
-    ?frag\Write : [ChoiceLabel ?frag] [Br]
-[end]
-RenderChoice ?frag: 
-    ?frag\Write : Continue [Br]
-[end]
+RenderChoice [?frag ?choice_id]: |[| [ChoiceLabel ?frag] |]| [GetID [?frag ?choice_id]] 
+RenderChoice ?choice: |[Continue]|\ -> [GetID ?choice] [Br]
+
+GetID [?frag ?choice_id]: [Different ?choice_id false] ?choice_id/Write
+GetID [?frag ?choice_id]: [Fragment ?frag ^CurrentScene] ?frag/Write
+GetID ?x: ?x

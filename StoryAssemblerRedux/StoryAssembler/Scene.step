@@ -10,13 +10,11 @@ fluent function CharacterLocation ?id ?scene [?x ?y].
 PrintName ?char_id ?scene: [Character ?char_id ?scene ?name] ?name
 PrintAsset ?char_id ?scene: [CharacterAsset ?char_id ?scene ?path] ?path
 PrintAsset ?char_id ?scene: No asset path for ?char_id/Write
-PrintLocation ?char_id ?scene: [CharacterLocation ?char_id ?scene [?x ?y]] ?x ?y
+PrintLocation ?char_id ?scene: [CharacterLocation ?char_id ?scene ?loc] ?loc
 PrintLocation ?char_id ?scene: No location for ?char_id/Write
 
 PrintCharacter ?char_id ?scene:
-    [PrintName ?char_id ?scene] [Br]
-    [PrintAsset ?char_id ?scene] [Br]
-    [PrintLocation ?char_id ?scene] [Br]
+    [PrintName ?char_id ?scene] at [PrintLocation ?char_id ?scene]
 [end]
 
 InitScene ?scene:
@@ -28,10 +26,6 @@ CompleteStorySpec ?scene:
     [Not [IncompleteStorySpec ?scene]]
 [end]
 
-SetupScene ?scene:
-    [set ^CurrentScene = ?scene]
-    [InitScene ^CurrentScene]
-[end]
 
 # # A Want is an element in a story spec 
 # A Want is attached to a scene, and can be fulfilled

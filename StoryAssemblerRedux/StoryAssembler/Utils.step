@@ -5,6 +5,11 @@ initially:
 
 Br: [Paragraph]
 
+ChoiceInList [?frag ?choice_id] ?list:
+    [Member ?m ?list]
+    [= ?m [?frag ?choice_id]]
+[end]
+
 # Call ?call one time and return the result but reset variables and text output
 # Example usage: [Backtrack [SetA ?args] ?result] would call 
 # [SetA ?args ?result]
@@ -78,8 +83,3 @@ Last ?last ?list:
     [set ^Reversed = ?reversed]
     [removeNext ?last ^Reversed]
 [end]
-
-# Custom max check
-[predicate]
-MaxOf ?x ?y ?max: [< ?x ?y] [set ?max = ?y]
-MaxOf ?x ?y ?max: [set ?max = ?x]
