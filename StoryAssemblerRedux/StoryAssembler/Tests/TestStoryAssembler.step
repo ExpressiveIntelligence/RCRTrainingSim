@@ -1,45 +1,44 @@
 # Test the transpiled dinner scene.
 TestDinner:
-    [SetupScene final_dinner]
+    [Initialize final_dinner]
     Testing ^CurrentScene
     [AllPathsFrom root ?paths]
     ?paths
 [end]
 
 TestRanking:
-    [SetupScene test]
+    [Initialize test]
     [AllPathsFrom root ?paths]
     [ForEach [Member ?path ?paths] [Paragraph] [Write ?path]]
 [end]
 
 TestFindPaths:
-    [SetupScene test]
+    [Initialize test]
     [FindPaths [root false] empty ?paths]
     ?paths
 [end]
 
 TestBestChoices:
-    [SetupScene test]
+    [Initialize test]
     [BestChoices root ?choices]
     Best Choices: ?choices
 [end]
 
-
 TestAllGoToChoices:
-    [SetupScene test]
+    [Initialize test]
     Empty: [AllGoToChoices root ?goto_frags] ?goto_frags
     # TODO
 [end]
 
 TestAllPathsFrom:
-    [SetupScene test]
+    [Initialize test]
     [AllPathsFrom root ?paths] 
     ?paths
     # TODO
 [end]
 
 TestBestConditionalChoices:
-    [SetupScene test]
+    [Initialize test]
     [AllPathsFrom root ?paths] 
     [BestConditionalChoices ?frag ?paths ?choice_spec_frags]
     Empty: ?choice_spec_frags
@@ -48,7 +47,7 @@ TestBestConditionalChoices:
 [end]
 
 TestTopLevelChoicesIfNoOtherOption:
-    [SetupScene test]
+    [Initialize test]
     [AllPathsFrom root ?paths] 
     [TopLevelChoicesIfNoOtherOption empty ?top_level]
     ?top_level
@@ -78,7 +77,7 @@ TestNotAny ?f:
 [end]
 
 TestAvailableNextFragment:
-    [SetupScene test]
+    [Initialize test]
     
     [AvailableNextFragment root [?b ?n1]]
     root ?b ?n1
@@ -91,12 +90,12 @@ TestAvailableNextFragment:
 [end]
 
 TestAllSatisfiableChoices:
-    [SetupScene test]
+    [Initialize test]
     [DoAll [AllSatisfiableChoices ?frag ?list] [Write ?frag][Write ?list]]
 [end]
 
 TestForEachAvailable:
-    [SetupScene test]
+    [Initialize test]
     [Visit disastrous_date]
     [Visit apology]
     [Visit unapologetic]
@@ -107,7 +106,7 @@ TestForEachAvailable:
 [end]
 
 TestExpanded:
-    [SetupScene test]
+    [Initialize test]
     [AllAvailableTopLevelChoices ?f]
     [Length ?f ?len] Length: ?len/Write
     ?f/Write
@@ -118,7 +117,7 @@ TestExpanded:
 [end]
 
 TestBestTopLevelFrag:
-    [SetupScene test]
+    [Initialize test]
     [AllAvailableTopLevelChoices ?f] [TopFrag ?f ?frag ?score]
     Best Top Level Fragment: ?frag ?score
 [end]
@@ -126,7 +125,7 @@ TestBestTopLevelFrag:
     Best Top Level Fragment: FAIL
 [end]
 TestBestSatisfiableFrag:
-    [SetupScene test]
+    [Initialize test]
     [AllSatisfiableChoices ?source ?fs] [TopFrag ?fs ?frag ?score]
     Best Choice Spec Fragment: ?frag ?score
 [end]
@@ -134,7 +133,7 @@ TestBestSatisfiableFrag:
     Best Choice Spec Fragment: FAIL
 [end]
 TestBestGoToFrag:
-    [SetupScene test]
+    [Initialize test]
     [AllGoToChoices ?source ?fs] [TopFrag ?fs ?frag ?score]
     Best Choice Spec Fragment: ?frag ?score
 [end]
@@ -143,7 +142,7 @@ TestBestGoToFrag:
 [end]
 
 TestWantConditions:
-    [SetupScene test]
+    [Initialize test]
     [= ?want some_respite]
     [EffectMakesWantTrue ?frag ?want] 
     ?frag/Write ?want
@@ -155,7 +154,7 @@ Y:
 [end]
 
 X ?frag ?choice_id ?path ?paths_from_children:
-    [SetupScene test]
+    [Initialize test]
 
     [case ?frag] [Different root] : [Visit ?frag] [else]  [end]
     # All possible next fragments that can be selected are 'children' of the current fragment. Should backtrack all calls.
@@ -165,7 +164,7 @@ X ?frag ?choice_id ?path ?paths_from_children:
 [end]
 
 TestBestCInternals:
-    [SetupScene test]
+    [Initialize test]
     [AllGoToChoices ?frag ?goto_frags]
     [AllPathsFrom ?frag ?paths]
     [BestConditionalChoices ?frag ?paths ?choice_spec_frags]
@@ -182,13 +181,13 @@ TestBestCInternals:
 
 
 TestBestChoices:
-    [SetupScene test]
+    [Initialize test]
     [BestChoices root ?choices]
     ?choices
 [end]
 
 TestNextStepFulfillsChoice:
-    [SetupScene test]
+    [Initialize test]
     [BestChoices root ?paths]
     [Member ?path ?paths]
     [NextStepFulfillsChoice ?choice ?path ?target_frag]
