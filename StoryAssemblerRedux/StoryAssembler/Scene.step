@@ -60,5 +60,5 @@ GetSceneData ?scene:
     
 [end]
 
-# TODO Functions
+# TODO This is the last function neccessary to complete the full StoryAssembler port
 predicate AddWishListItem ?fragment. # TODO https://github.com/LudoNarrative/StoryAssembler/wiki/Authoring-Patterns

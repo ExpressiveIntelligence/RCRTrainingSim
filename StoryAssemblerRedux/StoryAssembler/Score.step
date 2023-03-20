@@ -3,7 +3,7 @@
 ScorePath ?path ?scored_path: [Reverse ?path ?ordered_path] [ScoreCalculation ?ordered_path ?value] [ScoredPath ?ordered_path ?value ?scored_path]
 
 ## The data structure of a path that has been scored
-ScoredPath ?path ?score ?scored_path: [= ?scored_path [?path ?score]] # [Number ?score]
+ScoredPath ?path ?score ?scored_path: [= ?scored_path [?path ?score]] 
 
 ScoreCalculation ?path 0:
     # Paths ending with a request (dynamic node) are not allowed should not be considered

@@ -1,19 +1,21 @@
 initially:
     [set ^CurrentScene = test]
     [set ^AddTemp = empty]
+    [set Test = none]
 [end]
 
 Br: [Paragraph]
 
+[predicate]
 ChoiceInList [?frag ?choice_id] ?list:
     [Member ?m ?list]
     [= ?m [?frag ?choice_id]]
 [end]
 
 # Call ?call one time and return the result but reset variables and text output
-# Example usage: [Backtrack [SetA ?args] ?result] would call 
-# [SetA ?args ?result]
-# exactly one time and bind the the final argument to ?result
+# Example usage: 
+#   [Backtrack [SetA ?args] ?result]
+# This would call [SetA ?args ?result] exactly one time and bind the the final argument to ?result
 Backtrack ?call ?result:
     [FindAll ?intermediate_result [BacktrackHelper ?call ?intermediate_result] [?result]]
 [end]

@@ -1,31 +1,52 @@
-Initialize ?scene: 
+# TODO
+# Save the previous search
+# Show the full best path
+
+Initialize ?scene:
+    [InitializeScene ?scene]
+    [InitializeChoices]
+[end]
+
+InitializeScene ?scene: 
     [set ^CurrentFragment = root]
+    [Scene ?scene]
     [set ^CurrentScene = ?scene]
     [InitScene ^CurrentScene]
+[end]
+
+InitializeChoices:
     [BestChoices ^CurrentFragment ?next_best]
     [set ^NextBestChoices = ?next_best]
-    Initial Scene State: ^CurrentFragment ^CurrentScene [Br] # ^NextBestChoices
+    Initial Scene State: ^CurrentFragment ^CurrentScene [Br] 
+    best: ^NextBestChoices
+[end]
+
+PrintChoices:
+    [DoAll [Member ?choice ^NextBestChoices] [WriteVerbatim ?choice]]
+[end]
+
+BestPath:
+    # TODO render the best path, which should be saved somewhere
+[end]
+
+ShowHelp:
+    # TODO 
 [end]
 
 MakeChoice ?choice_id:
     [Var ?choice_id]
-    [Throw "MakeChoice called with unbound variable"]
+    [Throw |MakeChoice called with unbound variable|]
 [end]
 MakeChoice ?choice_id:
     [Not [Fragment ?choice_id ^CurrentScene]]
     [Not [ConditionalChoice ^CurrentFragment ?choice_id]]
-    [Throw "No fragment or conditional choice found for" ^CurrentScene ^CurrentFragment ?choice_id]
-[end]
-MakeChoice ?choice_id:
-    [GoToChoice ^CurrentFragment ?choice_id]
-    [ConditionalChoice ^CurrentFragment ?choice_id]
-    [Throw "Ambiguous choice ID. ConditionalChoice ID's and GoToChoice fragments should not overlap within a fragment" ^CurrentScene ^CurrentFragment ?choice_id]
+    [Throw |No fragment or conditional choice found for| ^CurrentScene ^CurrentFragment ?choice_id]
 [end]
 MakeChoice ?choice_id:
     [GoToChoice ^CurrentFragment ?choice_id]
     [Fragment ?choice_id ^CurrentScene]
     [Not [TestConditions ?choice_id]]
-    [Throw "Conditions not met for " ?choice_id]
+    [Throw Conditions not met for ?choice_id]
 [end]
 MakeChoice ?choice_id:
     [GoToChoice ^CurrentFragment ?choice_id]
@@ -33,7 +54,6 @@ MakeChoice ?choice_id:
     [UpdateCurrentFragment ?choice_id]
 [end]
 MakeChoice ?choice_id:
-    [ConditionalChoice ^CurrentFragment ?choice_id] # TODO I think this logic needs to be thought through
     [GetFromNextBestChoices ?fragment_id ?choice_id]
     [UpdateCurrentFragment ?fragment_id]
 [end]
@@ -49,23 +69,16 @@ UpdateCurrentFragment ?fragment_id:
     [set ^CurrentFragment = ?fragment_id]
     [BestChoices ?fragment_id ?next_best]
     [set ^NextBestChoices = ?next_best]
+    New ?fragment_id ?next_best
 [end]
 UpdateCurrentFragment ?fragment_id:
     [Not [TestConditions ?fragment_id]]
-    [Throw "Conditions not met for " ?fragment_id]
+    [Throw Conditions not met for ?fragment_id]
 [end]
 
+[predicate]
 GetFromNextBestChoices ?next_fragment ?choice_id:
     [ChoiceInList [?next_fragment ?choice_id] ^NextBestChoices]
-[end]
-GetFromNextBestChoices ?next_fragment ?choice_id:
-    [Length ^NextBestChoices 0]
-    [Throw "Next best choices is empty..."]
-[end]
-GetFromNextBestChoices ?next_fragment ?choice_id:
-    [Not [ChoiceInList [?next_fragment ?choice_id] ^NextBestChoices]]
-    [Throw ?next_fragment ?choice_id]
-    # [Throw [?next_fragment ?choice_id] "is not a valid choice for" ^CurrentFragment Next best choices are ^NextBestChoices]
 [end]
 
 Render:
@@ -74,6 +87,9 @@ Render:
     [RenderChoices ?frag ^NextBestChoices]
 [end]
 
+RenderScene ?scene:
+    [NotAny [Character ? ?scene ?]]
+[end]
 RenderScene ?scene:
     You see: [DoAll [PrintCharacter ?id ?scene]]
 [end]
@@ -85,12 +101,16 @@ RenderFragment ?frag:
 [end]
 
 RenderChoices ?frag ?choices:
-    [Length ?choices ?l] ?l Choices: [Br] [DoAll [Member ?c ?choices] [RenderChoice ?c]]
+    [Length ?choices 0]
+    [WriteVerbatim "Dead End! No choices available."]
+[end]
+RenderChoices ?frag ?choices:
+    [Length ?choices ?l] ?l Choices: [Br] [DoAll [Member ?c ?choices] [RenderChoice ?c] [Br]]
 [end]
 
 RenderChoice [?frag ?choice_id]: |[| [ChoiceLabel ?frag] |]| [GetID [?frag ?choice_id]] 
-RenderChoice ?choice: |[Continue]|\ -> [GetID ?choice] [Br]
+RenderChoice ?choice: |[Continue]|\ -> choice\_id: [GetID ?choice] [Br]
 
-GetID [?frag ?choice_id]: [Different ?choice_id false] ?choice_id/Write
-GetID [?frag ?choice_id]: [Fragment ?frag ^CurrentScene] ?frag/Write
+GetID [?frag ?choice_id]: [Different ?choice_id false] ?choice_id/WriteVerbatim
+GetID [?frag ?choice_id]: [Fragment ?frag ^CurrentScene] ?frag/WriteVerbatim
 GetID ?x: ?x

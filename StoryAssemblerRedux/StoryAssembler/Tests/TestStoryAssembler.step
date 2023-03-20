@@ -7,10 +7,11 @@ TestDinner:
 [end]
 
 TestRanking:
-    [Initialize test]
+    [InitializeScene test]
     [AllPathsFrom root ?paths]
     [ForEach [Member ?path ?paths] [Paragraph] [Write ?path]]
 [end]
+
 
 TestFindPaths:
     [Initialize test]
@@ -23,6 +24,23 @@ TestBestChoices:
     [BestChoices root ?choices]
     Best Choices: ?choices
 [end]
+TestBestChoices2:
+    [Initialize test] [BestChoices root ?choices]
+    Best Choices: ?choices
+    [MakeChoice disastrous_date]
+    [BestChoices disastrous_date ?choices2]
+    Choices2: ?choices2
+[end]
+TestBestChoices3:
+    [Initialize test] [BestChoices root ?choices]
+    [MakeChoice disastrous_date]
+    [AllPathsFrom ^CurrentFragment ?paths]
+    [PotentialConditionalChoices ^CurrentFragment ?paths ?potential]
+    ?potential
+    [BestOfPotential ?potential ?best]
+    Best: ?best
+[end]
+    
 
 TestAllGoToChoices:
     [Initialize test]
@@ -179,12 +197,6 @@ TestBestCInternals:
     ?choices
 [end]
 
-
-TestBestChoices:
-    [Initialize test]
-    [BestChoices root ?choices]
-    ?choices
-[end]
 
 TestNextStepFulfillsChoice:
     [Initialize test]
