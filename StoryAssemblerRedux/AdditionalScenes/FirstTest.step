@@ -44,6 +44,7 @@ Conditions necessary.
 GoToChoice necessary disastrous_date.
 GoToChoice necessary dynamic.
 
+ChoiceLabel disastrous_date: Begin
 Content disastrous_date: Ally and protagonist go to a high end restaurant. Ally orders a $100 bottle of wine. Protagonist is offended. 
 Conditions disastrous_date:
     [Not [Dating ally protagonist]]
@@ -124,16 +125,3 @@ Fulfilled characters_dating: [Dating ally protagonist]
 Fulfilled some_respite: [Respite]
 Fulfilled married: [Married ally protagonist]
 Fulfilled extra_points: [ExtraPoints]
-
-# Another scene
-# ... with an incomplete storyspec
-# Scene incomplete_scene.
-# InitialSceneState incomplete_scene:
-#     [set Initialized = false]
-# [end]
-
-# [randomly]
-# Want incomplete_scene initialized.
-# Fulfilled initialized:
-#     [= ^Initialized true]
-# [end]

@@ -236,3 +236,9 @@ TestSetUnion:
     Result ?c
 [end]
 
+
+TestKaze:
+    [InitializeScene maze]
+    [AllPathsFrom root ?paths]
+    [ForEach [Member ?path ?paths] [Paragraph] [Write ?path]]
+[end]

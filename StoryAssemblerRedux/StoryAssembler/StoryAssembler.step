@@ -1,10 +1,16 @@
 # TODO
 # Save the previous search
 # Show the full best path
+initially:
+    [set ^PrintMode = cmd] # cmd or json
+[end]
 
 Initialize ?scene:
     [InitializeScene ?scene]
     [InitializeChoices]
+    Initialized ^CurrentScene.
+    Currently at fragment ^CurrentFragment. [Br]
+    [Check]
 [end]
 
 InitializeScene ?scene: 
@@ -14,11 +20,21 @@ InitializeScene ?scene:
     [InitScene ^CurrentScene]
 [end]
 
+Check:
+    [ForEach [ChoiceLabel ?f] [CheckNoFrag ?f]]
+    [ForEach [Content ?f] [CheckNoFrag ?f]]
+[end]
+
+CheckNoFrag ?f:
+    [Not [Fragment ?f ^CurrentScene]]
+    Warning: no fragment found for ?f
+[end]
+CheckNoFrag ?f.
+
+
 InitializeChoices:
     [BestChoices ^CurrentFragment ?next_best]
     [set ^NextBestChoices = ?next_best]
-    Initial Scene State: ^CurrentFragment ^CurrentScene [Br] 
-    best: ^NextBestChoices
 [end]
 
 PrintChoices:
@@ -30,18 +46,32 @@ BestPath:
 [end]
 
 ShowHelp:
-    # TODO 
+    Command Line Interface: [Paragraph]
+    Press "s" to save state between executions.
+
+    Commands: [Paragraph]
+
+    \[Initialize\ \?scene\] [Paragraph] Must be called before any other |StoryAssembler.step| task. Sets up the |?scene| and sets the current fragment to an empty root. Note: it's fine to call this task with an unbound |?scene|. Example: \[Initialize maze\] \[Render\] [Paragraph]
+    |[Select ?choice_id]| [Paragraph] Makes a choice and render the result (for command line purposes only). Example \[Select welcome\] [Paragraph]
+    \[Render\] [Paragraph] Render the current fragment and scene content, and display choices. [Paragraph]
+    |[MakeChoice \?\choice_id]| [Paragraph] Specify the choice to make, based on the choice id, which will not be shown to the end user.  [Paragraph]
+    |[PrintChoices]| [Paragraph] Print the choices available. [Paragraph]
+[end]
+
+Select ?choice_id:
+    [MakeChoice ?choice_id]
+    [Render]
 [end]
 
 MakeChoice ?choice_id:
     [Var ?choice_id]
     [Throw |MakeChoice called with unbound variable|]
 [end]
-MakeChoice ?choice_id:
-    [Not [Fragment ?choice_id ^CurrentScene]]
-    [Not [ConditionalChoice ^CurrentFragment ?choice_id]]
-    [Throw |No fragment or conditional choice found for| ^CurrentScene ^CurrentFragment ?choice_id]
-[end]
+# MakeChoice ?choice_id:
+#     [Not [Fragment ?choice_id ^CurrentScene]]
+#     [Not [ConditionalChoice ^CurrentFragment ?choice_id]]
+#     [Throw |No fragment or conditional choice found for| ^CurrentScene ^CurrentFragment ?choice_id]
+# [end]
 MakeChoice ?choice_id:
     [GoToChoice ^CurrentFragment ?choice_id]
     [Fragment ?choice_id ^CurrentScene]
@@ -69,7 +99,6 @@ UpdateCurrentFragment ?fragment_id:
     [set ^CurrentFragment = ?fragment_id]
     [BestChoices ?fragment_id ?next_best]
     [set ^NextBestChoices = ?next_best]
-    New ?fragment_id ?next_best
 [end]
 UpdateCurrentFragment ?fragment_id:
     [Not [TestConditions ?fragment_id]]
@@ -83,7 +112,7 @@ GetFromNextBestChoices ?next_fragment ?choice_id:
 
 Render:
     [RenderScene ^CurrentScene][Br]
-    [RenderFragment ^CurrentFragment][Br]
+    [RenderFragment ^CurrentFragment] [Paragraph]
     [RenderChoices ?frag ^NextBestChoices]
 [end]
 
@@ -94,7 +123,7 @@ RenderScene ?scene:
     You see: [DoAll [PrintCharacter ?id ?scene]]
 [end]
 
-RenderFragment ?frag: [= ?frag root] Not viewing a fragment (at root).
+RenderFragment ?frag: [= ?frag root] Welcome to StoryAssembler! No Fragment selected. 
 RenderFragment ?frag:
     [Different ?frag root]
     [Content ?frag]
@@ -108,8 +137,9 @@ RenderChoices ?frag ?choices:
     [Length ?choices ?l] ?l Choices: [Br] [DoAll [Member ?c ?choices] [RenderChoice ?c] [Br]]
 [end]
 
-RenderChoice [?frag ?choice_id]: |[| [ChoiceLabel ?frag] |]| [GetID [?frag ?choice_id]] 
-RenderChoice ?choice: |[Continue]|\ -> choice\_id: [GetID ?choice] [Br]
+RenderChoice [?frag ?choice_id]: |[| [ChoiceLabel ?frag] |]| [GetID [?frag ?choice_id]]
+RenderChoice [?frag ?choice_id]: [= ?frag root] |[Start]|\ -> choice\_id: [GetID [?frag ?choice_id]] [Br] 
+RenderChoice [?frag ?choice_id]: |[Continue]|\ -> choice\_id: [GetID [?frag ?choice_id]] [Br]
 
 GetID [?frag ?choice_id]: [Different ?choice_id false] ?choice_id/WriteVerbatim
 GetID [?frag ?choice_id]: [Fragment ?frag ^CurrentScene] ?frag/WriteVerbatim

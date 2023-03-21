@@ -60,5 +60,9 @@ GetSceneData ?scene:
     
 [end]
 
+SceneInfo: 
+    [DoAll [Fragment ?f ^CurrentScene] [Write ?f]]
+[end]
+
 # TODO This is the last function neccessary to complete the full StoryAssembler port
 predicate AddWishListItem ?fragment. # TODO https://github.com/LudoNarrative/StoryAssembler/wiki/Authoring-Patterns

@@ -4,7 +4,7 @@ initially:
     [set Test = none]
 [end]
 
-Br: [Paragraph]
+Br: [NewLine]
 
 [predicate]
 ChoiceInList [?frag ?choice_id] ?list:

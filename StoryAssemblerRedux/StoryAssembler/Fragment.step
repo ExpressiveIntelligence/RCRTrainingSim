@@ -189,7 +189,7 @@ AvailableGoToChoice ?source_frag [?target_frag false]:
 AllGoToChoices root empty.  # there is no source frag
 AllGoToChoices ?source_frag ?choices:
     [Different ?source_frag root]
-    [FindAll ?choice [AvailableGoToChoice ?source_frag ?choice] ?choices]
+    [FindUnique ?choice [AvailableGoToChoice ?source_frag ?choice] ?choices]
 [end]
 
 # Returns true if ?satisfying_frag satisfies ?source_frag's choice ?choice_id
@@ -216,5 +216,5 @@ AvailableTopLevelChoice [?frag false]:
 
 [predicate]
 AllAvailableTopLevelChoices ?choices:
-    [FindAll ?choice [AvailableTopLevelChoice ?choice] ?choices]
+    [FindUnique ?choice [AvailableTopLevelChoice ?choice] ?choices]
 [end]
