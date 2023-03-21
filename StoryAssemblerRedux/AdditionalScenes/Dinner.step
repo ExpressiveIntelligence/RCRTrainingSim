@@ -170,7 +170,7 @@ Content satisfy_game_interrupt: Thanks. What were we talking about again?.
 Conditions satisfy_game_interrupt:
 	[>= ^Satiation 3] 
 [end]
-ConditionalChoice satisfy_game_interrupt end_interrupt_0: [= ^EndInterrupt true]
+ChoiceCondition satisfy_game_interrupt end_interrupt_0: [= ^EndInterrupt true]
 Effects satisfy_game_interrupt:
 	[inc ^Satiation 1] 
 	[inc ^Tension 1] 
@@ -799,9 +799,9 @@ Conditions at_beach.
 
 Speaker eat_food ally.
 Content eat_food: \{name\|protagonist\}, come on. This stew is not going to eat itself..
-ConditionalChoice eat_food establish_setting_0: [= ^EstablishSetting true]
-ConditionalChoice eat_food setup_challenge_0: [= ^SetupChallenge true]
-ConditionalChoice eat_food establish_setting_0: [= ^EstablishSetting true]
+ChoiceCondition eat_food establish_setting_0: [= ^EstablishSetting true]
+ChoiceCondition eat_food setup_challenge_0: [= ^SetupChallenge true]
+ChoiceCondition eat_food establish_setting_0: [= ^EstablishSetting true]
 Conditions eat_food:
 	[= ^Setting dinner] 
 [end]

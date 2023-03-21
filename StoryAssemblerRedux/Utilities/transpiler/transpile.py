@@ -164,7 +164,7 @@ def format_choice(id, json_choice):
         condition = json_choice['condition']
         condition, var = format_condition(condition)
         choice_name = f"{format_literal(var)}_{str(choice_tracker[var])}"
-        return f"ConditionalChoice {id} {choice_name}: {condition}"
+        return f"ChoiceCondition {id} {choice_name}: {condition}"
     else:
         raise Exception("Choice is not a goto or conditional choice")
 

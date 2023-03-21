@@ -1,5 +1,5 @@
 initially: 
-    [set MaxDepth = 5] # The maximum depth of the search tree
+    [set MaxDepth = 3] # The maximum depth of the search tree
 [end]
 
 # Exposed function headers
@@ -9,13 +9,6 @@ task BestChoices ?source_frag ?choices.
 AllPathsFrom ?source_frag ?paths: [FindPaths [?source_frag false] empty ?paths] 
 
 # TODO we don't yet support requests in BestChoices
-BestChoices ?frag ?choices:
-    # The case that there are no conditional or top level choices. 
-    # We don't need to do a search, return the directly linked goto choices.
-    [NotAny [ConditionalChoice ?frag ?]]
-    [NotAny [AvailableTopLevelChoice ?]]
-    [AllGoToChoices ?choices] 
-[end]
 BestChoices ?frag ?choices:
     [AllPathsFrom ?frag ?paths]
     [AllGoToChoices ?frag ?goto_frags]
@@ -55,6 +48,7 @@ PotentialConditionalChoices ?frag ?paths empty.
 BestOfPotential ?potential empty: [Length ?potential 0]
 BestOfPotential ?potential ?best:   
     [set Choices = empty]
+    [set PickedFrags = empty]
     [FindUnique ?choice_id [Begin [Member ?m ?potential] [= ?m [? ?choice_id ?]]] ?choice_ids]
     [ForEach 
         [Member ?choice_id ?choice_ids]
@@ -66,12 +60,12 @@ BestOfPotential ?potential ?best:
 SaveMaxValChoiceToChoices ?choice_id ?potential:
     [Max ?value
         [Member ?m ?potential]
-        [= ?m [?frag ?choice_id ?value]] 
+        [= ?m [?frag ?choice_id ?value]]
+        [Not [Member ?frag ^PickedFrags]]
     ]
     [add [?frag ?choice_id] Choices] 
     # For the next round of searching, don't include the one we selected
-    # [RemoveFromList ^Path ^PathsToCheck ?new_paths]
-    # [set ^PathsToCheck = ?new_paths]
+    [add ?frag PickedFrags]
 [end]
 
 [predicate]

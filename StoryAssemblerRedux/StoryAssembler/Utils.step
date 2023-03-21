@@ -76,9 +76,32 @@ ToTuple ?a ?b ?tuple:
     [= ?tuple [?a ?b]]
 [end]
 
+[predicate] # Extra logic to handle things like tuples
+InList ?tuple ?list: [Member ?m ?list] [= ?m ?tuple]
+
 RemoveFromList ?m ?list ?without:
-    [FindAll ?n [Member ?n ?list] [Different ?m ?n] ?without]
+    [NotAny 
+        [Member ?n ?list]
+        [= ?n ?m]
+    ]
+    [Throw RemoveFromList: element not in list ?m ?list]
 [end]
+RemoveFromList ?m ?list ?without:
+    [FindAll ?n [Begin [Member ?n ?list] [Not [= ?m ?n]]] ?without]
+[end]
+
+# Slower than RemoveFromList
+RemoveTupleFromList ?tuple ?list ?without:
+    [NotAny 
+        [Member ?m ?list]
+        [= ?m ?tuple]
+    ]
+    [Throw RemoveTupleFromList: element not in list ?tuple ?list]
+[end]
+RemoveTupleFromList ?tuple ?list ?without:
+    [FindAll ?n [Begin [Member ?n ?list] [Different ?tuple ?n]] ?without]
+[end]
+
 
 Last ?last ?list:
     [Reverse ?list ?reversed]

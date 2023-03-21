@@ -197,7 +197,6 @@ TestBestCInternals:
     ?choices
 [end]
 
-
 TestNextStepFulfillsChoice:
     [Initialize test]
     [BestChoices root ?paths]
@@ -221,8 +220,7 @@ SetA ?arg ?result:
     Shouldn't see this: ?arg
 [end]
 
-# Test Utils.SetUnion
-TestSetUnion:
+TestLists:
     [set A = empty]
     [set B = empty]
     [add 1 A]
@@ -231,13 +229,51 @@ TestSetUnion:
     [add 1 B]
     [add 4 B]
     [add 5 B]
+[end]
+
+# Test Utils.SetUnion
+TestSetUnion:
+    [TestLists]
     ^A ^B
     [SetUnion ^A ^B ?c]
     Result ?c
 [end]
 
+TestRemoveFromList:
+    [TestLists]
+    Before: ^A
+    [RemoveFromList 1 ^A ?a]
+    After removing 1: ?a
+    [RemoveFromList 2 ?a ?b]
+    After removing 2: ?b
+    [RemoveFromList 3 ?b ?c]
+    After removing 3: ?c
 
-TestKaze:
+    [add [1 2] ^A]
+    Remove tuple: ^A
+    [RemoveFromList [1 2] ^A ?d]
+    After removing tuple: ?d
+[end]
+
+[randomly]
+TestRemoveNotInList:
+    [TestLists]
+    Before: ^A
+    [RemoveFromList 4 ^A ?a] # Should throw error
+[end]
+TestRemoveNotInList:
+    [TestLists]
+    Before: ^A
+    [RemoveFromList [1 2] ^A ?a] # Should throw error
+[end]
+
+TestTupleInList:
+    [TestLists]
+    [add [1 2] ^A]
+    [TupleInList [1 2] ^A]
+[end]
+
+TestMaze:
     [InitializeScene maze]
     [AllPathsFrom root ?paths]
     [ForEach [Member ?path ?paths] [Paragraph] [Write ?path]]

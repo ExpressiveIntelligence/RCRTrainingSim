@@ -65,13 +65,8 @@ Select ?choice_id:
 
 MakeChoice ?choice_id:
     [Var ?choice_id]
-    [Throw |MakeChoice called with unbound variable|]
+    [Throw |MakeChoice needs a bound variable:| ?choice_id]
 [end]
-# MakeChoice ?choice_id:
-#     [Not [Fragment ?choice_id ^CurrentScene]]
-#     [Not [ConditionalChoice ^CurrentFragment ?choice_id]]
-#     [Throw |No fragment or conditional choice found for| ^CurrentScene ^CurrentFragment ?choice_id]
-# [end]
 MakeChoice ?choice_id:
     [GoToChoice ^CurrentFragment ?choice_id]
     [Fragment ?choice_id ^CurrentScene]

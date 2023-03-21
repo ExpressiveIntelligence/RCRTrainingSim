@@ -50,9 +50,9 @@ Conditions go_in: [Not [Inside]]
 Effects go_in: [now [Inside]]
 Reusable go_in maze.
 [randomly]
-ConditionalChoice go_in choice_a: [CardinalChoice]
-ConditionalChoice go_in choice_b: [CardinalChoice]
-ConditionalChoice go_in choice_c_to_do_should_check_no_duplicates_here: [CardinalChoice]
+ChoiceCondition go_in choice_a: [CardinalChoice]
+ChoiceCondition go_in choice_b: [CardinalChoice]
+ChoiceCondition go_in choice_c_to_do_should_check_no_duplicates_here: [CardinalChoice]
 
 ChoiceLabel turn_around: Turn around.
 Content turn_around: You turn around and walk back. Surrounding you is a vast, empty plane. It is dark blue and stretches on forever. You are alone.
@@ -99,10 +99,10 @@ Reusable mice maze.
 Content confused: Though you haven't been in this game - maze - long, you already forget which way you came from. Turning around, there are three paths, each of which you may have just emerged from. 
 Conditions confused: [Inside] [Not [CardinalChoice]]
 Effects confused.
-Reusable confused.
-ConditionalChoice confused choice_a: [CardinalChoice]
-ConditionalChoice confused choice_b: [CardinalChoice]
-ConditionalChoice confused choice_c_to_do_should_check_no_duplicates_here: [CardinalChoice]
+Reusable confused maze.
+ChoiceCondition confused choice_a: [CardinalChoice]
+ChoiceCondition confused choice_b: [CardinalChoice]
+ChoiceCondition confused choice_c_to_do_should_check_no_duplicates_here: [CardinalChoice]
 
 ChoiceLabel sleep: This is a good spot for a nap!
 Content sleep: You lie down and close your eyes. It has been quite the adventure, but you are ready to wake up in your bed, assuming this has been a digital dream.

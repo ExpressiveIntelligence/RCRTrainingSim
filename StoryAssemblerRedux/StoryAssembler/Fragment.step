@@ -15,7 +15,7 @@ predicate TestConditions ?frag.
 predicate Content ?frag.
 predicate Speaker ?frag ?speaker.
 predicate ChoiceLabel ?frag.
-predicate ConditionalChoice ?frag ?choice_id.
+predicate ChoiceCondition ?frag ?choice_id.
 predicate GoToChoice ?frag ?target_frag.
 
 # Declaring a request marks the ?fragment as a dynamic fragment
@@ -62,8 +62,8 @@ TopLevelFragment ?frag: [Fragment ?frag ^CurrentScene] [Not [HasChoiceLabel ?fra
 HasChoiceLabel ?frag: [Fragment ?frag ^CurrentScene] [IgnoreOutput [ChoiceLabel ?frag]]
 
 [predicate]
-SatisfiesConditionalChoice ?frag ?choice_id:
-    [ConditionalChoice ?frag ?choice_id]
+SatisfiesChoiceCondition ?frag ?choice_id:
+    [ChoiceCondition ?frag ?choice_id]
     [Fragment ?frag ^CurrentScene]
 [end]
 
@@ -98,7 +98,7 @@ Visit ?frag:
 # There are three types of choices: 
 # 1. GoTo: 
 #       Go to a specific fragment based on its id
-# 2. ConditionalChoice: 
+# 2. ChoiceCondition: 
 #       Find a fragment that satisfies the choice spec 
 #       Each choice must have a choice label
 # 3. TopLevel: 
@@ -198,7 +198,7 @@ AvailableConditionalChoice ?source_frag ?choice_id ?satisfying_frag:
     [HasChoiceLabel ?satisfying_frag]        # the new fragment must have a choice label
     [TestConditions ?satisfying_frag]
     [ApplyEffects ?satisfying_frag]            # apply the effects of the new frag
-    [SatisfiesConditionalChoice ?source_frag ?choice_id]  # see if they satisfy the choice spec of the source frag
+    [SatisfiesChoiceCondition ?source_frag ?choice_id]  # see if they satisfy the choice spec of the source frag
     [Available ?satisfying_frag]          # TODO I can't put this at the top even though it would speedup
 [end]
 
@@ -218,3 +218,4 @@ AvailableTopLevelChoice [?frag false]:
 AllAvailableTopLevelChoices ?choices:
     [FindUnique ?choice [AvailableTopLevelChoice ?choice] ?choices]
 [end]
+

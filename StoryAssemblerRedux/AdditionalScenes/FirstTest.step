@@ -52,9 +52,9 @@ Conditions disastrous_date:
 Effects disastrous_date. # no effects
 Speaker disastrous_date ?speaker: [= ?speaker "ally"]
 [randomly]
-ConditionalChoice disastrous_date ends_badly: [Dislikes ally protagonist]
-ConditionalChoice disastrous_date tentative_recovery: [Dating ally protagonist]
-ConditionalChoice disastrous_date pause: [Respite]
+ChoiceCondition disastrous_date ends_badly: [Dislikes ally protagonist]
+ChoiceCondition disastrous_date tentative_recovery: [Dating ally protagonist]
+ChoiceCondition disastrous_date pause: [Respite]
 GoToChoice disastrous_date overthinking.
 
 Content unapologetic: You won't even spend $100 on me?.
