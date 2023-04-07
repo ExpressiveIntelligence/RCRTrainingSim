@@ -34,8 +34,8 @@ TestBestChoices2:
 TestBestChoices3:
     [Initialize test] [BestChoices root ?choices]
     [MakeChoice disastrous_date]
-    [AllPathsFrom ^CurrentFragment ?paths]
-    [PotentialConditionalChoices ^CurrentFragment ?paths ?potential]
+    [AllPathsFrom CurrentFragment ?paths]
+    [PotentialConditionalChoices CurrentFragment ?paths ?potential]
     ?potential
     [BestOfPotential ?potential ?best]
     Best: ?best
@@ -76,14 +76,14 @@ TestTopLevelChoicesIfNoOtherOption:
 TestCat:
     [Cat empty empty ?empty]
     Empty ?empty
-    [set ^A = empty]
-    [add 1 ^A]
-    [add 2 ^A]
+    [set A = empty]
+    [add 1 A]
+    [add 2 A]
     [Br]
-    [Cat ^A empty ?a]
+    [Cat A empty ?a]
     ^A ?a
     [Br]
-    [Cat ^A ^A ?b]
+    [Cat A A ?b]
     ^A x2 ?b
 [end]
 
@@ -208,14 +208,14 @@ TestNextStepFulfillsChoice:
 
 # Test that the custom Backtack function works as expected.
 TestBacktrack:
-    [set ^A = good]
+    [set A = good]
     [Backtrack [SetA bad] ?result]
     Backtrack result: ?result [Paragraph]
     A: ^A
 [end]
 
 SetA ?arg ?result:
-    [set ^A = bad]
+    [set A = bad]
     [= ?result result]
     Shouldn't see this: ?arg
 [end]
@@ -235,23 +235,23 @@ TestLists:
 TestSetUnion:
     [TestLists]
     ^A ^B
-    [SetUnion ^A ^B ?c]
+    [SetUnion A B ?c]
     Result ?c
 [end]
 
 TestRemoveFromList:
     [TestLists]
     Before: ^A
-    [RemoveFromList 1 ^A ?a]
+    [RemoveFromList 1 A ?a]
     After removing 1: ?a
     [RemoveFromList 2 ?a ?b]
     After removing 2: ?b
     [RemoveFromList 3 ?b ?c]
     After removing 3: ?c
 
-    [add [1 2] ^A]
+    [add [1 2] A]
     Remove tuple: ^A
-    [RemoveFromList [1 2] ^A ?d]
+    [RemoveFromList [1 2] A ?d]
     After removing tuple: ?d
 [end]
 
@@ -259,18 +259,18 @@ TestRemoveFromList:
 TestRemoveNotInList:
     [TestLists]
     Before: ^A
-    [RemoveFromList 4 ^A ?a] # Should throw error
+    [RemoveFromList 4 A ?a] # Should throw error
 [end]
 TestRemoveNotInList:
     [TestLists]
     Before: ^A
-    [RemoveFromList [1 2] ^A ?a] # Should throw error
+    [RemoveFromList [1 2] A ?a] # Should throw error
 [end]
 
 TestTupleInList:
     [TestLists]
-    [add [1 2] ^A]
-    [TupleInList [1 2] ^A]
+    [add [1 2] A]
+    [TupleInList [1 2] A]
 [end]
 
 TestMaze:

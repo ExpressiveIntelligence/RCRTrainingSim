@@ -11,29 +11,29 @@ Want intro_mechanics test.
 # Want dropped_knowledge.
 
 Fulfilled intro_mechanics: 
-    [= ^IntroMechanics true]
+    [= IntroMechanics true]
 [end]
 # Fulfilled establish_specialty_info: 
-#     [= ^EstablishSpecialtyInfo true]
+#     [= EstablishSpecialtyInfo true]
 # [end]
 # Fulfilled establish_setting: 
-#     [= ^EstablishSetting true]
+#     [= EstablishSetting true]
 # [end]
 # Fulfilled establish_ally_backstory: 
-#     [= ^EstablishAllyBackstory true]
+#     [= EstablishAllyBackstory true]
 # [end]
 # Fulfilled establish_protag_regrets: 
-#     [= ^EstablishProtagRegrets true]
+#     [= EstablishProtagRegrets true]
 # [end]
 # Fulfilled establish_protag_backstory: 
-#     [= ^EstablishProtagBackstory true]
+#     [= EstablishProtagBackstory true]
 # [end]
 # Fulfilled provoke_confidence_choice: 
-#     [= ^ProvokeConfidenceChoice true]
+#     [= ProvokeConfidenceChoice true]
 # [end]
 # Fulfilled ally_reassures_protag: 
-#     [= ^AllyReassuresProtag true]
+#     [= AllyReassuresProtag true]
 # [end]
 # Fulfilled dropped_knowledge: 
-#     [>= ^DroppedKnowledge 2]
+#     [>= DroppedKnowledge 2]
 # [end]

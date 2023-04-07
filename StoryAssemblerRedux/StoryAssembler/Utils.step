@@ -1,6 +1,6 @@
 initially:
-    [set ^CurrentScene = test]
-    [set ^AddTemp = empty]
+    [set CurrentScene = test]
+    [set AddTemp = empty]
     [set Test = none]
 [end]
 
@@ -27,32 +27,32 @@ BacktrackHelper ?call ?result:
 
 # Add an element to a list
 Add ?element ?list ?new_list:
-    [set ^AddTemp = ?list]
+    [set AddTemp = ?list]
     [AddHelper ?element]
-    [= ?new_list ^AddTemp]
+    [= ?new_list AddTemp]
 [end]
 AddHelper ?element:
-    [add ?element ^AddTemp]
+    [add ?element AddTemp]
 [end]
 
 SetUnion ?l1 ?l2 ?union:
-    [set ^AddTemp = empty]
+    [set AddTemp = empty]
     [ForEach [Member ?x ?l1] [AddHelper ?x]]
     [ForEach [Member ?y ?l2] [Not [Member ?y ?l1]] [AddHelper ?y]]
-    [= ?union ^AddTemp]
+    [= ?union AddTemp]
 [end]
 
 SetIntersection ?l1 ?l2 ?int:
-    [set ^AddTemp = empty]
+    [set AddTemp = empty]
     [ForEach [Member ?x ?l1] [Member ?x ?l2] [AddHelper ?x]]
-    [= ?int ^AddTemp]
+    [= ?int AddTemp]
 [end]
 
 Cat ?l1 ?l2 ?cat:
-    [set ^AddTemp = empty]
+    [set AddTemp = empty]
     [ForEach [Member ?x ?l1] [AddHelper ?x]]
     [ForEach [Member ?y ?l2] [AddHelper ?y]]
-    [= ?cat ^AddTemp]
+    [= ?cat AddTemp]
 [end]
 
 Flatten2D ?list empty: [Length ?list 0]
@@ -66,9 +66,9 @@ InnerMember ?m ?list:
 [end]
 
 Reverse ?list ?reversed:
-    [set ^AddTemp = empty]
+    [set AddTemp = empty]
     [ForEach [Member ?x ?list] [AddHelper ?x]]
-    [= ?reversed ^AddTemp]
+    [= ?reversed AddTemp]
 [end]
 
 [predicate]
@@ -105,6 +105,6 @@ RemoveTupleFromList ?tuple ?list ?without:
 
 Last ?last ?list:
     [Reverse ?list ?reversed]
-    [set ^Reversed = ?reversed]
-    [removeNext ?last ^Reversed]
+    [set Reversed = ?reversed]
+    [removeNext ?last Reversed]
 [end]

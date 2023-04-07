@@ -41,8 +41,8 @@ fluent Reusable ?fragment ?scene.
 # The conditions to be avialiable is that the fragment must be reusable or not expanded 
 predicate Available ?fragment.
 
-Available ?fragment: [Reusable ?fragment ^CurrentScene]
-Available ?fragment: [Not [Expanded ?fragment ^CurrentScene]]
+Available ?fragment: [Reusable ?fragment CurrentScene]
+Available ?fragment: [Not [Expanded ?fragment CurrentScene]]
 
 ## End fragment attributes ##
 
@@ -56,27 +56,27 @@ predicate TopLevelFragment ?fragment.
 # TODO document
 predicate Request ?fragment ?request_type ?go_to_or_condition.
 
-TopLevelFragment ?frag: [Fragment ?frag ^CurrentScene] [Not [HasChoiceLabel ?frag]] # If it has a choice label it is not a top level fragment
+TopLevelFragment ?frag: [Fragment ?frag CurrentScene] [Not [HasChoiceLabel ?frag]] # If it has a choice label it is not a top level fragment
 
 [predicate]
-HasChoiceLabel ?frag: [Fragment ?frag ^CurrentScene] [IgnoreOutput [ChoiceLabel ?frag]]
+HasChoiceLabel ?frag: [Fragment ?frag CurrentScene] [IgnoreOutput [ChoiceLabel ?frag]]
 
 [predicate]
 SatisfiesChoiceCondition ?frag ?choice_id:
     [ChoiceCondition ?frag ?choice_id]
-    [Fragment ?frag ^CurrentScene]
+    [Fragment ?frag CurrentScene]
 [end]
 
 
 [predicate]
 ApplyEffects ?frag:
-    [Fragment ?frag ^CurrentScene]
+    [Fragment ?frag CurrentScene]
     [Effects ?frag]
 [end]
 
 [predicate]
 TestConditions ?frag:
-    [Fragment ?frag ^CurrentScene]
+    [Fragment ?frag CurrentScene]
     [Conditions ?frag]
 [end]
 
@@ -90,8 +90,8 @@ EffectMakesWantTrue ?fragment ?want_id:
 [end]
 
 Visit ?frag:
-    [Fragment ?frag ^CurrentScene]      # without this line, ?frag may not be ground...
-    [now [Expanded ?frag ^CurrentScene]] # TODO: this is a side effect, but it is necessary for the planner to work
+    [Fragment ?frag CurrentScene]      # without this line, ?frag may not be ground...
+    [now [Expanded ?frag CurrentScene]] # TODO: this is a side effect, but it is necessary for the planner to work
     [ApplyEffects ?frag]
 [end]
 
@@ -151,7 +151,7 @@ AssembleRequest ?source_frag ?response:
     # Make the request for a completion node and apply its effects
     [MakeRequest ?source_frag ?request_type ?args ?response]
 [end]
-AssembleRequest ?source_frag ?source_frag: [Fragment ?source_frag ^CurrentScene] [NotAny [Request ?source_frag ? ?]]
+AssembleRequest ?source_frag ?source_frag: [Fragment ?source_frag CurrentScene] [NotAny [Request ?source_frag ? ?]]
 
 # SIDE EFFECT: potentially applies the Effects of ?response
 [predicate]

@@ -54,14 +54,14 @@ BestOfPotential ?potential ?best:
         [Member ?choice_id ?choice_ids]
         [SaveMaxValChoiceToChoices ?choice_id ?potential]
     ]
-    [= ?best ^Choices]
+    [= ?best Choices]
 [end]
 
 SaveMaxValChoiceToChoices ?choice_id ?potential:
     [Max ?value
         [Member ?m ?potential]
         [= ?m [?frag ?choice_id ?value]]
-        [Not [Member ?frag ^PickedFrags]]
+        [Not [Member ?frag PickedFrags]]
     ]
     [add [?frag ?choice_id] Choices] 
     # For the next round of searching, don't include the one we selected
@@ -70,9 +70,9 @@ SaveMaxValChoiceToChoices ?choice_id ?potential:
 
 [predicate]
 NextStepFulfillsChoice ?path ?next_frag ?linking_choice_id:
-    [set ^Path = ?path]
-    [removeNext [?cur_frag ?] ^Path] 
-    [removeNext [?next_frag ?linking_choice_id] ^Path]
+    [set Path = ?path]
+    [removeNext [?cur_frag ?] Path] 
+    [removeNext [?next_frag ?linking_choice_id] Path]
 [end]
 
 [predicate]
@@ -87,13 +87,13 @@ BestTopLevelChoice ?paths ?choice ?value:
 
 [predicate]
 NextStepTopIsTopLevel ?path ?target_choice:
-    [set ^Path = ?path]
-    [removeNext [?cur_frag ?] ^Path]          # The first step in the path is always the current fragment
-    [removeNext ?target_choice ^Path]
+    [set Path = ?path]
+    [removeNext [?cur_frag ?] Path]          # The first step in the path is always the current fragment
+    [removeNext ?target_choice Path]
     [AvailableTopLevelChoice ?target_choice]  # We check if the next step in the path is a top level choice
 [end]
 
-# Find all outgoing paths from ?frag and store them in the ^AllPaths global variable
+# Find all outgoing paths from ?frag and store them in the AllPaths global variable
 # The wrapper for this Task is AllPathsFrom
 # Example usage: [AllPathsFrom root ?paths]
 [predicate]
@@ -106,7 +106,7 @@ FindPaths [?frag ?choice_id] ?path ?found_paths:
     [Throw FindPaths called with unbound choice_id]
 [end]
 FindPaths [?frag ?choice_id] ?path ?found_paths:
-    [Length ?path ^MaxDepth]
+    [Length ?path MaxDepth]
     [ScorePath ?path ?scored_path]
     [= ?found_paths [?scored_path]]
 [end]

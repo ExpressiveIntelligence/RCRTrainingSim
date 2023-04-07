@@ -25,7 +25,7 @@ Fragment confused maze.
 fluent Inside.
 
 InitialSceneState maze:
-    [set ^Initialized = true]
+    [set Initialized = true]
     [now [Not [Inside]]]
     [now [Not [CardinalChoice]]]
 [end]
@@ -118,5 +118,5 @@ Want maze initialized.
 Want maze inside.
 
 [randomly]
-Fulfilled initialized: [= ^Initialized true]
+Fulfilled initialized: [= Initialized true]
 Fulfilled inside: [Inside]

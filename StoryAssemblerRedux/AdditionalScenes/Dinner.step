@@ -101,87 +101,87 @@ Fragment tester final_dinner.
 # Scene specific predicates
 
 InitialSceneState final_dinner: 
-	[set ^EstablishFriends = false]
-	[set ^EstablishSettingDinner = false]
-	[set ^EstablishDefenseTomorrow = false]
-	[set ^EmmaDefenseFeeling = false]
-	[set ^EmmaJobFutureBeat = false]
-	[set ^EmmaClassTypeBeat = false]
-	[set ^EstablishFriend1Background = false]
-	[set ^EstablishFriend2Background = false]
-	[set ^EstablishFriend1Supportiveness = false]
-	[set ^EstablishFriend2Supportiveness = false]
-	[set ^FriendTension = 0]
-	[set ^FriendTensionRelieved = false]
-	[set ^CheckinWithDisagreer = false]
-	[set ^InactivityIsBad = false]
-	[set ^Outro = false]
-	[set ^AcademicFriend1 = true]
-	[set ^ActivistFriend1 = false]
-	[set ^AcademicFriend2 = false]
-	[set ^ActivistFriend2 = true]
-	[set ^SupportiveFriend1 = true]
-	[set ^ChallengingFriend1 = false]
-	[set ^SupportiveFriend2 = false]
-	[set ^ChallengingFriend2 = true]
-	[set ^Satiation = 5]
-	[set ^Friend1Relationship = 5]
-	[set ^Friend2Relationship = 5]
-	[set ^Confidence = 5]
-	[set ^AcademicEnthusiasm = 5]
-	[set ^FriendTension = 0]
-	[set ^Tension = 0]
+	[set EstablishFriends = false]
+	[set EstablishSettingDinner = false]
+	[set EstablishDefenseTomorrow = false]
+	[set EmmaDefenseFeeling = false]
+	[set EmmaJobFutureBeat = false]
+	[set EmmaClassTypeBeat = false]
+	[set EstablishFriend1Background = false]
+	[set EstablishFriend2Background = false]
+	[set EstablishFriend1Supportiveness = false]
+	[set EstablishFriend2Supportiveness = false]
+	[set FriendTension = 0]
+	[set FriendTensionRelieved = false]
+	[set CheckinWithDisagreer = false]
+	[set InactivityIsBad = false]
+	[set Outro = false]
+	[set AcademicFriend1 = true]
+	[set ActivistFriend1 = false]
+	[set AcademicFriend2 = false]
+	[set ActivistFriend2 = true]
+	[set SupportiveFriend1 = true]
+	[set ChallengingFriend1 = false]
+	[set SupportiveFriend2 = false]
+	[set ChallengingFriend2 = true]
+	[set Satiation = 5]
+	[set Friend1Relationship = 5]
+	[set Friend2Relationship = 5]
+	[set Confidence = 5]
+	[set AcademicEnthusiasm = 5]
+	[set FriendTension = 0]
+	[set Tension = 0]
 	# The following variables have had types inferred and should be reviewed.
-	[set ^GlobalClassSize = none]
-	[set ^EstablishSetting = false]
-	[set ^Smol = false]
-	[set ^FriendIsInAcademia = false]
-	[set ^Lecture = false]
-	[set ^ClassStyle = false]
-	[set ^Career = none]
-	[set ^Setting = none]
-	[set ^SetupChallenge = false]
-	[set ^EstablishFriendsEmmaJobFutureBeat = false]
-	[set ^EstablishProtagBackstory = false]
-	[set ^AcademicEnthusiam = 0]
-	[set ^EstablishSpecialtyInfo = false]
-	[set ^Seminar = false]
-	[set ^RespondToChallenge = false]
-	[set ^AcademiaFriend = false]
-	[set ^ClassSize = false]
-	[set ^EndInterrupt = false]
-	[set ^SetSetting = false]
-	[set ^GlobalClassStyle = none]
-	[set ^AllyReassuresProtag = false]
-	[set ^Large = false]
-	[set ^FriendIsNotInAcademia = false]
+	[set GlobalClassSize = none]
+	[set EstablishSetting = false]
+	[set Smol = false]
+	[set FriendIsInAcademia = false]
+	[set Lecture = false]
+	[set ClassStyle = false]
+	[set Career = none]
+	[set Setting = none]
+	[set SetupChallenge = false]
+	[set EstablishFriendsEmmaJobFutureBeat = false]
+	[set EstablishProtagBackstory = false]
+	[set AcademicEnthusiam = 0]
+	[set EstablishSpecialtyInfo = false]
+	[set Seminar = false]
+	[set RespondToChallenge = false]
+	[set AcademiaFriend = false]
+	[set ClassSize = false]
+	[set EndInterrupt = false]
+	[set SetSetting = false]
+	[set GlobalClassStyle = none]
+	[set AllyReassuresProtag = false]
+	[set Large = false]
+	[set FriendIsNotInAcademia = false]
 [end]
 
 # Fragments
 Content game_interrupt: \{ifStateCondition\|establishSettingDinner eq true\|Hey, pass the potatoes, will you? I'm starving!\|"Hey, mind topping me up?" Shelly gestures at the wine bottle sitting behind you.\}.
 GoToChoice game_interrupt satisfy_game_interrupt.
 Conditions game_interrupt:
-	[< ^Satiation 3] 
+	[< Satiation 3] 
 [end]
 Effects game_interrupt.
 
 ChoiceLabel satisfy_game_interrupt: \{ifStateCondition\|establishSettingDinner eq true\|Oh, here you go!\|Oh, here you go. Sorry!\}
 Content satisfy_game_interrupt: Thanks. What were we talking about again?.
 Conditions satisfy_game_interrupt:
-	[>= ^Satiation 3] 
+	[>= Satiation 3] 
 [end]
-ChoiceCondition satisfy_game_interrupt end_interrupt_0: [= ^EndInterrupt true]
+ChoiceCondition satisfy_game_interrupt end_interrupt_0: [= EndInterrupt true]
 Effects satisfy_game_interrupt:
-	[inc ^Satiation 1] 
-	[inc ^Tension 1] 
+	[inc Satiation 1] 
+	[inc Tension 1] 
 [end]
 
 Content friend_is_in_academia_enthusiastici: "So \{nickname\|protagonist\}, I got you something." \{name\|friend1\} pulls out a coffee thermos from under the table. "It says "Trust me, I'm a doctor". \{ifStateCondition\|academicFriend gt 0\|I have one too. Whenever we're both on campus we can stop by that little cafe and drink some mocha on the patio.\|Whenever you're on campus you can stop by that little cafe and drink some mocha on the patio.\} It'll be adorable!".
 GoToChoice friend_is_in_academia_enthusiastici friend_is_in_academia_enthusiastici2.
 Conditions friend_is_in_academia_enthusiastici:
-	[= ^EmmaJobFutureBeat true] 
-	[> ^AcademicEnthusiasm 4] 
-	[= ^EmmaClassTypeBeat true] 
+	[= EmmaJobFutureBeat true] 
+	[> AcademicEnthusiasm 4] 
+	[= EmmaClassTypeBeat true] 
 [end]
 Effects friend_is_in_academia_enthusiastici.
 
@@ -190,18 +190,18 @@ Content friend_is_in_academia_enthusiastici2: \{name\|friend2\} stabs a carrot w
 GoToChoice friend_is_in_academia_enthusiastici2 lovei.
 GoToChoice friend_is_in_academia_enthusiastici2 too_muchi.
 Effects friend_is_in_academia_enthusiastici2:
-	[set ^FriendIsInAcademia = true] 
+	[set FriendIsInAcademia = true] 
 [end]
 Conditions friend_is_in_academia_enthusiastici2:
-	[= ^EmmaJobFutureBeat true] 
-	[> ^AcademicEnthusiasm 4] 
-	[= ^EmmaClassTypeBeat true] 
+	[= EmmaJobFutureBeat true] 
+	[> AcademicEnthusiasm 4] 
+	[= EmmaClassTypeBeat true] 
 [end]
 
 ChoiceLabel lovei: I. Love. It.
 Content lovei: \{name\|friend1\} claps her hands together and bounces a little\{ifState\|activistFriend2\|true\|(, ignoring \{name\|friend2\} sticking out her tongue)\|\}..
 Effects lovei:
-	[inc ^AcademicEnthusiasm 1] 
+	[inc AcademicEnthusiasm 1] 
 [end]
 Conditions lovei.
 
@@ -213,9 +213,9 @@ Effects too_muchi.
 Content friend_is_in_academia_unenthusiastici: "Hey \{nickname\|protagonist\}. I want to tell you something. When I was about to present my dissertation I felt awful." \{name\|friend1\} sets her utensils down and places her hands on her lap. "I couldn't sleep. I thought I was getting the flu. When I showed up at campus, I was so nervous I threw up in the bathroom just five minutes before my presentation. I looked like a zombie." She pauses..
 GoToChoice friend_is_in_academia_unenthusiastici friend_is_in_academia_unenthusiastici2.
 Conditions friend_is_in_academia_unenthusiastici:
-	[= ^EstablishFriendsEmmaJobFutureBeat true] 
-	[<= ^AcademicEnthusiasm 3] 
-	[= ^EmmaClassTypeBeat true] 
+	[= EstablishFriendsEmmaJobFutureBeat true] 
+	[<= AcademicEnthusiasm 3] 
+	[= EmmaClassTypeBeat true] 
 [end]
 Effects friend_is_in_academia_unenthusiastici.
 
@@ -225,15 +225,15 @@ GoToChoice friend_is_in_academia_unenthusiastici2 nothingi.
 GoToChoice friend_is_in_academia_unenthusiastici2 grossi.
 GoToChoice friend_is_in_academia_unenthusiastici2 got_thisi.
 Effects friend_is_in_academia_unenthusiastici2:
-	[set ^FriendIsInAcademia = true] 
-	[set ^AcademiaFriend = true] 
+	[set FriendIsInAcademia = true] 
+	[set AcademiaFriend = true] 
 [end]
 Conditions friend_is_in_academia_unenthusiastici2.
 
 Content nothingi: "Why don't I go grab dessert." \{name\|friend1\} gets up and walks into the kitchen. \{name\|friend2\} clasps your shoulder for just a second. \{name\|friend1\} returns with a few bowls of ice cream. "Sorry, it's a little melted.".
 Effects nothingi:
-	[dec ^Confidence 1] 
-	[dec ^AcademicEnthusiam 1] 
+	[dec Confidence 1] 
+	[dec AcademicEnthusiam 1] 
 [end]
 ChoiceLabel nothingi: Say nothing.
 Conditions nothingi.
@@ -241,93 +241,93 @@ Conditions nothingi.
 ChoiceLabel grossi: "Jeez, \{nickname\|friend1\}, that's pretty gross you threw up."
 Content grossi: \{name\|friend1\} laughs. Or at least she would have, had she not been mid-gulp of water. She spits it over the table.<p>\{name\|friend1\} cleans the splash off her with a napkin."And that's the last time I tell you anything," \{name\|friend1\} says, smiling.</p>.
 Effects grossi:
-	[inc ^Confidence 1] 
+	[inc Confidence 1] 
 [end]
 Conditions grossi.
 
 ChoiceLabel got_thisi: "You're right \{nickname\|friend1\}, I got this."
 Content got_thisi: "Atta girl." \{name\|friend1\} gives you a light slug in the arm.<p>"You're gonna do great at whatever you do\{ifStateCondition\|activistFriend gt 0\|. Just remember you don't need to be a professor to make a difference\|\}," \{name\|friend2\} says.</p>.
 Effects got_thisi:
-	[inc ^Confidence 1] 
-	[inc ^AcademicEnthusiasm 1] 
+	[inc Confidence 1] 
+	[inc AcademicEnthusiasm 1] 
 [end]
 Conditions got_thisi.
 
 Content friend_not_in_academici: \{name\|friend2\} rests her elbows on the table and leans in. "So, I dunno what you're doing next Friday, but I'm actually setting up a beach cleanup a little bit south of here."<p>"Oh damn \{name\|friend2\}," \{name\|friend1\} interjects. \{ifStateCondition\|academicFriend gt 0\|("That's when \{name\|protagonist\} and I have our faculty orientation meeting.")\|("Isn't that when \{name\|protagonist\} has her faculty orientation meeting?")\}</p>.
 Effects friend_not_in_academici:
-	[set ^FriendIsNotInAcademia = true] 
+	[set FriendIsNotInAcademia = true] 
 [end]
 GoToChoice friend_not_in_academici i_can_do_thati.
 GoToChoice friend_not_in_academici interestingi.
 GoToChoice friend_not_in_academici gotta_passi.
 Conditions friend_not_in_academici:
-	[= ^EmmaClassTypeBeat true] 
-	[= ^EmmaJobFutureBeat true] 
+	[= EmmaClassTypeBeat true] 
+	[= EmmaJobFutureBeat true] 
 [end]
 
 ChoiceLabel i_can_do_thati: "I can probably be late to the meeting."
 Content i_can_do_thati: \{name\|friend1\} sighs and shakes her head. \{name\|friend2\} pumps her fist..
 Effects i_can_do_thati:
-	[dec ^AcademicEnthusiasm 1] 
+	[dec AcademicEnthusiasm 1] 
 [end]
 Conditions i_can_do_thati.
 
 ChoiceLabel interestingi: "A beach cleanup. That sounds... neat, I guess."
 Content interestingi: \{name\|friend2\} leans back. "Well, I'll jot you down as probably not attending, in that case.".
 Effects interestingi:
-	[inc ^Tension 1] 
+	[inc Tension 1] 
 [end]
 Conditions interestingi.
 
 ChoiceLabel gotta_passi: "Sorry \{nickname\|friend2\}, I can't miss work."
 Content gotta_passi: \{name\|friend2\} waves her hand back and forth. "Yeah, yeah I getcha. We'll plan something for next time.".
 Effects gotta_passi:
-	[inc ^AcademicEnthusiasm 1] 
+	[inc AcademicEnthusiasm 1] 
 [end]
 Conditions gotta_passi.
 
 Content fight_begins_and_tension_relievedi: After a few choice words, \{name\|friend2\} and \{name\|friend1\} have begun to bicker.<p>"I'm sorry \{ifStateCondition\|academicFriend lt 2\|getting a degree was too hard for you\|you're still bitter about academia\}, \{name\|friend2\}, but that's your problem."</p><p>"Honestly? If you need other people to validate your success then fine, be my guest."</p>.
 Conditions fight_begins_and_tension_relievedi:
-	[= ^FriendIsInAcademia true] 
-	[= ^FriendIsNotInAcademia true] 
+	[= FriendIsInAcademia true] 
+	[= FriendIsNotInAcademia true] 
 [end]
 GoToChoice fight_begins_and_tension_relievedi side_zanitai.
 GoToChoice fight_begins_and_tension_relievedi side_shellyi.
 GoToChoice fight_begins_and_tension_relievedi neutrali.
 Effects fight_begins_and_tension_relievedi:
-	[set ^FriendTensionRelieved = true] 
+	[set FriendTensionRelieved = true] 
 [end]
 
 ChoiceLabel side_zanitai: "Come on \{name\|friend2\}, you know it's not like that."
 Content side_zanitai: "What \{nickname\|protagonist\}, you too?" \{name\|friend2\} sighs. "No, you're right. Just because it isn't what I would do, doesn't mean it's wrong. I guess I'm just stubborn. Surprise!".
 Conditions side_zanitai:
-	[= ^FriendIsInAcademia true] 
-	[= ^FriendIsNotInAcademia true] 
+	[= FriendIsInAcademia true] 
+	[= FriendIsNotInAcademia true] 
 [end]
 Effects side_zanitai:
-	[inc ^AcademicEnthusiasm 1] 
-	[dec ^Tension 1] 
+	[inc AcademicEnthusiasm 1] 
+	[dec Tension 1] 
 [end]
 
 ChoiceLabel side_shellyi: "Hey \{name\|friend1\}, back off a little bit."
 Content side_shellyi: \{name\|friend1\} goes a little pale, as if she's stunned by her own behavior. "You're right \{nickname\|protagonist\}. Sorry \{nickname\|friend2\}, that wasn't me talking. I'm just a bit overwhelmed with \{ifStateCondition\|academicFriend gt 0\|teaching\|work\} lately.".
 Conditions side_shellyi:
-	[= ^FriendIsInAcademia true] 
-	[= ^FriendIsNotInAcademia true] 
+	[= FriendIsInAcademia true] 
+	[= FriendIsNotInAcademia true] 
 [end]
 Effects side_shellyi:
-	[dec ^AcademicEnthusiasm 1] 
-	[dec ^Tension 1] 
+	[dec AcademicEnthusiasm 1] 
+	[dec Tension 1] 
 [end]
 
 ChoiceLabel neutrali: Don't get involved
 Content neutrali: "Please, \{name\|friend1\}, now you're just being childish," \{name\|friend2\} says.</p><p>"Oh jeez prof, this won't bring down my participation points, will it?" \{name\|friend1\} waves her hand in dismissal. The two go quiet and focus on their food..
 Conditions neutrali:
-	[= ^FriendIsInAcademia true] 
-	[= ^FriendIsNotInAcademia true] 
+	[= FriendIsInAcademia true] 
+	[= FriendIsNotInAcademia true] 
 [end]
 Effects neutrali:
-	[inc ^Tension 1] 
+	[inc Tension 1] 
 [end]
 
 Content check_with_disagreer_shellyi: You look over at \{name\|friend2\} and notice that she's fidgeting absentmindedly with her utensils on the table. It looks like she might be feeling defensive. Maybe you should check in on her..
@@ -335,11 +335,11 @@ GoToChoice check_with_disagreer_shellyi maybe_ishouldnt_shelli.
 GoToChoice check_with_disagreer_shellyi positive_shelli.
 GoToChoice check_with_disagreer_shellyi negative_shelli.
 Conditions check_with_disagreer_shellyi:
-	[>= ^AcademicEnthusiasm 5] 
-	[= ^FriendTensionRelieved true] 
+	[>= AcademicEnthusiasm 5] 
+	[= FriendTensionRelieved true] 
 [end]
 Effects check_with_disagreer_shellyi:
-	[set ^CheckinWithDisagreer = true] 
+	[set CheckinWithDisagreer = true] 
 [end]
 
 ChoiceLabel maybe_ishouldnt_shelli: She's fine. She can deal with it.
@@ -350,14 +350,14 @@ Effects maybe_ishouldnt_shelli.
 ChoiceLabel positive_shelli: "You okay there, \{name\|friend2\}?"
 Content positive_shelli: "Huh? Oh, yeah – my mind's just wandering a bit. It's been a long day – you know how it is." She smiles at you and turns her attention back to the conversation..
 Effects positive_shelli:
-	[dec ^Tension 1] 
+	[dec Tension 1] 
 [end]
 Conditions positive_shelli.
 
 ChoiceLabel negative_shelli: "So \{name\|friend2\}, how has your volunteering been going?"
 Content negative_shelli: "Ehh, fine I guess. You probably don't want to hear about it though." She goes back to staring disinterestedly at her plate..
 Effects negative_shelli:
-	[inc ^Tension 1] 
+	[inc Tension 1] 
 [end]
 Conditions negative_shelli.
 
@@ -366,11 +366,11 @@ GoToChoice checkwith_disagreer_zanitai maybe_ishouldnt_zani.
 GoToChoice checkwith_disagreer_zanitai positive_zani.
 GoToChoice checkwith_disagreer_zanitai negative_zani.
 Conditions checkwith_disagreer_zanitai:
-	[<= ^AcademicEnthusiasm 4] 
-	[= ^FriendTensionRelieved true] 
+	[<= AcademicEnthusiasm 4] 
+	[= FriendTensionRelieved true] 
 [end]
 Effects checkwith_disagreer_zanitai:
-	[set ^CheckinWithDisagreer = true] 
+	[set CheckinWithDisagreer = true] 
 [end]
 
 ChoiceLabel maybe_ishouldnt_zani: I think I'll leave her be for now.
@@ -381,14 +381,14 @@ Effects maybe_ishouldnt_zani.
 ChoiceLabel positive_zani: "Hey \{nickname\|friend1\}, how are classes going. I've been hearin' a lot of good things about you 'round campus."
 Content positive_zani: "Oh, they're pretty good. It's been busy, ya know." She brushes a lock of hair behind her ear. "There have been a lot of students at my office hours though. They're really engaged. It's nice!" She seems to have relaxed a little bit..
 Effects positive_zani:
-	[dec ^Tension 1] 
+	[dec Tension 1] 
 [end]
 Conditions positive_zani.
 
 ChoiceLabel negative_zani: "Relax \{name\|friend1\}, isn't all the food out here already?"
 Content negative_zani: "Oh, umm..." She looks to you and cocks her head. "Yeah, yeah. All the food's out here... I guess...".
 Effects negative_zani:
-	[inc ^Tension 1] 
+	[inc Tension 1] 
 [end]
 Conditions negative_zani.
 
@@ -414,7 +414,7 @@ ChoiceLabel wine_question0_t: "Yeah, I need to clear my head."
 Content wine_question0_t: "That’s the spirit! Let me get a new bottle," \{name\|friend2\} says, to \{name\|friend1\}’s displeasure.<br><br>"Just don’t go crazy, \{nickname\|protagonist\}," \{name\|friend1\} says. "You know you have a big day tomorrow.".
 GoToChoice wine_question0_t scene_set_up_end_t.
 Effects wine_question0_t:
-	[inc ^Tension 1] 
+	[inc Tension 1] 
 [end]
 Conditions wine_question0_t.
 
@@ -422,7 +422,7 @@ ChoiceLabel wine_question1_t: "No, my stomach's been off. Too nervous."
 Content wine_question1_t: "C'mon, \{name\|protagonist\}, \{ifState\|sceneTimeline\|high\|drink it while you still can! We won't be able to grow grapes around here forever\|you stick-in-the-mud\}," \{name\|friend2\} says, fiddling with the metal cage on a bottle of champagne.<br><br>"That’s for after dinner, \{name\|friend2\}," \{name\|friend1\} says. She crosses her arms. "And she doesn’t need to drink if she doesn’t want to." \{name\|friend1\} takes the bottle from \{name\|friend2\} and puts it back in the fridge..
 GoToChoice wine_question1_t scene_set_up_end_t.
 Effects wine_question1_t:
-	[inc ^Tension 1] 
+	[inc Tension 1] 
 [end]
 Conditions wine_question1_t.
 
@@ -441,17 +441,17 @@ Effects scene_set_up_end_t2.
 ChoiceLabel scene_set_up_end_t3: Continue
 Content scene_set_up_end_t3: Finally, \{name\|friend1\} emerges from the kitchen with a large silver serving plate.<br><br>"Voila," \{name\|friend1\} says with a grand gesture. "Beef Wellington a la \{name\|friend1\}!".
 Effects scene_set_up_end_t3:
-	[set ^EstablishSettingDinner = true] 
-	[set ^EstablishFriends = true] 
+	[set EstablishSettingDinner = true] 
+	[set EstablishFriends = true] 
 [end]
 Conditions scene_set_up_end_t3.
 
 Content tension_in_the_room0_t: The dinner goes on - forks clicking against plates, food slowly disappearing between snatches of amiable conversation.<br><br>"It’s so good, \{nickname\|friend1\}!" you say, half-chewing and already preparing your next bite..
 GoToChoice tension_in_the_room0_t tension_in_the_room1_t.
 Conditions tension_in_the_room0_t:
-	[< ^Tension 4] 
-	[= ^FriendIsInAcademia true] 
-	[= ^FriendIsNotInAcademia true] 
+	[< Tension 4] 
+	[= FriendIsInAcademia true] 
+	[= FriendIsNotInAcademia true] 
 [end]
 Effects tension_in_the_room0_t.
 
@@ -493,15 +493,15 @@ Effects tension_in_the_room4_t.
 ChoiceLabel tension_in_the_room5_t: Continue
 Content tension_in_the_room5_t: An awkward silence falls over the table. Finally, after what feels like an eternity, \{name\|friend2\} breaks the silence. "Don’t be so sensitive, \{name\|friend1\}...it was just a joke.".
 Effects tension_in_the_room5_t:
-	[inc ^Tension 4] 
+	[inc Tension 4] 
 [end]
 Conditions tension_in_the_room5_t.
 
 Content inactivity_is_pond_scum0_t: Dinner presses on. You sigh worriedly.<br><br>"What’s the matter, \{name\|protagonist\}?" \{name\|friend1\} says, now frowning.<br><br>"Huh? Oh, nothing."<br><br>"You don’t have to pretend everything’s fine. You remember how big a wreck I was before my defense, don’t you?"<br><br>You do – she really <em>was</em> a wreck..
 GoToChoice inactivity_is_pond_scum0_t inactivity_is_pond_scum1_t.
 Conditions inactivity_is_pond_scum0_t:
-	[= ^FriendIsInAcademia true] 
-	[= ^FriendIsNotInAcademia true] 
+	[= FriendIsInAcademia true] 
+	[= FriendIsNotInAcademia true] 
 [end]
 Effects inactivity_is_pond_scum0_t.
 
@@ -514,22 +514,22 @@ Effects inactivity_is_pond_scum1_t.
 ChoiceLabel inactivity_is_pond_scum2_t: Continue
 Content inactivity_is_pond_scum2_t: "As surprised as I am to hear myself say this," \{name\|friend2\} interjects, "\{name\|friend1\} is right. Your defense will be fine, and it'll set you up to do whatever ends up being right for you – whether you end up sticking it out in academia or not."<br><br>Somehow, their reassurance – plus their sudden agreement – makes you feel a little bit better. The tension drains out of your shoulders; up until this moment, you hadn't even completely realized exactly how on edge you'd been..
 Effects inactivity_is_pond_scum2_t:
-	[set ^InactivityIsBad = true] 
+	[set InactivityIsBad = true] 
 [end]
 Conditions inactivity_is_pond_scum2_t.
 
 Content thats_all_folks0_t: You press your fork against the plate collecting crumbs - remnants of a great dinner, great conversation, and great friends..
 Conditions thats_all_folks0_t:
-	[= ^EstablishFriends true] 
-	[= ^EstablishSettingDinner true] 
-	[= ^EstablishDefenseTomorrow true] 
-	[= ^EmmaJobFutureBeat true] 
-	[= ^EmmaClassTypeBeat true] 
-	[= ^FriendIsInAcademia true] 
-	[= ^FriendIsNotInAcademia true] 
-	[= ^FriendTensionRelieved true] 
-	[= ^CheckinWithDisagreer true] 
-	[= ^InactivityIsBad true] 
+	[= EstablishFriends true] 
+	[= EstablishSettingDinner true] 
+	[= EstablishDefenseTomorrow true] 
+	[= EmmaJobFutureBeat true] 
+	[= EmmaClassTypeBeat true] 
+	[= FriendIsInAcademia true] 
+	[= FriendIsNotInAcademia true] 
+	[= FriendTensionRelieved true] 
+	[= CheckinWithDisagreer true] 
+	[= InactivityIsBad true] 
 [end]
 GoToChoice thats_all_folks0_t thats_all_folks0_t2.
 Effects thats_all_folks0_t.
@@ -556,10 +556,10 @@ Content establish_defense_tomorrow_beat: "So \{nickname\|protagonist\}, ready fo
 GoToChoice establish_defense_tomorrow_beat yes.
 GoToChoice establish_defense_tomorrow_beat maybe_not_sure.
 Effects establish_defense_tomorrow_beat:
-	[set ^EstablishDefenseTomorrow = true] 
+	[set EstablishDefenseTomorrow = true] 
 [end]
 Conditions establish_defense_tomorrow_beat:
-	[= ^EstablishSettingDinner true] 
+	[= EstablishSettingDinner true] 
 [end]
 
 ChoiceLabel yes: "Yeah, I'll be fine."
@@ -567,8 +567,8 @@ Content yes: You smile. "It'll be great. I'll finish it, and then I'll finally g
 GoToChoice yes im_sure.
 GoToChoice yes maybe_not_sure.
 Effects yes:
-	[inc ^Confidence 1] 
-	[set ^EmmaDefenseFeeling = true] 
+	[inc Confidence 1] 
+	[set EmmaDefenseFeeling = true] 
 [end]
 Conditions yes.
 
@@ -577,7 +577,7 @@ Content im_sure: You smile a bit as \{name\|friend2\} pokes your side. "You <i>s
 GoToChoice im_sure smile_at_friends.
 GoToChoice im_sure hug_them.
 Effects im_sure:
-	[inc ^AcademicEnthusiasm 1] 
+	[inc AcademicEnthusiasm 1] 
 [end]
 Conditions im_sure.
 
@@ -586,8 +586,8 @@ Content maybe_not_sure: "\{nickname\|protagonist\}, it'll be okay. It's normal t
 GoToChoice maybe_not_sure smile_at_friends.
 GoToChoice maybe_not_sure hug_them.
 Effects maybe_not_sure:
-	[dec ^Confidence 1] 
-	[set ^EmmaDefenseFeeling = true] 
+	[dec Confidence 1] 
+	[set EmmaDefenseFeeling = true] 
 [end]
 Conditions maybe_not_sure.
 
@@ -595,7 +595,7 @@ ChoiceLabel smile_at_friends: You smile at your two friends.
 Content smile_at_friends: Even if they like to butt heads all the time, you feel so incredibly lucky to have them. "Thanks guys, now I guess we should eat?" <p> "Yes. Let's eat!" </p> You laugh a bit before picking up your fork..
 GoToChoice smile_at_friends emma_job_future_beat.
 Effects smile_at_friends:
-	[inc ^Confidence 1] 
+	[inc Confidence 1] 
 [end]
 Conditions smile_at_friends.
 
@@ -603,7 +603,7 @@ ChoiceLabel hug_them: You try to hug them.
 Content hug_them: You go in for a hug but get pushed off. You laugh a bit at this. "Aww, nobody wants a hug?" <p>"We can hug later. The food is gonna be cold at this rate." </p> You laugh louder and shake your head..
 GoToChoice hug_them emma_job_future_beat.
 Effects hug_them:
-	[inc ^Confidence 1] 
+	[inc Confidence 1] 
 [end]
 Conditions hug_them.
 
@@ -611,7 +611,7 @@ ChoiceLabel emma_job_future_beat: "Want to hear about my new job?"
 Content emma_job_future_beat: "You got a job afterwards? What is it?"<p>"I get to teach my own class."</p>\{ifStateCondition\|academicFriend eq 2\|<p>"Sounds exciting!"</p>\|\}\{ifStateCondition\|academicFriend eq 1\|<p>"That sounds-"</p><p>You hear boring and exciting at the same time. You pray they don't start arguing - and by some miracle they don't.</p>\|\}\{ifStateCondition\|academicFriend eq 0\|<p>"That sounds so boring!"</p>\|\}.
 GoToChoice emma_job_future_beat emma_job_future_beat2.
 Conditions emma_job_future_beat:
-	[= ^EstablishDefenseTomorrow true] 
+	[= EstablishDefenseTomorrow true] 
 [end]
 Effects emma_job_future_beat.
 
@@ -620,7 +620,7 @@ Content emma_job_future_beat2: \{name\|friend2\} tries to sound casual. "Hey, be
 GoToChoice emma_job_future_beat2 sure.
 GoToChoice emma_job_future_beat2 maybe_another_time.
 Effects emma_job_future_beat2:
-	[set ^EmmaJobFutureBeat = true] 
+	[set EmmaJobFutureBeat = true] 
 [end]
 Conditions emma_job_future_beat2.
 
@@ -628,21 +628,21 @@ ChoiceLabel sure: "Sure. After the defense?"
 Content sure: "I have some time in between my defense and my job. I could help out a bit then." You notice \{name\|friend1\} rolling her eyes, but \{name\|friend2\} looks so happy. You don't regret saying yes.<p>"Thanks \{nickname\|protagonist\}! I knew you wouldn't forget about us."</p>.
 GoToChoice sure emma_class_type_beat.
 Conditions sure:
-	[= ^EstablishDefenseTomorrow true] 
+	[= EstablishDefenseTomorrow true] 
 [end]
 Effects sure:
-	[dec ^AcademicEnthusiasm 1] 
+	[dec AcademicEnthusiasm 1] 
 [end]
 
 ChoiceLabel maybe_another_time: "Maybe another time"
 Content maybe_another_time: "I kind of wanted to relax a bit afterwards..." You notice \{name\|friend2\} deflate a bit. <p> "Oh um...okay then..." </p><p>You feel your stomach knot a bit. You didn't mean to make her sad. "You know what? Why don't I just give you a rain check on it instead? Just give me a heads up when next one is happening."</p>.
 GoToChoice maybe_another_time emma_class_type_beat.
 Effects maybe_another_time:
-	[inc ^AcademicEnthusiasm 1] 
-	[dec ^Confidence 1] 
+	[inc AcademicEnthusiasm 1] 
+	[dec Confidence 1] 
 [end]
 Conditions maybe_another_time:
-	[= ^EstablishDefenseTomorrow true] 
+	[= EstablishDefenseTomorrow true] 
 [end]
 
 ChoiceLabel emma_class_type_beat: "Still want to hear about my class?"
@@ -650,10 +650,10 @@ Content emma_class_type_beat: \{name\|friend1\} beams. "Of course! How are you s
 GoToChoice emma_class_type_beat class_size.
 GoToChoice emma_class_type_beat class_style.
 Effects emma_class_type_beat:
-	[set ^EmmaClassTypeBeat = true] 
+	[set EmmaClassTypeBeat = true] 
 [end]
 Conditions emma_class_type_beat:
-	[= ^EmmaJobFutureBeat true] 
+	[= EmmaJobFutureBeat true] 
 [end]
 
 ChoiceLabel class_size: "So, the size of the class..."
@@ -668,12 +668,12 @@ Content smol: "It's okay \{nickname\|protagonist\}. You can have a few, more ded
 GoToChoice smol class_style.
 GoToChoice smol nothing_left_to_say.
 Effects smol:
-	[set ^ClassSize = true] 
-	[inc ^Tension 1] 
-	[inc ^AcademicEnthusiasm 1] 
-	[inc ^Confidence 1] 
-	[set ^Smol = true] 
-	[set ^GlobalClassSize = small] 
+	[set ClassSize = true] 
+	[inc Tension 1] 
+	[inc AcademicEnthusiasm 1] 
+	[inc Confidence 1] 
+	[set Smol = true] 
+	[set GlobalClassSize = small] 
 [end]
 Conditions smol.
 
@@ -682,11 +682,11 @@ Content large: \{name\|friend2\} laughs. "Thata girl! I know you can." <p>You sm
 GoToChoice large argue1.
 GoToChoice large argue2.
 Effects large:
-	[set ^ClassSize = true] 
-	[inc ^AcademicEnthusiasm 1] 
-	[set ^Large = true] 
-	[inc ^Confidence 2] 
-	[set ^GlobalClassSize = large] 
+	[set ClassSize = true] 
+	[inc AcademicEnthusiasm 1] 
+	[set Large = true] 
+	[inc Confidence 2] 
+	[set GlobalClassSize = large] 
 [end]
 Conditions large.
 
@@ -704,12 +704,12 @@ Content large_continued: "Must you <i>always</i> be a downer, \{name\|friend1\}?
 GoToChoice large_continued class_style.
 GoToChoice large_continued nothing_left_to_say.
 Effects large_continued:
-	[set ^ClassSize = true] 
-	[inc ^Tension 1] 
-	[dec ^Confidence 1] 
+	[set ClassSize = true] 
+	[inc Tension 1] 
+	[dec Confidence 1] 
 [end]
 Conditions large_continued:
-	[= ^Large true] 
+	[= Large true] 
 [end]
 
 ChoiceLabel class_style: "So, what about the style do you wanna hear?"
@@ -724,12 +724,12 @@ Content lecture: "A lecture-styled class could be fun. I could get all my inform
 GoToChoice lecture class_size.
 GoToChoice lecture nothing_left_to_say.
 Effects lecture:
-	[set ^ClassStyle = true] 
-	[inc ^AcademicEnthusiasm 1] 
-	[set ^Lecture = true] 
-	[inc ^Confidence 1] 
-	[inc ^Tension 1] 
-	[set ^GlobalClassStyle = lecture] 
+	[set ClassStyle = true] 
+	[inc AcademicEnthusiasm 1] 
+	[set Lecture = true] 
+	[inc Confidence 1] 
+	[inc Tension 1] 
+	[set GlobalClassStyle = lecture] 
 [end]
 Conditions lecture.
 
@@ -738,29 +738,29 @@ Content seminar: "A seminar could be great. I could share my knowledge, and then
 GoToChoice seminar class_size.
 GoToChoice seminar nothing_left_to_say.
 Effects seminar:
-	[set ^ClassStyle = true] 
-	[inc ^AcademicEnthusiasm 1] 
-	[set ^Seminar = true] 
-	[inc ^Tension 1] 
-	[set ^GlobalClassStyle = seminar] 
+	[set ClassStyle = true] 
+	[inc AcademicEnthusiasm 1] 
+	[set Seminar = true] 
+	[inc Tension 1] 
+	[set GlobalClassStyle = seminar] 
 [end]
 Conditions seminar.
 
 ChoiceLabel nothing_left_to_say: "Why don't we move onto a new topic?"
 Content nothing_left_to_say: "That's really all I've got planned so far."<p>"Awww \{nickname\|protagonist\}. Seriously? I'm sure you have more!" </p><p>Honestly, you do have a bit more in mind, but \{ifStateCondition\|academicFriend lt 2\|(you don't want to bore \{name\|friend2\} with any more academic talk)\|all this talk about your job is only making you more and more anxious about your impending defense\}.<!--You offer again to switch topics. \{name\|friend1\} sighs but agrees. \{name\|friend2\} attempts to hide a small smile, but you notice it. At least you did <em>something</em> to keep them from starting another fight.-->.
 Conditions nothing_left_to_say:
-	[= ^ClassStyle true] 
-	[= ^ClassSize true] 
+	[= ClassStyle true] 
+	[= ClassSize true] 
 [end]
 Effects nothing_left_to_say:
-	[inc ^Confidence 1] 
-	[dec ^Tension 1] 
+	[inc Confidence 1] 
+	[dec Tension 1] 
 [end]
 
 ChoiceLabel end_dummy: Start next scene.
 Content end_dummy: .
 Effects end_dummy:
-	[set ^Outro = true] 
+	[set Outro = true] 
 [end]
 
 Speaker set_level_setting ally.
@@ -769,7 +769,7 @@ GoToChoice set_level_setting at_dinner.
 GoToChoice set_level_setting at_lecture.
 GoToChoice set_level_setting at_beach.
 Effects set_level_setting:
-	[set ^SetSetting = true] 
+	[set SetSetting = true] 
 [end]
 Conditions set_level_setting.
 
@@ -777,7 +777,7 @@ Speaker at_dinner ally.
 ChoiceLabel at_dinner: We're at the dinner scene.
 Content at_dinner: Oh, ok. Right..
 Effects at_dinner:
-	[set ^Setting = dinner] 
+	[set Setting = dinner] 
 [end]
 Conditions at_dinner.
 
@@ -785,7 +785,7 @@ Speaker at_lecture ally.
 ChoiceLabel at_lecture: We're at the lecture scene.
 Content at_lecture: Oh, ok. Right..
 Effects at_lecture:
-	[set ^Setting = lecture] 
+	[set Setting = lecture] 
 [end]
 Conditions at_lecture.
 
@@ -793,24 +793,24 @@ Speaker at_beach ally.
 ChoiceLabel at_beach: We're at the beach scene.
 Content at_beach: Oh, ok. Right..
 Effects at_beach:
-	[set ^Setting = beach] 
+	[set Setting = beach] 
 [end]
 Conditions at_beach.
 
 Speaker eat_food ally.
 Content eat_food: \{name\|protagonist\}, come on. This stew is not going to eat itself..
-ChoiceCondition eat_food establish_setting_0: [= ^EstablishSetting true]
-ChoiceCondition eat_food setup_challenge_0: [= ^SetupChallenge true]
-ChoiceCondition eat_food establish_setting_0: [= ^EstablishSetting true]
+ChoiceCondition eat_food establish_setting_0: [= EstablishSetting true]
+ChoiceCondition eat_food setup_challenge_0: [= SetupChallenge true]
+ChoiceCondition eat_food establish_setting_0: [= EstablishSetting true]
 Conditions eat_food:
-	[= ^Setting dinner] 
+	[= Setting dinner] 
 [end]
 Effects eat_food.
 
 ChoiceLabel apologize_messy_choice: What's with all the boxes everywhere?
 Request apologize_messy_choice goto apologize_messy.
 Effects apologize_messy_choice:
-	[set ^EstablishSetting = true] 
+	[set EstablishSetting = true] 
 [end]
 Conditions apologize_messy_choice.
 
@@ -820,10 +820,10 @@ GoToChoice apologize_messy dont_worry_about_it.
 GoToChoice apologize_messy whats_with_new_digs.
 GoToChoice apologize_messy you_should_see_my_place.
 Conditions apologize_messy:
-	[= ^Setting dinner] 
+	[= Setting dinner] 
 [end]
 Effects apologize_messy:
-	[set ^EstablishSetting = true] 
+	[set EstablishSetting = true] 
 [end]
 
 Speaker dont_worry_about_it ally.
@@ -847,21 +847,21 @@ Effects you_should_see_my_place.
 Speaker just_moved_in ally.
 Content just_moved_in: I keep forgetting...you haven't been here before, right?.
 Conditions just_moved_in:
-	[Different ^Setting beach] 
+	[Different Setting beach] 
 [end]
 Effects just_moved_in:
-	[set ^EstablishSetting = true] 
+	[set EstablishSetting = true] 
 [end]
 
 Speaker bathroom_down_the_hall ally.
 Content bathroom_down_the_hall: \{ifState\|setting\|dinner\|Bathroom's down that hallway, in case you forgot.\|\}\{ifState\|setting\|lecture\|Break room's up on the third floor, in case you forgot.\|\}\{ifState\|setting\|beach\|Lunch is gonna be back at the parking lot, in case no one told you.\|\}.
 Effects bathroom_down_the_hall:
-	[set ^EstablishSetting = true] 
+	[set EstablishSetting = true] 
 [end]
 Conditions bathroom_down_the_hall.
 
 ChoiceLabel taking_it_in: Sure! Sorry, I was just taking everything in.
-Request taking_it_in condition [= ^EstablishSetting true].
+Request taking_it_in condition [= EstablishSetting true].
 Conditions taking_it_in.
 Effects taking_it_in.
 
@@ -869,7 +869,7 @@ Speaker whats_wrong ally.
 Content whats_wrong: Hey what's wrong, \{name\|protagonist\}? You've got that look..
 GoToChoice whats_wrong what_am_i_doing.
 Effects whats_wrong:
-	[set ^SetupChallenge = true] 
+	[set SetupChallenge = true] 
 [end]
 Conditions whats_wrong.
 
@@ -877,19 +877,19 @@ ChoiceLabel what_am_i_doing: I just...what am I even doing? I mean even if I get
 Speaker what_am_i_doing ally.
 Content what_am_i_doing: Don't give me that, \{name\|protagonist\}! You've been doing this your whole life! You got this!.
 Conditions what_am_i_doing:
-	[<= ^Confidence 5] 
+	[<= Confidence 5] 
 [end]
 Effects what_am_i_doing:
-	[set ^RespondToChallenge = true] 
+	[set RespondToChallenge = true] 
 [end]
 
 Speaker easily_backsdown antagonist.
 Content easily_backsdown: Woah, woah. Ok sorry..
 Conditions easily_backsdown:
-	[= ^SetupChallenge true] 
+	[= SetupChallenge true] 
 [end]
 Effects easily_backsdown:
-	[set ^AllyReassuresProtag = true] 
+	[set AllyReassuresProtag = true] 
 [end]
 
 Speaker whatspecialty ally.
@@ -904,8 +904,8 @@ ChoiceLabel pick_shrimp: <i>Lysmata amboinensis.</i> Pacific cleaner shrimp.
 Speaker pick_shrimp ally.
 Content pick_shrimp: Right. Lysmata amoeba ninnies. Thingies..
 Effects pick_shrimp:
-	[set ^Career = shrimp] 
-	[set ^EstablishSpecialtyInfo = true] 
+	[set Career = shrimp] 
+	[set EstablishSpecialtyInfo = true] 
 [end]
 Conditions pick_shrimp.
 
@@ -913,8 +913,8 @@ ChoiceLabel pick_lobsters: <i>Homarus americanus.</i> Lobsters.
 Speaker pick_lobsters ally.
 Content pick_lobsters: Right. Been awhile since I've seen one of those!.
 Effects pick_lobsters:
-	[set ^Career = lobster] 
-	[set ^EstablishSpecialtyInfo = true] 
+	[set Career = lobster] 
+	[set EstablishSpecialtyInfo = true] 
 [end]
 Conditions pick_lobsters.
 
@@ -922,15 +922,15 @@ ChoiceLabel pick_coral: <i>Octocorallia.</i> Backbone of the coral reefs.
 Speaker pick_coral ally.
 Content pick_coral: Right. Octo-coro-lala-rama-dingdong..
 Effects pick_coral:
-	[set ^Career = coral] 
-	[set ^EstablishSpecialtyInfo = true] 
+	[set Career = coral] 
+	[set EstablishSpecialtyInfo = true] 
 [end]
 Conditions pick_coral.
 
 Speaker disastrous_date protagonist.
 Content disastrous_date: Oh man, what was his name...Vincent? We went to that Italian place, and he found out he was allergic to pesto?.
 Effects disastrous_date:
-	[set ^EstablishProtagBackstory = true] 
+	[set EstablishProtagBackstory = true] 
 [end]
 Conditions disastrous_date.
 
@@ -960,17 +960,17 @@ Want final_dinner outro_0.
 
 
 [randomly]
-Fulfilled satiation_0: [>= ^Satiation 5]
-Fulfilled establish_friends_0: [= ^EstablishFriends true]
-Fulfilled establish_setting_dinner_0: [= ^EstablishSettingDinner true]
-Fulfilled establish_defense_tomorrow_0: [= ^EstablishDefenseTomorrow true]
-Fulfilled emma_defense_feeling_0: [= ^EmmaDefenseFeeling true]
-Fulfilled emma_job_future_beat_0: [= ^EmmaJobFutureBeat true]
-Fulfilled emma_class_type_beat_0: [= ^EmmaClassTypeBeat true]
-Fulfilled friend_is_in_academia_0: [= ^FriendIsInAcademia true]
-Fulfilled friend_is_not_in_academia_0: [= ^FriendIsNotInAcademia true]
-Fulfilled tension_0: [>= ^Tension 4]
-Fulfilled friend_tension_relieved_0: [= ^FriendTensionRelieved true]
-Fulfilled checkin_with_disagreer_0: [= ^CheckinWithDisagreer true]
-Fulfilled inactivity_is_bad_0: [= ^InactivityIsBad true]
-Fulfilled outro_0: [= ^Outro true]
+Fulfilled satiation_0: [>= Satiation 5]
+Fulfilled establish_friends_0: [= EstablishFriends true]
+Fulfilled establish_setting_dinner_0: [= EstablishSettingDinner true]
+Fulfilled establish_defense_tomorrow_0: [= EstablishDefenseTomorrow true]
+Fulfilled emma_defense_feeling_0: [= EmmaDefenseFeeling true]
+Fulfilled emma_job_future_beat_0: [= EmmaJobFutureBeat true]
+Fulfilled emma_class_type_beat_0: [= EmmaClassTypeBeat true]
+Fulfilled friend_is_in_academia_0: [= FriendIsInAcademia true]
+Fulfilled friend_is_not_in_academia_0: [= FriendIsNotInAcademia true]
+Fulfilled tension_0: [>= Tension 4]
+Fulfilled friend_tension_relieved_0: [= FriendTensionRelieved true]
+Fulfilled checkin_with_disagreer_0: [= CheckinWithDisagreer true]
+Fulfilled inactivity_is_bad_0: [= InactivityIsBad true]
+Fulfilled outro_0: [= Outro true]

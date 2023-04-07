@@ -65,10 +65,11 @@ def format_content(val):
     val = escape(val)
     return val.strip().replace("\n", "")
 
-def format_global(var):
+def format_global(var, text_mode=False):
     # snake or camel case to pascal case
     var = var.strip().replace("?", "")
-    global_var = '^' + sc.pascalcase(var) 
+    carat = '^' if text_mode else ''
+    global_var = carat + sc.pascalcase(var) 
     return global_var
 
 def format_literal(var):

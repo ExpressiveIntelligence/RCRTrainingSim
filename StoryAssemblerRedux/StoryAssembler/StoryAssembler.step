@@ -2,7 +2,7 @@
 # Save the previous search
 # Show the full best path
 initially:
-    [set ^PrintMode = cmd] # cmd or json
+    [set PrintMode = cmd] # cmd or json
 [end]
 
 Initialize ?scene:
@@ -14,10 +14,10 @@ Initialize ?scene:
 [end]
 
 InitializeScene ?scene: 
-    [set ^CurrentFragment = root]
+    [set CurrentFragment = root]
     [Scene ?scene]
-    [set ^CurrentScene = ?scene]
-    [InitScene ^CurrentScene]
+    [set CurrentScene = ?scene]
+    [InitScene CurrentScene]
 [end]
 
 Check:
@@ -26,19 +26,19 @@ Check:
 [end]
 
 CheckNoFrag ?f:
-    [Not [Fragment ?f ^CurrentScene]]
+    [Not [Fragment ?f CurrentScene]]
     Warning: no fragment found for ?f
 [end]
 CheckNoFrag ?f.
 
 
 InitializeChoices:
-    [BestChoices ^CurrentFragment ?next_best]
-    [set ^NextBestChoices = ?next_best]
+    [BestChoices CurrentFragment ?next_best]
+    [set NextBestChoices = ?next_best]
 [end]
 
 PrintChoices:
-    [DoAll [Member ?choice ^NextBestChoices] [WriteVerbatim ?choice]]
+    [DoAll [Member ?choice NextBestChoices] [WriteVerbatim ?choice]]
 [end]
 
 BestPath:
@@ -68,14 +68,14 @@ MakeChoice ?choice_id:
     [Throw |MakeChoice needs a bound variable:| ?choice_id]
 [end]
 MakeChoice ?choice_id:
-    [GoToChoice ^CurrentFragment ?choice_id]
-    [Fragment ?choice_id ^CurrentScene]
+    [GoToChoice CurrentFragment ?choice_id]
+    [Fragment ?choice_id CurrentScene]
     [Not [TestConditions ?choice_id]]
     [Throw Conditions not met for ?choice_id]
 [end]
 MakeChoice ?choice_id:
-    [GoToChoice ^CurrentFragment ?choice_id]
-    [Fragment ?choice_id ^CurrentScene] # TODO no fragment case
+    [GoToChoice CurrentFragment ?choice_id]
+    [Fragment ?choice_id CurrentScene] # TODO no fragment case
     [UpdateCurrentFragment ?choice_id]
 [end]
 MakeChoice ?choice_id:
@@ -91,9 +91,9 @@ MakeChoice ?choice_id:
 UpdateCurrentFragment ?fragment_id:
     [TestConditions ?fragment_id]
     [Visit ?fragment_id]
-    [set ^CurrentFragment = ?fragment_id]
+    [set CurrentFragment = ?fragment_id]
     [BestChoices ?fragment_id ?next_best]
-    [set ^NextBestChoices = ?next_best]
+    [set NextBestChoices = ?next_best]
 [end]
 UpdateCurrentFragment ?fragment_id:
     [Not [TestConditions ?fragment_id]]
@@ -102,13 +102,13 @@ UpdateCurrentFragment ?fragment_id:
 
 [predicate]
 GetFromNextBestChoices ?next_fragment ?choice_id:
-    [ChoiceInList [?next_fragment ?choice_id] ^NextBestChoices]
+    [ChoiceInList [?next_fragment ?choice_id] NextBestChoices]
 [end]
 
 Render:
-    [RenderScene ^CurrentScene][Br]
-    [RenderFragment ^CurrentFragment] [Paragraph]
-    [RenderChoices ?frag ^NextBestChoices]
+    [RenderScene CurrentScene][Br]
+    [RenderFragment CurrentFragment] [Paragraph]
+    [RenderChoices ?frag NextBestChoices]
 [end]
 
 RenderScene ?scene:
@@ -137,5 +137,5 @@ RenderChoice [?frag ?choice_id]: [= ?frag root] |[Start]|\ -> choice\_id: [GetID
 RenderChoice [?frag ?choice_id]: |[Continue]|\ -> choice\_id: [GetID [?frag ?choice_id]] [Br]
 
 GetID [?frag ?choice_id]: [Different ?choice_id false] ?choice_id/WriteVerbatim
-GetID [?frag ?choice_id]: [Fragment ?frag ^CurrentScene] ?frag/WriteVerbatim
+GetID [?frag ?choice_id]: [Fragment ?frag CurrentScene] ?frag/WriteVerbatim
 GetID ?x: ?x

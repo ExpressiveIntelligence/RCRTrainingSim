@@ -61,7 +61,7 @@ GetSceneData ?scene:
 [end]
 
 SceneInfo: 
-    [DoAll [Fragment ?f ^CurrentScene] [Write ?f]]
+    [DoAll [Fragment ?f CurrentScene] [Write ?f]]
 [end]
 
 # TODO This is the last function neccessary to complete the full StoryAssembler port
