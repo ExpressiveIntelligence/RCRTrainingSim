@@ -106,9 +106,9 @@ GetFromNextBestChoices ?next_fragment ?choice_id:
 [end]
 
 Render:
-    [RenderScene CurrentScene][Br]
-    [RenderFragment CurrentFragment] [Paragraph]
-    [RenderChoices ?frag NextBestChoices]
+    Scene [RenderScene CurrentScene][Br]
+    Fragment [RenderFragment CurrentFragment] [Paragraph]
+    Choices [RenderChoices ?frag NextBestChoices]
 [end]
 
 RenderScene ?scene:
