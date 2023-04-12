@@ -3,13 +3,14 @@
 # Show the full best path
 initially:
     [set PrintMode = cmd] # cmd or json
+    [set Error = ""]
 [end]
 
 Initialize ?scene:
     [InitializeScene ?scene]
     [InitializeChoices]
-    Initialized ^CurrentScene.
-    Currently at fragment ^CurrentFragment. [Br]
+    # Initialized ^CurrentScene.
+    # Currently at fragment ^CurrentFragment. [Br]
     [Check]
 [end]
 
@@ -106,35 +107,55 @@ GetFromNextBestChoices ?next_fragment ?choice_id:
 [end]
 
 Render:
-    Scene [RenderScene CurrentScene][Br]
-    Fragment [RenderFragment CurrentFragment] [Paragraph]
-    Choices [RenderChoices ?frag NextBestChoices]
+    <render>
+        <scene> [RenderScene CurrentScene] </scene> [Br]
+        <content> [RenderFragment CurrentFragment] </content> [Br]
+        <speaker> [RenderSpeaker CurrentFragment] </speaker> [Br]
+        <choices> [RenderChoices CurrentFragment NextBestChoices] </choices> [Br]
+        <message> [Error] </message> [Br]
+    </render>
 [end]
 
+RenderScene ?scene: [NotAny [Character ? ?scene ?]]
 RenderScene ?scene:
-    [NotAny [Character ? ?scene ?]]
-[end]
-RenderScene ?scene:
-    You see: [DoAll [PrintCharacter ?id ?scene]]
+    [DoAll [Character ?id ?scene ?n] [RenderCharacter ?id ?scene]]
 [end]
 
-RenderFragment ?frag: [= ?frag root] Welcome to StoryAssembler! No Fragment selected. 
+RenderCharacter ?id ?scene:
+    <character>
+        <id> ?id/WriteVerbatim </id>
+        <name> [PrintName ?id ?scene] </name>
+        <location> [PrintLocation ?id ?scene] </location>
+        <asset> [PrintAsset ?id ?scene] </asset>
+    </character>
+[end]
+RenderCharacter ?id ?scene: <character></character>
+
+
+RenderFragment ?frag: [set ^Error = |"No fragment selected"|] [= ?frag root]
 RenderFragment ?frag:
     [Different ?frag root]
     [Content ?frag]
 [end]
 
-RenderChoices ?frag ?choices:
-    [Length ?choices 0]
-    [WriteVerbatim "Dead End! No choices available."]
+RenderSpeaker ?frag:
+    [Different ?frag root]
+    [Speaker ?frag ?speaker]
+    [PrintName ?speaker CurrentScene]
 [end]
+RenderSpeaker ?frag.
+
+
+RenderChoices ?frag ?choices: [Length ?choices 0] [set ^Error = "No choices available"]
 RenderChoices ?frag ?choices:
-    [Length ?choices ?l] ?l Choices: [Br] [DoAll [Member ?c ?choices] [RenderChoice ?c] [Br]]
+    [Length ?choices ?l]
+    [Br]
+        [DoAll [Member ?c ?choices] [RenderChoice ?c] [Write ,] [Br]] 
 [end]
 
-RenderChoice [?frag ?choice_id]: |[| [ChoiceLabel ?frag] |]| [GetID [?frag ?choice_id]]
-RenderChoice [?frag ?choice_id]: [= ?frag root] |[Start]|\ -> choice\_id: [GetID [?frag ?choice_id]] [Br] 
-RenderChoice [?frag ?choice_id]: |[Continue]|\ -> choice\_id: [GetID [?frag ?choice_id]] [Br]
+RenderChoice [?frag ?choice_id]: <choice> <choice_id>[GetID [?frag ?choice_id]]</choice_id> <text>[ChoiceLabel ?frag]</text> </choice>  
+RenderChoice [?frag ?choice_id]: <choice> [= ?frag root] <choice_id>[GetID [?frag ?choice_id]]</choice_id> <text>Start</text> </choice> 
+RenderChoice [?frag ?choice_id]:  <choice> <choice_id>[GetID [?frag ?choice_id]]</choice_id> <text>Continue</text> </choice> 
 
 GetID [?frag ?choice_id]: [Different ?choice_id false] ?choice_id/WriteVerbatim
 GetID [?frag ?choice_id]: [Fragment ?frag CurrentScene] ?frag/WriteVerbatim

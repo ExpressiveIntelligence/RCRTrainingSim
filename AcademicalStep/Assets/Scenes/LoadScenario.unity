@@ -284,6 +284,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d1bffff72fc0994cba2b11dd2d851a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  storyAssemblerPath: ../StoryAssemblerRedux/StoryAssembler
+  optionalScenePath: 
+  sceneName: maze
 --- !u!4 &1429551393
 Transform:
   m_ObjectHideFlags: 0
