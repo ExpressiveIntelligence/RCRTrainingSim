@@ -51,7 +51,6 @@ Available ?fragment: [Not [Expanded ?fragment CurrentScene]]
 # Check if a fragment has a choice label, but does not print the text of the choice label
 predicate HasChoiceLabel ?frag.
 
-task RenderFragment ?fragment.
 predicate TopLevelFragment ?fragment.
 # TODO document
 predicate Request ?fragment ?request_type ?go_to_or_condition.

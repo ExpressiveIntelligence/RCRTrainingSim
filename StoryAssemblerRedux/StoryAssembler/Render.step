@@ -1,0 +1,59 @@
+task Delim.
+task ItemDelim.
+
+ItemDelim: [WriteVerbatim |<ItemDelim>|]
+Delim: [WriteVerbatim |<Delim>|]
+Br: [NewLine]
+
+Render:
+    [RenderScene][Br]
+    [RenderFragment] [Br]
+    [RenderSpeaker][Br]
+    [RenderNextBestChoices] [Br]
+    [Error] [Br]
+[end]
+
+RenderScene: [NotAny [Character ? ^CurrentScene ?]]
+RenderScene:
+    [DoAll [Character ?id ^CurrentScene ?n] [RenderCharacter ?id ^CurrentScene] [ItemDelim]]
+[end]
+
+RenderCharacter ?id ?scene:
+         ?id/WriteVerbatim [Delim]
+         [PrintName ?id ?scene] [Delim]
+         [PrintLocation ?id ?scene] [Delim]
+         [PrintAsset ?id ?scene] [Delim]
+[end]
+RenderCharacter ?id ?scene: Character Missing.
+
+
+RenderFragment:
+    [Different CurrentFragment root]
+    [Content CurrentFragment]
+[end]
+RenderFragment: [set ^Error = |"No fragment selected"|] 
+
+
+RenderSpeaker:
+    [Different CurrentFragment root]
+    [Speaker CurrentFragment ?speaker]
+    [PrintName ?speaker CurrentScene]
+[end]
+RenderSpeaker.
+
+RenderNextBestChoices: [RenderChoices NextBestChoices]
+
+RenderChoices ?choices: [Length ?choices 0] [set ^Error = "No choices available"]
+RenderChoices ?choices:
+    [Length ?choices ?l]
+    [Br]
+        [DoAll [Member ?c ?choices] [RenderChoice ?c] [ItemDelim]] 
+[end]
+
+RenderChoice [?frag ?choice_id]:  [GetID [?frag ?choice_id]] [Delim] [ChoiceLabel ?frag]   
+RenderChoice [?frag ?choice_id]:  [= ?frag root] [GetID [?frag ?choice_id]] [Delim] Start  
+RenderChoice [?frag ?choice_id]:   [GetID [?frag ?choice_id]] [Delim] Continue
+
+GetID [?frag ?choice_id]: [Different ?choice_id false] ?choice_id/WriteVerbatim
+GetID [?frag ?choice_id]: [Fragment ?frag CurrentScene] ?frag/WriteVerbatim
+GetID ?x: ?x

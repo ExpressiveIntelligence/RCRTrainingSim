@@ -59,6 +59,7 @@ ShowHelp:
     |[PrintChoices]| [Paragraph] Print the choices available. [Paragraph]
 [end]
 
+
 Select ?choice_id:
     [MakeChoice ?choice_id]
     [Render]
@@ -105,58 +106,3 @@ UpdateCurrentFragment ?fragment_id:
 GetFromNextBestChoices ?next_fragment ?choice_id:
     [ChoiceInList [?next_fragment ?choice_id] NextBestChoices]
 [end]
-
-Render:
-    <render>
-        <scene> [RenderScene CurrentScene] </scene> [Br]
-        <content> [RenderFragment CurrentFragment] </content> [Br]
-        <speaker> [RenderSpeaker CurrentFragment] </speaker> [Br]
-        <choices> [RenderChoices CurrentFragment NextBestChoices] </choices> [Br]
-        <message> [Error] </message> [Br]
-    </render>
-[end]
-
-RenderScene ?scene: [NotAny [Character ? ?scene ?]]
-RenderScene ?scene:
-    [DoAll [Character ?id ?scene ?n] [RenderCharacter ?id ?scene]]
-[end]
-
-RenderCharacter ?id ?scene:
-    <character>
-        <id> ?id/WriteVerbatim </id>
-        <name> [PrintName ?id ?scene] </name>
-        <location> [PrintLocation ?id ?scene] </location>
-        <asset> [PrintAsset ?id ?scene] </asset>
-    </character>
-[end]
-RenderCharacter ?id ?scene: <character></character>
-
-
-RenderFragment ?frag: [set ^Error = |"No fragment selected"|] [= ?frag root]
-RenderFragment ?frag:
-    [Different ?frag root]
-    [Content ?frag]
-[end]
-
-RenderSpeaker ?frag:
-    [Different ?frag root]
-    [Speaker ?frag ?speaker]
-    [PrintName ?speaker CurrentScene]
-[end]
-RenderSpeaker ?frag.
-
-
-RenderChoices ?frag ?choices: [Length ?choices 0] [set ^Error = "No choices available"]
-RenderChoices ?frag ?choices:
-    [Length ?choices ?l]
-    [Br]
-        [DoAll [Member ?c ?choices] [RenderChoice ?c] [Write ,] [Br]] 
-[end]
-
-RenderChoice [?frag ?choice_id]: <choice> <choice_id>[GetID [?frag ?choice_id]]</choice_id> <text>[ChoiceLabel ?frag]</text> </choice>  
-RenderChoice [?frag ?choice_id]: <choice> [= ?frag root] <choice_id>[GetID [?frag ?choice_id]]</choice_id> <text>Start</text> </choice> 
-RenderChoice [?frag ?choice_id]:  <choice> <choice_id>[GetID [?frag ?choice_id]]</choice_id> <text>Continue</text> </choice> 
-
-GetID [?frag ?choice_id]: [Different ?choice_id false] ?choice_id/WriteVerbatim
-GetID [?frag ?choice_id]: [Fragment ?frag CurrentScene] ?frag/WriteVerbatim
-GetID ?x: ?x

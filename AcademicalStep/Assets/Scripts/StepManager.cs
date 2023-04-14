@@ -1,9 +1,46 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Step;
 using System.Text.RegularExpressions;
+
+
+[Serializable]
+public class SerializedSceneRender
+{
+    public string content;
+    public string fragmentID;
+    public SerializableChoice[] choices;
+    public SerializableCharacter[] characters;
+    public string speakerID;
+    public string systemMessage; // Error messages, etc.
+}
+
+[Serializable]
+public class SerializableChoice 
+{
+    public string id;
+    public string text;
+}
+
+[Serializable]
+public class SerializableCharacter
+{
+    public string id;
+    public string name;
+    public string assetPath;
+    public Tuple<int, int> position;
+}
+
+[Serializable]
+public class SerializedSceneSaveState
+{
+    public string currentFragment;
+    public SerializableCharacter[] characters;
+    public Dictionary<string, object> stateVariables;
+}
 
 public class StepManager : MonoBehaviour
 {
@@ -53,6 +90,8 @@ public class StepManager : MonoBehaviour
         Debug.Log(current_scene_json);
         current_scene_json = Select("welcome");
         Debug.Log(current_scene_json);
+        var save = SaveState();
+        Debug.Log("Save: " + save);
     }
 
     // Should be called before anything else with a scene name as defined in the Step file: 
@@ -79,15 +118,79 @@ public class StepManager : MonoBehaviour
     }
 
     // Render the current scene, including the fragment content, characters, and choices.
+    // TODO Question: Should we return the JSON string or the SerializedSceneRender object?
     string Render() 
     {
-        return ExecuteWithState("[Render]");
+        // string sceneString = ExecuteWithState("[RenderScene]");
+        string contentString = ExecuteWithState("[RenderFragment]");
+        string currentFragment = ExecuteWithState("[CurrentFragment]");
+        string speakerString = ExecuteWithState("[RenderSpeaker]");
+        // string choicesString = ExecuteWithState("[RenderNextBestChoices]");
+        string systemMessage = ExecuteWithState("[Error]");
+
+        var renderedScene = new SerializedSceneRender()
+        {
+            fragmentID = currentFragment, 
+            content = contentString,
+            choices = new SerializableChoice[] { 
+                new SerializableChoice() { id = "think_twice", text = "Should you really do this?" },
+                new SerializableChoice() { id = "welcome", text = "Welcome to the game. This choice should be displayed second." },
+                new SerializableChoice() { id = "run", text = "Get out of there!" },
+            },
+            characters = new SerializableCharacter[] { 
+                new SerializableCharacter() { id = "samantha", name = "Samantha", assetPath = "Assets/Scripts/Scenes/Characters/samantha.png", position = new Tuple<int, int>(0, 20) },
+            },
+            speakerID= "samantha", // this can be empty
+            systemMessage = systemMessage // Error messages, etc. 
+        };
+
+        // Convert the object to JSON
+        return JsonUtility.ToJson(renderedScene);
+    }
+
+    string parseStep(string stepOutput) 
+    {
+        return stepOutput; // TODO
+        //     string itemDelim = ExecuteWithState("[ItemDelim]");
+        //     string[] objects = stepOutput.Split(itemDelim);
+        //     // for each object, call parseStep on with the type of the array
+        //     // then add the result to the array
+        //     var subType = typeof(T).GetElementType();
+        //     subType[] subObjects = new subType[objects.Length];
+        //     for (int i = 0; i < objects.Length; i++)
+        //     {
+        //         var subObject = parseStep(subType, objects[i]);
+        //         subObjects[i] = subObject;
+        //     }
+        //     return subObjects;
+    }
+
+    string SaveState()
+    {
+        var state = new SerializedSceneSaveState() {
+            currentFragment = "fragment_id_1",
+            stateVariables = new Dictionary<string, object>() {
+                { "Married", false },
+                {"LearningGoalProgress", 4},
+            },
+            characters = new SerializableCharacter[] { 
+                new SerializableCharacter() { id = "samantha", name = "Samantha", assetPath = "Assets/Scripts/Scenes/Characters/samantha.png", position = new Tuple<int, int>(0, 20) },
+            }
+        };
+        return JsonUtility.ToJson(state);
+    }
+
+    void LoadState(string state)
+    {
+        // TODO load a scene from a save state
     }
     
     // Identical to calling MakeChoice, followed by Render
     string Select(string choice_id)
     { 
-        return ExecuteWithState($"[Select {choice_id}]");
+        // return ExecuteWithState($"[Select {choice_id}]"); // This is the old way, TODO remove this from .step files
+        MakeChoice(choice_id);
+        return Render();
     }
 
     // Direct access to the Step interpreter.
@@ -98,8 +201,7 @@ public class StepManager : MonoBehaviour
     {
         (string result, State newState) = this.module.ParseAndExecute(code, this.state);
         this.state = newState;
-        string render = StepManager.FormatHTML(result);
-        return render;
+        return result;
     }
     
     private void SetupStep()
@@ -109,8 +211,12 @@ public class StepManager : MonoBehaviour
 
         // Load the StoryAssembler library, implemented in Step
         LoadStoryAssembler();
-        Debug.Log("Loaded StoryAssembler: " + storyAssemblerLoaded + " and optional scene: " + optionalScenePathLoaded);
+        Debug.Log(
+            "Loaded StoryAssembler: " + storyAssemblerLoaded + 
+            " and optional scene: " + optionalScenePathLoaded
+        );
         Initialize(this.sceneName);
+        UsageDemo();
     }
 
     private void LoadStoryAssembler() 
@@ -141,43 +247,5 @@ public class StepManager : MonoBehaviour
             }
         }
         return module;
-        }
-
-    private static string FormatHTML(string html)
-    {
-        // Replace all newlines and tabs with a single space
-        html = Regex.Replace(html, @"[\r\n\t]+", " ");
-
-        // Lowercase all element text
-        html = Regex.Replace(html, @"<([^>]*)>", match =>
-        {
-            string tag = match.Groups[1].Value;
-            return $"<{tag.ToLower()}>";
-        });
-
-        // Indent the HTML
-        string[] lines = html.Split('<');
-        int indentLevel = 0;
-        string result = "";
-        foreach (string line in lines)
-        {
-            if (line.StartsWith("/"))
-            {
-                indentLevel--;
-            }
-            string indent = "";
-            for (int i = 0; i < indentLevel; i++)
-            {
-                indent += "    ";
-            }
-            result += indent + "<" + line.ToLower() + "\n";
-            if (!line.StartsWith("/") && !line.EndsWith(">"))
-            {
-                indentLevel++;
-            }
-        }
-
-        return result.TrimEnd();
     }
-    
 }

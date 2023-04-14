@@ -1,8 +1,11 @@
 # Must declare the scene for various checks to succeed
 Scene maze.
 
-Character ally maze "Alice".
-CharacterAsset ally maze "./alice.png".
+# TODO World has characters, world state,
+# World has initial scene start, list of scenes
+
+Character ally maze |Alice|.
+CharacterAsset ally maze |./alice.png|.
 CharacterLocation ally maze [0, 0].
 
 # Declare all storylets (fragments)

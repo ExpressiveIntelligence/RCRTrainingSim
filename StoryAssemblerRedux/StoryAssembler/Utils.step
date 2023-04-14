@@ -4,8 +4,6 @@ initially:
     [set Test = none]
 [end]
 
-Br: [NewLine]
-
 [predicate]
 ChoiceInList [?frag ?choice_id] ?list:
     [Member ?m ?list]
