@@ -59,7 +59,6 @@ public class StepManager : MonoBehaviour
         var save = SaveState();
         Debug.Log("Save: " + save);
     }
-
     
     /** 
      *  Initialize Step Library 
@@ -122,14 +121,14 @@ public class StepManager : MonoBehaviour
             systemMessage = ExecuteWithState("[Error]") // Error messages, etc. 
         };
 
-        //TODO: Change to instantiating serialized objects instead
-
-        // TODO discuss RETURN BOOL - INDICATING SUCCESSFUL PARSE OF STEP CONTENT
+        // TODO discuss: Change to instantiating serialized objects instead
+        // TODO discuss: RETURN BOOL - INDICATING SUCCESSFUL PARSE OF STEP CONTENT
         return renderedScene;
     }
 
     string SaveState()
     {
+        // TODO this is a temporary example of the data format
         var state = new SerializedFragmentSaveState() {
             currentFragment = "fragment_id_1",
             stateVariables = new Dictionary<string, object>() {
@@ -148,7 +147,10 @@ public class StepManager : MonoBehaviour
         // TODO load a scene from a save state
     }
     
-    // Identical to calling MakeChoice, followed by Render
+    /* 
+    * Represents the user selecting the choice with the given id.
+    * Returns the next fragment to be rendered.
+    */
     SerializedFragment Select(string choice_id)
     { 
         // return ExecuteWithState($"[Select {choice_id}]"); // This is the old way, TODO remove this from .step files
@@ -156,15 +158,21 @@ public class StepManager : MonoBehaviour
         return Render();
     }
 
-    // Direct access to the Step interpreter.
-    // Executes a step task and prints the result.
-    // For more information on accepted syntax, see the Step Language Reference 
-    // https://github.com/ianhorswill/Step/raw/master/Step%20Language%20Reference.docx
+    /* 
+    * Provides direct access to the Step interpreter.
+    * Executes a step task and returns the result.
+    * For more information on accepted syntax, see the Step Language Reference https://github.com/ianhorswill/Step/raw/master/Step%20Language%20Reference.docx
+    *
+    * @param code The Step code to execute e.g. "[MyTask argument1 argument2]"
+    * @return The result of the execution
+    */
     public string ExecuteWithState(string code)
     {
         return ParseAndExecute(code);
     }
 
+    // Generic overload for ExecuteWithState that parses the result into a list of serializable objects
+    // e.g. ExecuteWithState<SerializedChoice>("[RenderNextBestChoices]")
     public T[] ExecuteWithState<T>(string code)
     {
         string result = ParseAndExecute(code);
@@ -179,7 +187,9 @@ public class StepManager : MonoBehaviour
         return result;
     }
 
-    
+    /* 
+    * Helper function that parses a step output into a list of serializable objects
+    */
     private T[] ParseStep<T>(string stepOutput) {
         string[] items = stepOutput.Trim().Split(this.itemDelim);
         // for each, parse into a choice
