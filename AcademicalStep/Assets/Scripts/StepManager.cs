@@ -7,40 +7,6 @@ using Step;
 using System.Text.RegularExpressions;
 
 
-[Serializable]
-public class SerializedFragmentRender
-{
-    public string content;
-    public string fragmentID;
-    public SerializableChoice[] choices;
-    public SerializableCharacter[] characters;
-    public string speakerID;
-    public string systemMessage; // Error messages, etc.
-}
-
-[Serializable]
-public class SerializableChoice 
-{
-    public string id;
-    public string text;
-}
-
-[Serializable]
-public class SerializableCharacter
-{
-    public string id;
-    public string name;
-    public string assetPath;
-    public Tuple<int, int> position;
-}
-
-[Serializable]
-public class SerializedFragmentSaveState
-{
-    public string currentFragment;
-    public SerializableCharacter[] characters;
-    public Dictionary<string, object> stateVariables;
-}
 
 public class StepManager : MonoBehaviour
 {
@@ -113,7 +79,7 @@ public class StepManager : MonoBehaviour
     // choice_id is the id of the choice as defined in the Step file,
     // returned by Render or PrintChoices
     string MakeChoice(string choice_id)
-    {
+    { 
         return ExecuteWithState($"[MakeChoice {choice_id}]");
     }
 
@@ -132,13 +98,13 @@ public class StepManager : MonoBehaviour
         {
             fragmentID = currentFragment, 
             content = contentString,
-            choices = new SerializableChoice[] { 
-                new SerializableChoice() { id = "think_twice", text = "Should you really do this?" },
-                new SerializableChoice() { id = "welcome", text = "Welcome to the game. This choice should be displayed second." },
-                new SerializableChoice() { id = "run", text = "Get out of there!" },
+            choices = new SerializedChoice[] { 
+                new SerializedChoice() { id = "think_twice", text = "Should you really do this?" },
+                new SerializedChoice() { id = "welcome", text = "Welcome to the game. This choice should be displayed second." },
+                new SerializedChoice() { id = "run", text = "Get out of there!" },
             },
-            characters = new SerializableCharacter[] { 
-                new SerializableCharacter() { id = "samantha", name = "Samantha", assetPath = "Assets/Scripts/Scenes/Characters/samantha.png", position = new Tuple<int, int>(0, 20) },
+            characters = new SerializedCharacter[] { 
+                new SerializedCharacter() { id = "samantha", name = "Samantha", assetPath = "Assets/Scripts/Scenes/Characters/samantha.png", position = new Tuple<int, int>(0, 20) },
             },
             speakerID= "samantha", // this can be empty
             systemMessage = systemMessage // Error messages, etc. 
@@ -173,8 +139,8 @@ public class StepManager : MonoBehaviour
                 { "Married", false },
                 {"LearningGoalProgress", 4},
             },
-            characters = new SerializableCharacter[] { 
-                new SerializableCharacter() { id = "samantha", name = "Samantha", assetPath = "Assets/Scripts/Scenes/Characters/samantha.png", position = new Tuple<int, int>(0, 20) },
+            characters = new SerializedCharacter[] { 
+                new SerializedCharacter() { id = "samantha", name = "Samantha", assetPath = "Assets/Scripts/Scenes/Characters/samantha.png", position = new Tuple<int, int>(0, 20) },
             }
         };
         return JsonUtility.ToJson(state);

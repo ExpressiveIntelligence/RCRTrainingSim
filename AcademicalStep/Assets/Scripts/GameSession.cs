@@ -15,6 +15,9 @@ public class GameSession : MonoBehaviour
     // Singleton instance variable
     public static GameSession instance = null;
 
+    // Managers
+    public StepManager stepManager = null;
+
     // Player Profile Information and Save Data
     public PlayerProfile playerProfile;
 
@@ -33,6 +36,7 @@ public class GameSession : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
+
     }
 
     // Start is called before the first frame update
