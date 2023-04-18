@@ -236,6 +236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0954a7b3e2c9c145870e912765fbdbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stepManager: {fileID: 1429551392}
   playerProfile: {fileID: 1771414670}
   gameWorld: {fileID: 1488782997}
 --- !u!4 &1354342499

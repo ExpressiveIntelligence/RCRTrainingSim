@@ -6,8 +6,6 @@ using UnityEngine;
 using Step;
 using System.Text.RegularExpressions;
 
-
-
 public class StepManager : MonoBehaviour
 {
     // Singleton instance variable
@@ -33,8 +31,6 @@ public class StepManager : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
-
-        SetupStep(); // Load the objects needed to interact with the Step interpreter
     }
 
     // Start is called before the first frame update
@@ -83,10 +79,13 @@ public class StepManager : MonoBehaviour
         return ExecuteWithState($"[MakeChoice {choice_id}]");
     }
 
-    // Render the current scene, including the fragment content, characters, and choices.
-    // TODO Question: Should we return the JSON string or the SerializedSceneRender object?
+    /**
+     * Parse Raw Current Step Fragment into Fragment GameObject
+     */
     string Render() 
     {
+        //TODO: refactor into functions
+
         // string sceneString = ExecuteWithState("[RenderScene]");
         string contentString = ExecuteWithState("[RenderFragment]");
         string currentFragment = ExecuteWithState("[CurrentFragment]");
@@ -94,7 +93,8 @@ public class StepManager : MonoBehaviour
         // string choicesString = ExecuteWithState("[RenderNextBestChoices]");
         string systemMessage = ExecuteWithState("[Error]");
 
-        var renderedScene = new SerializedFragmentRender()
+        //TODO: write methods to systematically
+        var renderedScene = new SerializedFragment()
         {
             fragmentID = currentFragment, 
             content = contentString,
@@ -110,9 +110,12 @@ public class StepManager : MonoBehaviour
             systemMessage = systemMessage // Error messages, etc. 
         };
 
-        // Convert the object to JSON
+        //TODO: Change to instantiating serialized objects instead
+
+        //RETURN BOOL - INDICATING SUCCESSFUL PARSE OF STEP CONTENT
         return JsonUtility.ToJson(renderedScene);
     }
+
 
     string parseStep(string stepOutput) 
     {
@@ -170,7 +173,10 @@ public class StepManager : MonoBehaviour
         return result;
     }
     
-    private void SetupStep()
+    /** Initializes Step Library 
+     *  TODO: 
+     */
+    public void InitStep()
     {
         this.module = LoadModule();
         this.state = State.Empty;

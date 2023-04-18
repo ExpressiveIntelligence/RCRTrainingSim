@@ -24,6 +24,8 @@ public class GameSession : MonoBehaviour
     // Updated Game World Object
     public GameWorld gameWorld;
 
+    // Represents currently loaded Scene
+
     // Awake is used to instantiate class as singleton
     void Awake() 
     {
@@ -42,6 +44,25 @@ public class GameSession : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //safety check for stepManager
+        if (!this.stepManager) 
+        {
+            //get by tag
+            GameObject[] stepManagers = GameObject.FindGameObjectsWithTag("StepManager");
+            if (stepManagers.Length == 0)
+            {
+                Debug.Log("ERROR: StepManager GameObject not found.");
+            }
+            else 
+            {
+                this.stepManager = stepManagers[0].GetComponent<StepManager>();
+            }
+        }
+
+        //Initializes Step Interpreter
+        this.stepManager.InitStep();
+        //TODO: Step Configurations
+        //TODO: Load Current Fragment
         
     }
 

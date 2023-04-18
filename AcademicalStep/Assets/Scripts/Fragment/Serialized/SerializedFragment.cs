@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class SerializedFragmentRender
+public class SerializedFragment
 {
     public string content;
     public string fragmentID;
