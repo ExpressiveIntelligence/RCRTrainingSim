@@ -9,9 +9,9 @@ fluent function CharacterLocation ?id ?scene [?x ?y].
 
 PrintName ?char_id ?scene: [Character ?char_id ?scene ?name] ?name
 PrintAsset ?char_id ?scene: [CharacterAsset ?char_id ?scene ?path] ?path
-PrintAsset ?char_id ?scene: No asset path for ?char_id/Write
+PrintAsset ?char_id ?scene: |placeholder.png|
 PrintLocation ?char_id ?scene: [CharacterLocation ?char_id ?scene ?loc] ?loc
-PrintLocation ?char_id ?scene: No location for ?char_id/Write
+PrintLocation ?char_id ?scene: [0 0]
 
 PrintCharacter ?char_id ?scene:
     [PrintName ?char_id ?scene] at [PrintLocation ?char_id ?scene]

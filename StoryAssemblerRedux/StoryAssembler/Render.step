@@ -6,26 +6,28 @@ Delim: [WriteVerbatim |<Delim>|]
 Br: [NewLine]
 
 Render:
-    [RenderScene][Br]
+    [RenderCharacters][Br]
     [RenderFragment] [Br]
     [RenderSpeaker][Br]
     [RenderNextBestChoices] [Br]
     [Error] [Br]
 [end]
 
-RenderScene: [NotAny [Character ? ^CurrentScene ?]]
-RenderScene:
+RenderCharacters: [NotAny [Character ? ^CurrentScene ?]]
+RenderCharacters:
     [DoAll [Character ?id ^CurrentScene ?n] [RenderCharacter ?id ^CurrentScene] [ItemDelim]]
 [end]
 
 RenderCharacter ?id ?scene:
          ?id/WriteVerbatim [Delim]
          [PrintName ?id ?scene] [Delim]
-         [PrintLocation ?id ?scene] [Delim]
+         [RenderLocation ?id ?scene] [Delim]
          [PrintAsset ?id ?scene] [Delim]
 [end]
-RenderCharacter ?id ?scene: Character Missing.
+RenderCharacter ?id ?scene.
 
+RenderLocation ?char_id ?scene: [CharacterLocation ?char_id ?scene ?loc] [= ?loc [?x ?y]] ?x/WriteVerbatim [Delim] ?y/WriteVerbatim 
+RenderLocation ?char_id ?scene: 10 [Delim] 10 # TODO fix this hard coding
 
 RenderFragment:
     [Different CurrentFragment root]
@@ -39,7 +41,7 @@ RenderSpeaker:
     [Speaker CurrentFragment ?speaker]
     [PrintName ?speaker CurrentScene]
 [end]
-RenderSpeaker.
+RenderSpeaker: |narrator|
 
 RenderNextBestChoices: [RenderChoices NextBestChoices]
 

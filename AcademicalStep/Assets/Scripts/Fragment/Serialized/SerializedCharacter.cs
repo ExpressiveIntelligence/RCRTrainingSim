@@ -10,5 +10,6 @@ public class SerializedCharacter
     public string id;
     public string name;
     public string assetPath;
-    public Tuple<int, int> position;
+    public int x;
+    public int y; 
 }

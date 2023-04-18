@@ -12,5 +12,7 @@ public class SerializedFragment
     public SerializedChoice[] choices;
     public SerializedCharacter[] characters;
     public string speakerID;
+    public string backgroundPath;
+
     public string systemMessage; // Error messages, etc.
 }

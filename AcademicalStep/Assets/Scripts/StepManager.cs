@@ -18,6 +18,8 @@ public class StepManager : MonoBehaviour
     private State state;
     private bool storyAssemblerLoaded = false;
     private bool optionalScenePathLoaded = false;
+    private string itemDelim = "";
+    private string subItem = "";
     
     // Awake is used to instantiate class as singleton
     void Awake()
@@ -48,12 +50,37 @@ public class StepManager : MonoBehaviour
     /// A temporary example of how to use the StepManager
     void UsageDemo() 
     {   
-        string current_scene_json = Render();
+        SerializedFragment fragment = Render();
+        var current_scene_json = JsonUtility.ToJson(fragment);
         Debug.Log(current_scene_json);
-        current_scene_json = Select("welcome");
+        fragment = Select("welcome");
+        current_scene_json = JsonUtility.ToJson(fragment);
         Debug.Log(current_scene_json);
         var save = SaveState();
         Debug.Log("Save: " + save);
+    }
+
+    
+    /** 
+     *  Initialize Step Library 
+     */
+    public void InitStep()
+    {
+        this.module = LoadModule();
+        this.state = State.Empty;
+
+        // Load the StoryAssembler library, implemented in Step
+        LoadStoryAssembler();
+        Debug.Log(
+            "Loaded StoryAssembler: " + storyAssemblerLoaded + 
+            " and optional scene: " + optionalScenePathLoaded
+        );
+        
+        this.subItem = ExecuteWithState("[Delim]");
+        this.itemDelim = ExecuteWithState("[ItemDelim]");
+
+        Initialize(this.sceneName);
+        UsageDemo();
     }
 
     // Should be called before anything else with a scene name as defined in the Step file: 
@@ -82,56 +109,23 @@ public class StepManager : MonoBehaviour
     /**
      * Parse Raw Current Step Fragment into Fragment GameObject
      */
-    string Render() 
+    SerializedFragment Render() 
     {
-        //TODO: refactor into functions
-
-        // string sceneString = ExecuteWithState("[RenderScene]");
-        string contentString = ExecuteWithState("[RenderFragment]");
-        string currentFragment = ExecuteWithState("[CurrentFragment]");
-        string speakerString = ExecuteWithState("[RenderSpeaker]");
-        // string choicesString = ExecuteWithState("[RenderNextBestChoices]");
-        string systemMessage = ExecuteWithState("[Error]");
-
-        //TODO: write methods to systematically
         var renderedScene = new SerializedFragment()
         {
-            fragmentID = currentFragment, 
-            content = contentString,
-            choices = new SerializedChoice[] { 
-                new SerializedChoice() { id = "think_twice", text = "Should you really do this?" },
-                new SerializedChoice() { id = "welcome", text = "Welcome to the game. This choice should be displayed second." },
-                new SerializedChoice() { id = "run", text = "Get out of there!" },
-            },
-            characters = new SerializedCharacter[] { 
-                new SerializedCharacter() { id = "samantha", name = "Samantha", assetPath = "Assets/Scripts/Scenes/Characters/samantha.png", position = new Tuple<int, int>(0, 20) },
-            },
-            speakerID= "samantha", // this can be empty
-            systemMessage = systemMessage // Error messages, etc. 
+            fragmentID =  ExecuteWithState("[CurrentFragment]"), 
+            content = ExecuteWithState("[RenderFragment]"),
+            choices = ExecuteWithState<SerializedChoice>("[RenderNextBestChoices]"),
+            characters = ExecuteWithState<SerializedCharacter>("[RenderCharacters]"),
+            speakerID=  ExecuteWithState("[RenderSpeaker]"), // this can be empty
+            backgroundPath =  "Assets/PlaceholderPath.png", // TODO - implement the Step function retrieval of this
+            systemMessage = ExecuteWithState("[Error]") // Error messages, etc. 
         };
 
         //TODO: Change to instantiating serialized objects instead
 
-        //RETURN BOOL - INDICATING SUCCESSFUL PARSE OF STEP CONTENT
-        return JsonUtility.ToJson(renderedScene);
-    }
-
-
-    string parseStep(string stepOutput) 
-    {
-        return stepOutput; // TODO
-        //     string itemDelim = ExecuteWithState("[ItemDelim]");
-        //     string[] objects = stepOutput.Split(itemDelim);
-        //     // for each object, call parseStep on with the type of the array
-        //     // then add the result to the array
-        //     var subType = typeof(T).GetElementType();
-        //     subType[] subObjects = new subType[objects.Length];
-        //     for (int i = 0; i < objects.Length; i++)
-        //     {
-        //         var subObject = parseStep(subType, objects[i]);
-        //         subObjects[i] = subObject;
-        //     }
-        //     return subObjects;
+        // TODO discuss RETURN BOOL - INDICATING SUCCESSFUL PARSE OF STEP CONTENT
+        return renderedScene;
     }
 
     string SaveState()
@@ -143,7 +137,7 @@ public class StepManager : MonoBehaviour
                 {"LearningGoalProgress", 4},
             },
             characters = new SerializedCharacter[] { 
-                new SerializedCharacter() { id = "samantha", name = "Samantha", assetPath = "Assets/Scripts/Scenes/Characters/samantha.png", position = new Tuple<int, int>(0, 20) },
+                new SerializedCharacter() { id = "samantha", name = "Samantha", assetPath = "Assets/Scripts/Scenes/Characters/samantha.png", x=1, y=10 },
             }
         };
         return JsonUtility.ToJson(state);
@@ -155,7 +149,7 @@ public class StepManager : MonoBehaviour
     }
     
     // Identical to calling MakeChoice, followed by Render
-    string Select(string choice_id)
+    SerializedFragment Select(string choice_id)
     { 
         // return ExecuteWithState($"[Select {choice_id}]"); // This is the old way, TODO remove this from .step files
         MakeChoice(choice_id);
@@ -166,29 +160,63 @@ public class StepManager : MonoBehaviour
     // Executes a step task and prints the result.
     // For more information on accepted syntax, see the Step Language Reference 
     // https://github.com/ianhorswill/Step/raw/master/Step%20Language%20Reference.docx
-   string ExecuteWithState(string code)
+    public string ExecuteWithState(string code)
+    {
+        return ParseAndExecute(code);
+    }
+
+    public T[] ExecuteWithState<T>(string code)
+    {
+        string result = ParseAndExecute(code);
+        T[] parsed = ParseStep<T>(result);
+        return parsed;
+    }
+
+    private string ParseAndExecute(string code)
     {
         (string result, State newState) = this.module.ParseAndExecute(code, this.state);
         this.state = newState;
         return result;
     }
-    
-    /** Initializes Step Library 
-     *  TODO: 
-     */
-    public void InitStep()
-    {
-        this.module = LoadModule();
-        this.state = State.Empty;
 
-        // Load the StoryAssembler library, implemented in Step
-        LoadStoryAssembler();
-        Debug.Log(
-            "Loaded StoryAssembler: " + storyAssemblerLoaded + 
-            " and optional scene: " + optionalScenePathLoaded
-        );
-        Initialize(this.sceneName);
-        UsageDemo();
+    
+    private T[] ParseStep<T>(string stepOutput) {
+        string[] items = stepOutput.Trim().Split(this.itemDelim);
+        // for each, parse into a choice
+        var parsedItems = new List<T>();
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (items[i] == "") continue;
+            var item = InitStepItem<T>(items[i].Split(this.subItem));
+            parsedItems.Add(item);
+        }
+        return parsedItems.ToArray();
+    }
+
+    private T InitStepItem<T>(object[] fields) {
+        // switch statement on type of T, if it is a character create a Character, etc
+        if (typeof(T) == typeof(SerializedChoice))
+        {
+            return (T) (object) new SerializedChoice() { id = Normalize(fields[0]).ToLower(), text = Normalize(fields[1])};
+        }
+        else if (typeof(T) == typeof(SerializedCharacter))
+        {
+            return (T) (object) new SerializedCharacter() { 
+                id = Normalize(fields[0]).ToLower(), 
+                name = Normalize(fields[1]),
+                x = Int32.Parse(Normalize(fields[2])),
+                y = Int32.Parse(Normalize(fields[3])),
+                assetPath = Normalize(fields[4]),
+            };
+        }
+        else
+        {
+            return default(T);
+        }
+    }
+
+    private string Normalize(object o) {
+        return ((string) o).Trim();
     }
 
     private void LoadStoryAssembler() 
