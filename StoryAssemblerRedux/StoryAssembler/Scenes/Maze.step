@@ -116,6 +116,7 @@ Content grue: You are likely to be eaten by a grue.
 Conditions grue: [Inside]
 Effects grue.
 
+# Define the Story Spec as a list of wants and fufillments
 [randomly]
 Want maze initialized.
 Want maze inside.
