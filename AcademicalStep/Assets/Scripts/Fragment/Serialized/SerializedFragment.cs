@@ -13,6 +13,5 @@ public class SerializedFragment
     public SerializedCharacter[] characters;
     public string speakerID;
     public string backgroundPath;
-
     public string systemMessage; // Error messages, etc.
 }

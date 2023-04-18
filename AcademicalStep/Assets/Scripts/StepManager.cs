@@ -75,8 +75,8 @@ public class StepManager : MonoBehaviour
             " and optional scene: " + optionalScenePathLoaded
         );
         
-        this.subItem = ExecuteWithState("[Delim]");
-        this.itemDelim = ExecuteWithState("[ItemDelim]");
+        this.subItem = ExecuteStep("[Delim]");
+        this.itemDelim = ExecuteStep("[ItemDelim]");
 
         Initialize(this.sceneName);
         UsageDemo();
@@ -87,14 +87,14 @@ public class StepManager : MonoBehaviour
     // the scene name would be "maze"
     string Initialize(string sceneName)
     {
-        return ExecuteWithState($"[Initialize {sceneName}]");
+        return ExecuteStep($"[Initialize {sceneName}]");
     }
 
     // Print the choices available in the current scene
     // Unnecessary if you are using the Select or Render functions
     string PrintChoices()
     {
-        return ExecuteWithState("[PrintChoices]");
+        return ExecuteStep("[PrintChoices]");
     }
 
     // Represents a player selecting a choice
@@ -102,7 +102,7 @@ public class StepManager : MonoBehaviour
     // returned by Render or PrintChoices
     string MakeChoice(string choice_id)
     { 
-        return ExecuteWithState($"[MakeChoice {choice_id}]");
+        return ExecuteStep($"[MakeChoice {choice_id}]");
     }
 
     /**
@@ -112,13 +112,13 @@ public class StepManager : MonoBehaviour
     {
         var renderedScene = new SerializedFragment()
         {
-            fragmentID =  ExecuteWithState("[CurrentFragment]"), 
-            content = ExecuteWithState("[RenderFragment]"),
-            choices = ExecuteWithState<SerializedChoice>("[RenderNextBestChoices]"),
-            characters = ExecuteWithState<SerializedCharacter>("[RenderCharacters]"),
-            speakerID=  ExecuteWithState("[RenderSpeaker]"), // this can be empty
+            fragmentID =  ExecuteStep("[CurrentFragment]"), 
+            content = ExecuteStep("[RenderFragment]"),
+            choices = ExecuteStep<SerializedChoice>("[RenderNextBestChoices]"),
+            characters = ExecuteStep<SerializedCharacter>("[RenderCharacters]"),
+            speakerID=  ExecuteStep("[RenderSpeaker]"), // this can be empty
             backgroundPath =  "Assets/PlaceholderPath.png", // TODO - implement the Step function retrieval of this
-            systemMessage = ExecuteWithState("[Error]") // Error messages, etc. 
+            systemMessage = ExecuteStep("[Error]") // Error messages, etc. 
         };
 
         // TODO discuss: Change to instantiating serialized objects instead
@@ -153,7 +153,7 @@ public class StepManager : MonoBehaviour
     */
     SerializedFragment Select(string choice_id)
     { 
-        // return ExecuteWithState($"[Select {choice_id}]"); // This is the old way, TODO remove this from .step files
+        // return ExecuteStep($"[Select {choice_id}]"); // This is the old way, TODO remove this from .step files
         MakeChoice(choice_id);
         return Render();
     }
@@ -166,14 +166,14 @@ public class StepManager : MonoBehaviour
     * @param code The Step code to execute e.g. "[MyTask argument1 argument2]"
     * @return The result of the execution
     */
-    public string ExecuteWithState(string code)
+    public string ExecuteStep(string code)
     {
         return ParseAndExecute(code);
     }
 
-    // Generic overload for ExecuteWithState that parses the result into a list of serializable objects
-    // e.g. ExecuteWithState<SerializedChoice>("[RenderNextBestChoices]")
-    public T[] ExecuteWithState<T>(string code)
+    // Generic overload for ExecuteStep that parses the result into a list of serializable objects
+    // e.g. ExecuteStep<SerializedChoice>("[RenderNextBestChoices]")
+    public T[] ExecuteStep<T>(string code)
     {
         string result = ParseAndExecute(code);
         T[] parsed = ParseStep<T>(result);
