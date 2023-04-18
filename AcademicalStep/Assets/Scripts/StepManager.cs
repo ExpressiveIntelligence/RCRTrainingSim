@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 
 [Serializable]
-public class SerializedSceneRender
+public class SerializedFragmentRender
 {
     public string content;
     public string fragmentID;
@@ -35,7 +35,7 @@ public class SerializableCharacter
 }
 
 [Serializable]
-public class SerializedSceneSaveState
+public class SerializedFragmentSaveState
 {
     public string currentFragment;
     public SerializableCharacter[] characters;
@@ -128,7 +128,7 @@ public class StepManager : MonoBehaviour
         // string choicesString = ExecuteWithState("[RenderNextBestChoices]");
         string systemMessage = ExecuteWithState("[Error]");
 
-        var renderedScene = new SerializedSceneRender()
+        var renderedScene = new SerializedFragmentRender()
         {
             fragmentID = currentFragment, 
             content = contentString,
@@ -167,7 +167,7 @@ public class StepManager : MonoBehaviour
 
     string SaveState()
     {
-        var state = new SerializedSceneSaveState() {
+        var state = new SerializedFragmentSaveState() {
             currentFragment = "fragment_id_1",
             stateVariables = new Dictionary<string, object>() {
                 { "Married", false },
