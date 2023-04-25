@@ -6,10 +6,13 @@ predicate StartState ?scene.
 predicate Character ?id ?scene ?name.
 fluent function CharacterAsset ?id ?scene ?asset_path.
 fluent function CharacterLocation ?id ?scene [?x ?y].
+task BackgroundAsset ?scene.
 
 PrintName ?char_id ?scene: [Character ?char_id ?scene ?name] ?name
+
 PrintAsset ?char_id ?scene: [CharacterAsset ?char_id ?scene ?path] ?path
-PrintAsset ?char_id ?scene: |placeholder.png|
+PrintAsset ?char_id ?scene.
+
 PrintLocation ?char_id ?scene: [CharacterLocation ?char_id ?scene ?loc] ?loc
 PrintLocation ?char_id ?scene: [0 0]
 

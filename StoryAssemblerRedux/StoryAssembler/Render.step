@@ -1,9 +1,16 @@
 task Delim.
 task ItemDelim.
 
+initially:
+    [set ErrorList = empty]
+[end]
+
 ItemDelim: [WriteVerbatim |<ItemDelim>|]
 Delim: [WriteVerbatim |<Delim>|]
 Br: [NewLine]
+
+Error: [DoAll [Member ?e ErrorList] [WriteVerbatim ?e] [ItemDelim]]
+Error.
 
 Render:
     [RenderCharacters][Br]
@@ -27,14 +34,16 @@ RenderCharacter ?id ?scene:
 RenderCharacter ?id ?scene.
 
 RenderLocation ?char_id ?scene: [CharacterLocation ?char_id ?scene ?loc] [= ?loc [?x ?y]] ?x/WriteVerbatim [Delim] ?y/WriteVerbatim 
-RenderLocation ?char_id ?scene: 10 [Delim] 10 # TODO fix this hard coding
+RenderLocation ?char_id ?scene: [add |No location found| ErrorList] -1 [Delim] -1 
+
+RenderBackground: [BackgroundAsset CurrentScene] 
+RenderBackground.
 
 RenderFragment:
     [Different CurrentFragment root]
     [Content CurrentFragment]
 [end]
-RenderFragment: [set ^Error = |"No fragment selected"|] 
-
+RenderFragment: [add |No fragment available| ErrorList] 
 
 RenderSpeaker:
     [Different CurrentFragment root]
@@ -45,7 +54,7 @@ RenderSpeaker: |narrator|
 
 RenderNextBestChoices: [RenderChoices NextBestChoices]
 
-RenderChoices ?choices: [Length ?choices 0] [set ^Error = "No choices available"]
+RenderChoices ?choices: [Length ?choices 0] [add |No choices available| ErrorList]
 RenderChoices ?choices:
     [Length ?choices ?l]
     [Br]

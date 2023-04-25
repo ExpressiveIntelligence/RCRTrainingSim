@@ -107,6 +107,7 @@ public class StepManager : MonoBehaviour
 
     /**
      * Parse Raw Current Step Fragment into Fragment GameObject
+     * if the step parse fails for a given field, it will be null.
      */
     SerializedFragment Render() 
     {
@@ -116,13 +117,11 @@ public class StepManager : MonoBehaviour
             content = ExecuteStep("[RenderFragment]"),
             choices = ExecuteStep<SerializedChoice>("[RenderNextBestChoices]"),
             characters = ExecuteStep<SerializedCharacter>("[RenderCharacters]"),
-            speakerID=  ExecuteStep("[RenderSpeaker]"), // this can be empty
-            backgroundPath =  "Assets/PlaceholderPath.png", // TODO - implement the Step function retrieval of this
+            speakerID =  ExecuteStep("[RenderSpeaker]"), // this can be empty
+            backgroundPath = ExecuteStep("[RenderBackground]"),
             systemMessage = ExecuteStep("[Error]") // Error messages, etc. 
         };
 
-        // TODO discuss: Change to instantiating serialized objects instead
-        // TODO discuss: RETURN BOOL - INDICATING SUCCESSFUL PARSE OF STEP CONTENT
         return renderedScene;
     }
 
@@ -152,8 +151,7 @@ public class StepManager : MonoBehaviour
     * Returns the next fragment to be rendered.
     */
     SerializedFragment Select(string choice_id)
-    { 
-        // return ExecuteStep($"[Select {choice_id}]"); // This is the old way, TODO remove this from .step files
+    {
         MakeChoice(choice_id);
         return Render();
     }
@@ -164,20 +162,36 @@ public class StepManager : MonoBehaviour
     * For more information on accepted syntax, see the Step Language Reference https://github.com/ianhorswill/Step/raw/master/Step%20Language%20Reference.docx
     *
     * @param code The Step code to execute e.g. "[MyTask argument1 argument2]"
-    * @return The result of the execution
+    * @return The result of the execution. 
+    * Returns null and throws a debug message if the execution or parse fails.
     */
     public string ExecuteStep(string code)
-    {
-        return ParseAndExecute(code);
+    {   
+        try {
+            return ParseAndExecute(code);
+        } catch (Exception e) {
+            Debug.Log(e);
+            return null;
+        }
     }
 
     // Generic overload for ExecuteStep that parses the result into a list of serializable objects
     // e.g. ExecuteStep<SerializedChoice>("[RenderNextBestChoices]")
     public T[] ExecuteStep<T>(string code)
-    {
-        string result = ParseAndExecute(code);
-        T[] parsed = ParseStep<T>(result);
-        return parsed;
+    {   
+        string result = null;
+        try {
+            result = ParseAndExecute(code);
+        } catch (Exception e) {
+            Debug.Log(e);
+            return null;
+        }
+        try {
+            return ParseStep<T>(result);
+        } catch (Exception e) {
+            Debug.Log(e);
+            return null;
+        }
     }
 
     private string ParseAndExecute(string code)

@@ -1,12 +1,12 @@
 # Must declare the scene for various checks to succeed
 Scene test.
 
-Character ally test "Alice".
-CharacterAsset ally test "./alice.png".
+Character ally test |Alice|.
+CharacterAsset ally test |./alice.png|.
 CharacterLocation ally test [0, 0].
 
-Character protagonist test "Emma".
-CharacterAsset protagonist test "./emma.png".
+Character protagonist test |Emma|.
+CharacterAsset protagonist test |./emma.png|.
 CharacterLocation protagonist test [0, 0].
 
 # Declare all storylets (fragments)
@@ -50,7 +50,7 @@ Conditions disastrous_date:
     [Not [Dating ally protagonist]]
 [end]
 Effects disastrous_date. # no effects
-Speaker disastrous_date ?speaker: [= ?speaker "ally"]
+Speaker disastrous_date ?speaker: [= ?speaker |ally|]
 [randomly]
 ChoiceCondition disastrous_date ends_badly: [Dislikes ally protagonist]
 ChoiceCondition disastrous_date tentative_recovery: [Dating ally protagonist]
@@ -83,13 +83,13 @@ Conditions respite.
 # Effects dynamic: [now [ExtraPoints]]
 # [randomly] ChoiceLabel dynamic: Look outward.
 
-Content not_on_the_path: "In another town, someone else is dating"
+Content not_on_the_path: |In another town, someone else is dating|
 Effects not_on_the_path:
     [now [Dating someone_else another_person]]
 [end]
 Conditions not_on_the_path.
 
-Content hard: "I do"
+Content hard: |I do|
 Effects hard:
     [now [Married ally protagonist]]
 [end]
@@ -103,7 +103,7 @@ Conditions hard:
 # Conditions dynamic.
 # Effects dynamic.
 
-Content bad: "should not be able to get here"
+Content bad: |should not be able to get here|
 Effects bad.
 
 Content overthinking: What is happening?? I'm overthinking this. I need to take a break.
