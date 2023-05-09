@@ -17,6 +17,7 @@ public class GameSession : MonoBehaviour
 
     // Managers
     public StepManager stepManager = null;
+    public FragmentManager fragmentManager = null;
 
     // Player Profile Information and Save Data
     public PlayerProfile playerProfile;
@@ -59,11 +60,23 @@ public class GameSession : MonoBehaviour
             }
         }
 
-        //Initializes Step Interpreter
-        this.stepManager.InitStep();
-        //TODO: Step Configurations
-        //TODO: Load Current Fragment
-        
+        //safely check for fragmentManager
+        if (!this.fragmentManager)
+        {
+            //get by tag
+            GameObject[] fragmentManagers = GameObject.FindGameObjectsWithTag("FragmentManager");
+            if (fragmentManagers.Length == 0)
+            {
+                Debug.Log("ERROR: FragmentManager GameObject not found.");
+            }
+            else
+            {
+                this.fragmentManager = fragmentManagers[0].GetComponent<FragmentManager>();
+            }
+        }
+
+        this.fragmentManager.gameSession = this;
+         
     }
 
     // Update is called once per frame

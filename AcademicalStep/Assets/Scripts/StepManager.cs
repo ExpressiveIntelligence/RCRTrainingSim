@@ -79,7 +79,7 @@ public class StepManager : MonoBehaviour
         this.itemDelim = ExecuteStep("[ItemDelim]");
 
         Initialize(this.sceneName);
-        UsageDemo();
+        //UsageDemo();
     }
 
     // Should be called before anything else with a scene name as defined in the Step file: 
@@ -109,7 +109,7 @@ public class StepManager : MonoBehaviour
      * Parse Raw Current Step Fragment into Fragment GameObject
      * if the step parse fails for a given field, it will be null.
      */
-    SerializedFragment Render() 
+    public SerializedFragment Render() 
     {
         var renderedScene = new SerializedFragment()
         {
