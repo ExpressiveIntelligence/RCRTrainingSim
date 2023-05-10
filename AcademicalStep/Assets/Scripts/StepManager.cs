@@ -79,6 +79,20 @@ public class StepManager : MonoBehaviour
         this.itemDelim = ExecuteStep("[ItemDelim]");
 
         Initialize(this.sceneName);
+        // We need to call Render once to get the first fragment
+        SerializedFragment fragment = Render();
+        // Check the length of choices
+        Debug.Log("Choices: " + fragment.choices.Length);
+        if (fragment.choices.Length == 0) {
+            Debug.Log("No choices found from the root fragment");
+        } else if (fragment.choices.Length > 1) {
+            Debug.Log("Warning: StoryAssembler returned multiple choices from the root");
+            Select(fragment.choices[0].id);
+        } else {
+            // There should only be one choice if StoryAssembler is working nominally
+            Select(fragment.choices[0].id);
+        }
+
         UsageDemo();
     }
 
@@ -88,6 +102,8 @@ public class StepManager : MonoBehaviour
     string Initialize(string sceneName)
     {
         return ExecuteStep($"[Initialize {sceneName}]");
+
+
     }
 
     // Print the choices available in the current scene

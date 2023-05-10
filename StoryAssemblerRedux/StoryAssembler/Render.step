@@ -20,6 +20,14 @@ Render:
     [Error] [Br]
 [end]
 
+Show:
+    Characters: [RenderCharacters][Br]
+    Fragment: [RenderFragment] [Br]
+    Speaker: [RenderSpeaker][Br]
+    Choices: [RenderNextBestChoices] [Br]
+    Errror [Error] [Br]
+[end]
+
 RenderCharacters: [NotAny [Character ? ^CurrentScene ?]]
 RenderCharacters:
     [DoAll [Character ?id ^CurrentScene ?n] [RenderCharacter ?id ^CurrentScene] [ItemDelim]]

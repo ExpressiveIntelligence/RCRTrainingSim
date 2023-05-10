@@ -1,0 +1,81 @@
+Scene irb.
+
+Character student irb |Brad|.
+CharacterAsset student irb |./brad.png|.
+CharacterLocation student irb [0, 0].
+
+Character teacher irb |Ned|.
+CharacterAsset teacher irb |./ned.png|.
+CharacterLocation teacher irb [0, 0].
+
+# Scene specific predicates
+fluent CharacterSelected.
+
+InitialSceneState irb:
+    [set Initialized = true]
+    [now [Not [CharacterSelected]]]
+    [now [Not [BeginEvent]]]
+[end]
+
+# Declare all fragments
+[randomly]
+Fragment character_select irb.
+Fragment ned irb.
+Fragment brad irb.
+Fragment brad_is_late irb.
+Fragment irb_vent irb.
+Fragment apology irb.
+Fragment temp irb.
+
+Content character_select: Who are you?
+Effects character_select.
+Conditions character_select.
+GoToChoice character_select ned.
+GoToChoice character_select brad.
+
+# Fragment content
+Content ned: You're skimming through your email, killing time before one of your students arrives for a check-in meeting about a research project that he's leading the charge on. He's been vocal about his displeasure with the slow process of getting IRB approval, which has already taken over a month.
+Effects ned: [now [CharacterSelected]]
+Conditions ned.
+ChoiceLabel ned: Ned Prescott, Advisor
+GoToChoice ned brad_is_late.
+
+Content brad: Hi. I don't exist yet. 
+Effects brad: [now [CharacterSelected]]
+Conditions brad.
+ChoiceLabel brad: Brad, Student
+
+Content brad_is_late: Brad rushes in, out of breath.
+ChoiceLabel brad_is_late: Where is he?
+Effects brad_is_late.
+Conditions brad_is_late.
+ChoiceCondition brad_is_late choice1: [BeginEvent]
+Content brad_is_late.
+# ChoiceCondition brad_is_late choice2: [BeginEvent]
+
+
+Content irb_vent: This IRB thing is taking forever.
+ChoiceLabel irb_vent: I'm so sorry for being late Prof. Ned!
+Effects irb_vent: [now [BeginEvent]]
+Conditions irb_vent.
+
+# Content apology: I'm so sorry for being late Prof. Ned!
+# Speaker brad apology.
+# Effects apology: [now [BeginEvent]]
+# Conditions apology.
+
+Content temp: placeholder
+ChoiceLabel temp: placeholder
+Effects temp.
+Conditions temp.
+
+# Define the Story Spec as a list of wants and fufillments
+[randomly]
+Want irb initialized.
+Want irb character_selected.
+Want irb events.
+
+[randomly]
+Fulfilled initialized: [= Initialized true]
+Fulfilled character_selected: [CharacterSelected]
+Fulfilled events: [BeginEvent]

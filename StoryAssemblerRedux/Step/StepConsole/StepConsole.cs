@@ -88,6 +88,10 @@ namespace StepConsole
                     var dir = "..\\..\\..\\..\\StoryAssembler";
                     module.LoadDirectory(dir);
                     Console.WriteLine("Loaded " + dir);
+                    var dir2 = "..\\..\\..\\..\\IRBScenes";
+                    module.LoadDirectory(dir2);
+                    Console.WriteLine("Loaded " + dir2);
+
                     return module;
                 }
                 catch (Exception ex)
