@@ -92,8 +92,6 @@ public class StepManager : MonoBehaviour
             // There should only be one choice if StoryAssembler is working nominally
             Select(fragment.choices[0].id);
         }
-
-        UsageDemo();
     }
 
     // Should be called before anything else with a scene name as defined in the Step file: 
@@ -125,7 +123,7 @@ public class StepManager : MonoBehaviour
      * Parse Raw Current Step Fragment into Fragment GameObject
      * if the step parse fails for a given field, it will be null.
      */
-    SerializedFragment Render() 
+    public SerializedFragment Render() 
     {
         var renderedScene = new SerializedFragment()
         {
