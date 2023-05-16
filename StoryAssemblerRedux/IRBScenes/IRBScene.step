@@ -1,5 +1,8 @@
 Scene irb.
 
+BackgroundAsset irb: |./irb_background.png|.
+
+
 Character student irb |Brad|.
 CharacterAsset student irb |./brad.png|.
 CharacterLocation student irb [0, 0].

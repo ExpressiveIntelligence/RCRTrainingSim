@@ -14,6 +14,8 @@ public class StepManager : MonoBehaviour
     public string optionalScenePath; // If desired, you can specify an additional path to a file containing your current scene (e.g. "Assets/Scripts/Scenes/Maze.step")
     public string sceneName;
 
+    public bool debug = false;
+
     private Module module;
     private State state;
     private bool storyAssemblerLoaded = false;
@@ -82,7 +84,8 @@ public class StepManager : MonoBehaviour
         // We need to call Render once to get the first fragment
         SerializedFragment fragment = Render();
         // Check the length of choices
-        Debug.Log("Choices: " + fragment.choices.Length);
+        if (this.debug)
+            Debug.Log("Choices: " + fragment.choices.Length);
         if (fragment.choices.Length == 0) {
             Debug.Log("No choices found from the root fragment");
         } else if (fragment.choices.Length > 1) {
@@ -90,6 +93,8 @@ public class StepManager : MonoBehaviour
             Select(fragment.choices[0].id);
         } else {
             // There should only be one choice if StoryAssembler is working nominally
+            if (this.debug)
+                Debug.Log("Selecting choice: " + fragment.choices[0].id);
             Select(fragment.choices[0].id);
         }
     }
@@ -167,6 +172,8 @@ public class StepManager : MonoBehaviour
     SerializedFragment Select(string choice_id)
     {
         MakeChoice(choice_id);
+        if (this.debug)
+            Debug.Log("Rendering " + choice_id);
         return Render();
     }
 
@@ -182,6 +189,8 @@ public class StepManager : MonoBehaviour
     public string ExecuteStep(string code)
     {   
         try {
+            if (this.debug)
+                Debug.Log("Executing Step: " + code);
             return ParseAndExecute(code);
         } catch (Exception e) {
             Debug.Log(e);
