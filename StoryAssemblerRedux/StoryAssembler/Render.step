@@ -40,7 +40,8 @@ Show:
     Fragment: [CurrentFragment] [Br]
     Speaker: [RenderSpeaker][Br]
     Choices: [RenderNextBestChoices] [Br]
-    Error [Error] [Br]
+    Warnings: [Warnings CurrentScene]
+    Errors: [Error] [Br]
 [end]
 
 RenderCharacters: [NotAny [Character ? ^CurrentScene ?]]

@@ -11,6 +11,8 @@ AllPathsFrom ?source_frag ?paths: [FindPaths [?source_frag false] empty ?paths]
 # TODO we don't yet support requests in BestChoices
 BestChoices ?frag ?choices:
     [AllPathsFrom ?frag ?paths]
+    # All paths: ?paths
+
     [AllGoToChoices ?frag ?goto_frags]
     [BestConditionalChoices ?frag ?paths ?conditional_choice_frags] # TODO this has to be backtracked
     

@@ -1,8 +1,54 @@
+fluent DebugMode.
+
 initially:
     [set CurrentScene = test]
     [set AddTemp = empty]
     [set Test = none]
+    [now [DebugMode]]
 [end]
+
+Warnings ?scene: 
+    [Missing [Content] ?scene]
+    [Missing [ChoiceLabel] ?scene]
+    # [Missing [GoToChoice ?] ?scene]
+    # [Missing [Conditions] ?scene]
+    # [Missing [Effects] ?scene]
+    [ChoiceWarnings ?scene]
+[end]
+
+Missing ?call ?scene:
+    [FindAll ?frag
+        [Begin [Call ?call ?frag] [Not [Fragment ?frag ?scene]] ]
+        ?bad_content
+    ]
+    [Member ?m ?bad_content]
+    Warning, these ?call/WriteVerbatim declarations have no fragments: ?bad_content/WriteVerbatim
+[end]
+Missing ? ?.
+
+GoToWarnings ?scene:
+    [FindAll ?frag
+        [Begin [GoToChoice ?frag ?out] [Not [Fragment ?frag ?scene]] ]
+        ?bad_content
+    ]
+    [Member ?m ?bad_content]
+    Warning, these GoToChoice declarations have no fragments: ?bad_content
+[end]
+GoToWarnings ?.
+
+ChoiceWarnings ?scene:
+    [FindAll ?frag
+        [Begin [GoToChoice ?frag ?out] [Not [Fragment ?frag ?scene]] ]
+        ?bad_content
+    ]
+    [Member ?m ?bad_content]
+    Warning, these GoToChoice declarations have no fragments: ?bad_content
+[end]
+ChoiceWarnings ?.
+
+
+
+
 
 [predicate]
 ChoiceInList [?frag ?choice_id] ?list:

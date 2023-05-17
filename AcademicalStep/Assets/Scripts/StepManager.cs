@@ -105,8 +105,6 @@ public class StepManager : MonoBehaviour
     string Initialize(string sceneName)
     {
         return ExecuteStep($"[Initialize {sceneName}]");
-
-
     }
 
     // Print the choices available in the current scene
