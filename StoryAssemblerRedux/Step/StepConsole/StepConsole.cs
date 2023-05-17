@@ -17,7 +17,7 @@ namespace StepConsole
 
             Module module = LoadModule();
             State state = State.Empty;
-            Boolean useState = false;
+            Boolean useState = true;
 
             while (true)
             {

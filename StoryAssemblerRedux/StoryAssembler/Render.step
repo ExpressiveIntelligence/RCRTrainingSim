@@ -1,8 +1,12 @@
 task Delim.
 task ItemDelim.
 
-initially:
+PrepareRender: 
     [set ErrorList = empty]
+[end]
+
+initially:
+    [PrepareRender]
 [end]
 
 ItemDelim: [WriteVerbatim |<ItemDelim>|]
@@ -12,20 +16,31 @@ Br: [NewLine]
 Error: [DoAll [Member ?e ErrorList] [WriteVerbatim ?e] [ItemDelim]]
 Error.
 
-Render:
+
+# Create the output format that will be JSONified by the StepManager
+# Any changes to this should be accompanied by a change with the StepManager
+RenderOutputFormat:
+    [PrepareRender]
+
     [RenderCharacters][Br]
-    [RenderFragment] [Br]
+    [RenderFragmentContent] [Br]
     [RenderSpeaker][Br]
     [RenderNextBestChoices] [Br]
     [Error] [Br]
 [end]
 
+# Abbreviation of Show
+S: [Show]
+
+# Human readable version of Render
 Show:
+    [PrepareRender]
     Characters: [RenderCharacters][Br]
-    Fragment: [RenderFragment] [Br]
+    Content: [RenderFragmentContent] [Br]
+    Fragment: [CurrentFragment] [Br]
     Speaker: [RenderSpeaker][Br]
     Choices: [RenderNextBestChoices] [Br]
-    Errror [Error] [Br]
+    Error [Error] [Br]
 [end]
 
 RenderCharacters: [NotAny [Character ? ^CurrentScene ?]]
@@ -47,11 +62,11 @@ RenderLocation ?char_id ?scene: [add |No location found| ErrorList] -1 [Delim] -
 RenderBackground: [BackgroundAsset CurrentScene] 
 RenderBackground.
 
-RenderFragment:
+RenderFragmentContent:
     [Different CurrentFragment root]
     [Content CurrentFragment]
 [end]
-RenderFragment: [add |No fragment available| ErrorList] 
+RenderFragmentContent: [add |No fragment available| ErrorList] 
 
 RenderSpeaker:
     [Different CurrentFragment root]

@@ -100,7 +100,6 @@ RemoveTupleFromList ?tuple ?list ?without:
     [FindAll ?n [Begin [Member ?n ?list] [Different ?tuple ?n]] ?without]
 [end]
 
-
 Last ?last ?list:
     [Reverse ?list ?reversed]
     [set Reversed = ?reversed]

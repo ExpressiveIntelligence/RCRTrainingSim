@@ -133,7 +133,7 @@ public class StepManager : MonoBehaviour
         var renderedScene = new SerializedFragment()
         {
             fragmentID =  Normalize(ExecuteStep("[CurrentFragment]")).ToLower(), 
-            content = ExecuteStep("[RenderFragment]"),
+            content = ExecuteStep("[RenderOutputFormat]"),
             choices = ExecuteStep<SerializedChoice>("[RenderNextBestChoices]"),
             characters = ExecuteStep<SerializedCharacter>("[RenderCharacters]"),
             speakerID =  ExecuteStep("[RenderSpeaker]"), // this can be empty
