@@ -32,13 +32,13 @@ InitialSceneState irb:
 [randomly]
 Fragment character_select irb.
 Fragment select_ned irb.
-Fragment select_brad irb.
-Fragment beat_1_root irb.
-Fragment beat_1_ned_talks_low_snark irb.
-Fragment beat_1_ned_talks_med_snark irb.
-Fragment beat_1_ned_talks_high_snark irb.
-Fragment temp irb.
-Fragment temp2 irb.
+# Fragment select_brad irb.
+# Fragment beat_1_root irb.
+# Fragment beat_1_ned_talks_low_snark irb.
+# Fragment beat_1_ned_talks_med_snark irb.
+# Fragment beat_1_ned_talks_high_snark irb.
+# Fragment temp irb.
+# Fragment temp2 irb.
 
 Content character_select: Who are you? 
 Effects character_select: [now [CharacterSelected]]
@@ -73,9 +73,9 @@ Effects beat_1_root:
     # [now [Root]]
 [end]
 # GoToChoice beat_1_root temp.
-ChoiceCondition beat_1_root choice_1: [= CurrentBeat beat_1] [Not [Root]]
-ChoiceCondition beat_1_root choice_2: [= CurrentBeat beat_1] [Not [Root]]
-ChoiceCondition beat_1_root choice_3: [= CurrentBeat beat_1] [Not [Root]]
+ChoiceCondition beat_1_root choice_1: [= CurrentBeat beat_1]
+# ChoiceCondition beat_1_root choice_2: [= CurrentBeat beat_1]
+# ChoiceCondition beat_1_root choice_3: [= CurrentBeat beat_1]
 
 Content beat_1_ned_talks_low_snark: No worries! I was late myself, it's a busy world!
 ChoiceLabel beat_1_ned_talks_low_snark: No worries!
@@ -83,11 +83,11 @@ Conditions beat_1_ned_talks_low_snark.
 Effects beat_1_ned_talks_low_snark: 
     [set CurrentBeat = beat_1]
     [set Snark = Snark]
-    [now [Not [Root]]]
+    # [now [Not [Root]]]
 [end]
 ChoiceCondition beat_1_ned_talks_low_snark choice_1: 
     [= CurrentBeat beat_1]
-    [Not [Root]]
+    # [Not [Root]]
 [end]
 
 Content beat_1_ned_talks_med_snark: No worries! Though I do have a hard stop, I have another meeting soon.
@@ -96,7 +96,7 @@ Conditions beat_1_ned_talks_med_snark.
 Effects beat_1_ned_talks_med_snark: 
     [set CurrentBeat = beat_1]
     [set Snark = Snark + 1] 
-    [now [Not [Root]]]
+    # [now [Not [Root]]]
 [end]
 ChoiceCondition beat_1_ned_talks_med_snark choice_1: [= CurrentBeat beat_1] [Not [Root]]
 
@@ -106,12 +106,11 @@ Conditions beat_1_ned_talks_high_snark.
 Effects beat_1_ned_talks_high_snark: 
     [set CurrentBeat = beat_1]
     [set Snark = Snark + 2] 
-    [now [Not [Root]]]
+    # [now [Not [Root]]]
 [end]
 ChoiceCondition beat_1_ned_talks_high_snark choice_1: [= CurrentBeat beat_1] [Not [Root]]
 
 ## END BEAT 1 ##
-
 Content temp: placeholder
 ChoiceLabel temp: placeholder
 Effects temp.
@@ -129,7 +128,7 @@ Want irb snark.
 Want irb verysnark.
 
 [randomly]
-# Fulfilled initialized: [Initialized]
+Fulfilled initialized: [Initialized]
 Fulfilled character_selected: [CharacterSelected]
 Fulfilled snark: [> 0 Snark]
 Fulfilled verysnark: [> 1 Snark]

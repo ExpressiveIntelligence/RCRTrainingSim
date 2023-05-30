@@ -1,0 +1,39 @@
+Scene irb.
+
+BackgroundAsset irb: |./irb_background.png|.
+
+Character student irb |Brad|.
+CharacterAsset student irb |./brad.png|.
+CharacterLocation student irb [0, 0].
+
+Character teacher irb |Ned|.
+CharacterAsset teacher irb |./ned.png|.
+CharacterLocation teacher irb [0, 0].
+
+# Scene specific predicates
+fluent CharacterSelected.
+fluent Initialized.
+
+InitialSceneState irb:
+    [now [Not [CharacterSelected]]]
+    [now [Initialized]]
+[end]
+
+Fragment character_select irb.
+
+Content character_select: Who are you? 
+Effects character_select: [now [CharacterSelected]]
+Conditions character_select.
+GoToChoice character_select character_select.
+
+[randomly]
+Want irb initialized.
+Want irb character_selected.
+# Want irb snark.
+# Want irb verysnark.
+
+[randomly]
+Fulfilled initialized: [Initialized]
+Fulfilled character_selected: [CharacterSelected]
+# Fulfilled snark: [> 0 Snark]
+# Fulfilled verysnark: [> 1 Snark]

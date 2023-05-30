@@ -1,0 +1,133 @@
+Scene irb.
+
+BackgroundAsset irb: |./irb_background.png|.
+
+Character student irb |Brad|.
+CharacterAsset student irb |./brad.png|.
+CharacterLocation student irb [0, 0].
+
+Character teacher irb |Ned|.
+CharacterAsset teacher irb |./ned.png|.
+CharacterLocation teacher irb [0, 0].
+
+# Scene specific predicates
+fluent CharacterSelected.
+fluent Initialized.
+
+InitialSceneState irb:
+    [now [Not [CharacterSelected]]]
+    [now [Initialized]]
+
+    [set NedFrustration = 0]
+    [set CurrentBeat = beat_1]
+    [set Snark = 0]
+
+    [set Misunderstanding = empty] # forest for trees, not understanding what goes into an IRB request, etc
+[end]
+
+# Declare all fragments 
+# (NOTE DO NOT PUT A SPACE LINE VBETWEEN FRAGMENTS)
+[randomly]
+Fragment character_select irb.
+Fragment select_ned irb.
+Fragment select_brad irb.
+# Fragment beat_1_root irb.
+# Fragment beat_1_ned_talks_low_snark irb.
+# Fragment beat_1_ned_talks_med_snark irb.
+# Fragment beat_1_ned_talks_high_snark irb.
+
+
+# Fragment content
+
+## CHARACTER SELECT ##
+
+Content character_select: Who are you? 
+Effects character_select: [now [CharacterSelected]]
+Conditions character_select.
+# GoToChoice character_select select_ned.
+# GoToChoice character_select select_brad.
+
+Content select_ned: You're skimming through your email, killing time before one of your students arrives for a check-in meeting about a research project that he's leading the charge on. He's been vocal about his displeasure with the slow process of getting IRB approval, which has already taken over a month.
+Effects select_ned: [now [CharacterSelected]]
+Conditions select_ned.
+ChoiceLabel select_ned: Ned Prescott, Advisor
+GoToChoice select_ned beat_1_root.
+
+Content select_brad: Hi. This universe doesn't exist yet
+Effects select_brad: [now [CharacterSelected]]
+Conditions select_brad.
+ChoiceLabel select_brad: Brad, Student
+
+## END CHARACTER SELECT ##
+
+## BEAT 1 ## 
+# Content beat_1_root:  Brad rushes in, out of breath. Sorry Prof. Ned. Missed my alarm...
+# ChoiceLabel beat_1_root: Where is he?
+# Conditions beat_1_root.
+# Effects beat_1_root: 
+#     [set NedFrustration = NedFrustration + 1]
+#     [set CurrentBeat = beat_1]
+#     [set Snark = 0]
+#     # [now [Root]]
+# [end]
+# GoToChoice beat_1_root temp.
+# ChoiceCondition beat_1_root choice_1: [= CurrentBeat beat_1]
+# ChoiceCondition beat_1_root choice_2: [= CurrentBeat beat_1]
+# ChoiceCondition beat_1_root choice_3: [= CurrentBeat beat_1]
+
+Content beat_1_ned_talks_low_snark: No worries! I was late myself, it's a busy world!
+ChoiceLabel beat_1_ned_talks_low_snark: No worries!
+Conditions beat_1_ned_talks_low_snark.
+Effects beat_1_ned_talks_low_snark: 
+    [set CurrentBeat = beat_1]
+    [set Snark = Snark]
+    [now [Not [Root]]]
+[end]
+ChoiceCondition beat_1_ned_talks_low_snark choice_1: 
+    [= CurrentBeat beat_1]
+    [Not [Root]]
+[end]
+
+Content beat_1_ned_talks_med_snark: No worries! Though I do have a hard stop, I have another meeting soon.
+ChoiceLabel beat_1_ned_talks_med_snark: I'm on a schedule.
+Conditions beat_1_ned_talks_med_snark.
+Effects beat_1_ned_talks_med_snark: 
+    [set CurrentBeat = beat_1]
+    [set Snark = Snark + 1] 
+    [now [Not [Root]]]
+[end]
+ChoiceCondition beat_1_ned_talks_med_snark choice_1: [= CurrentBeat beat_1] [Not [Root]]
+
+Content beat_1_ned_talks_high_snark: Third time this week.
+ChoiceLabel beat_1_ned_talks_high_snark:  Again?!
+Conditions beat_1_ned_talks_high_snark.
+Effects beat_1_ned_talks_high_snark: 
+    [set CurrentBeat = beat_1]
+    [set Snark = Snark + 2] 
+    [now [Not [Root]]]
+[end]
+ChoiceCondition beat_1_ned_talks_high_snark choice_1: [= CurrentBeat beat_1] [Not [Root]]
+
+## END BEAT 1 ##
+
+# Content temp: placeholder
+# ChoiceLabel temp: placeholder
+# Effects temp.
+# Conditions temp.
+
+# Content temp2: placeholder
+# Effects temp2.
+# Conditions temp2.
+
+# Define the Story Spec as a list of wants and fufillments
+[randomly]
+Want irb initialized.
+Want irb character_selected.
+# Want irb snark.
+# Want irb verysnark.
+
+[randomly]
+Fulfilled initialized: [Initialized]
+Fulfilled character_selected: [CharacterSelected]
+# Fulfilled snark: [> 0 Snark]
+# Fulfilled verysnark: [> 1 Snark]
