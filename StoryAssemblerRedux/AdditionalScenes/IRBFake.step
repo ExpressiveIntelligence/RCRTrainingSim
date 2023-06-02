@@ -12,19 +12,29 @@ CharacterLocation teacher irb [0, 0].
 
 # Scene specific predicates
 fluent CharacterSelected.
-fluent Initialized.
+# fluent Initialized.
 
 InitialSceneState irb:
     [now [Not [CharacterSelected]]]
-    [now [Initialized]]
+    # [now [Initialized]]
+    [set Initialized = true]
+
 [end]
 
+[randomly]
 Fragment character_select irb.
+Fragment hi irb.
 
 Content character_select: Who are you? 
 Effects character_select: [now [CharacterSelected]]
 Conditions character_select.
-GoToChoice character_select character_select.
+GoToChoice character_select irb.
+
+Content hi: Hi, I'm Brad. I'm a student here.
+Effects hi.
+Conditions hi.
+ChoiceLabel hi: Hi, I'm Brad. I'm a student here.
+
 
 [randomly]
 Want irb initialized.
@@ -33,7 +43,7 @@ Want irb character_selected.
 # Want irb verysnark.
 
 [randomly]
-Fulfilled initialized: [Initialized]
+Fulfilled initialized: [= Initialized true]
 Fulfilled character_selected: [CharacterSelected]
 # Fulfilled snark: [> 0 Snark]
 # Fulfilled verysnark: [> 1 Snark]

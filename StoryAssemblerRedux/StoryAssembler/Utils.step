@@ -8,11 +8,12 @@ initially:
 [end]
 
 Warnings ?scene: 
+    [Scene ?scene]
     [Missing [Content] ?scene]
     [Missing [ChoiceLabel] ?scene]
-    # [Missing [GoToChoice ?] ?scene]
-    # [Missing [Conditions] ?scene]
-    # [Missing [Effects] ?scene]
+    [Missing [GoToChoice ?] ?scene]
+    [Missing [Conditions] ?scene]
+    [Missing [Effects] ?scene]
     [ChoiceWarnings ?scene]
 [end]
 
@@ -45,10 +46,6 @@ ChoiceWarnings ?scene:
     Warning, these GoToChoice declarations have no fragments: ?bad_content
 [end]
 ChoiceWarnings ?.
-
-
-
-
 
 [predicate]
 ChoiceInList [?frag ?choice_id] ?list:

@@ -128,7 +128,7 @@ Want irb snark.
 Want irb verysnark.
 
 [randomly]
-Fulfilled initialized: [Initialized]
+Fulfilled initialized: [Initialized] [Break]
 Fulfilled character_selected: [CharacterSelected]
 Fulfilled snark: [> 0 Snark]
 Fulfilled verysnark: [> 1 Snark]
