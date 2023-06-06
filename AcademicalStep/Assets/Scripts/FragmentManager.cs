@@ -62,4 +62,14 @@ public class FragmentManager : MonoBehaviour
     {
         
     }
+
+/*    void InitFragmentFromStepFragment() { }
+
+    void InitBackground();
+
+
+    void InitCharacters();
+    void InitChoices();
+    void InitContent();*/
+
 }
