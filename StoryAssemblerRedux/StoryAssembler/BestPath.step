@@ -1,17 +1,20 @@
+fluent DebugMode.
+
 initially: 
     [set MaxDepth = 3] # The maximum depth of the search tree
+    [now [DebugMode]]
 [end]
 
 # Exposed function headers
 task BestChoices ?source_frag ?choices.
 
 [predicate]
-AllPathsFrom ?source_frag ?paths: [FindPaths [?source_frag false] empty ?paths] 
+AllPathsFrom ?source_frag ?paths: [FindPaths [?source_frag false] empty ?paths]
 
 # TODO we don't yet support requests in BestChoices
 BestChoices ?frag ?choices:
     [AllPathsFrom ?frag ?paths]
-    # All paths: ?paths
+    All paths: ?paths
 
     [AllGoToChoices ?frag ?goto_frags]
     [BestConditionalChoices ?frag ?paths ?conditional_choice_frags] # TODO this has to be backtracked

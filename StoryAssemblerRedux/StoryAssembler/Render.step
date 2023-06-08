@@ -40,7 +40,7 @@ Show:
     Fragment: [CurrentFragment] [Br]
     Speaker: [RenderSpeaker][Br]
     Choices: [RenderNextBestChoices] [Br]
-    Warnings: [Warnings CurrentScene]
+    Warnings: [Warnings CurrentScene] [Br]
     Errors: [Error] [Br]
 [end]
 
