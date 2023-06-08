@@ -27,6 +27,7 @@ Fragment beat_1_ned_talks_med_snark irb.
 Fragment beat_1_ned_talks_high_snark irb.
 Fragment temp irb.
 Fragment temp2 irb.
+Fragment beat_2_root irb.
 
 # Scene specific predicates
 fluent Inside.
@@ -63,7 +64,7 @@ ChoiceLabel select_brad: Brad, Student
 
 # ## END CHARACTER SELECT ##
 
-## BEAT 1 ## 
+## BEAT 1 ##
 Content beat_1_root:  Brad rushes in, out of breath. Sorry Prof. Ned. Missed my alarm...
 ChoiceLabel beat_1_root: Where is he?
 Conditions beat_1_root.
@@ -71,12 +72,12 @@ Effects beat_1_root:
     [set NedFrustration = NedFrustration + 1]
     [set CurrentBeat = beat_1]
     [set Snark = 0]
-    # [now [Root]]
 [end]
 GoToChoice beat_1_root temp.
 ChoiceCondition beat_1_root choice_1: [= CurrentBeat beat_1]
 ChoiceCondition beat_1_root choice_2: [= CurrentBeat beat_1]
 ChoiceCondition beat_1_root choice_3: [= CurrentBeat beat_1]
+Speaker beat_1_root student.
 
 Content beat_1_ned_talks_low_snark: No worries! I was late myself, it's a busy world!
 ChoiceLabel beat_1_ned_talks_low_snark: No worries!
@@ -84,35 +85,82 @@ Conditions beat_1_ned_talks_low_snark.
 Effects beat_1_ned_talks_low_snark: 
     [set CurrentBeat = beat_1]
     [set Snark = Snark]
-    # [now [Not [Root]]]
+    # [now [Not [Root]]] # Do we want to add these as first class predicates
 [end]
 ChoiceCondition beat_1_ned_talks_low_snark choice_1: 
-    [= CurrentBeat beat_1]
-    # [Not [Root]]
+    [= CurrentBeat beat_2]
 [end]
+Speaker beat_1_ned_talks_low_snark teacher.
 
 Content beat_1_ned_talks_med_snark: No worries! Though I do have a hard stop, I have another meeting soon.
 ChoiceLabel beat_1_ned_talks_med_snark: I'm on a schedule.
 Conditions beat_1_ned_talks_med_snark.
-Effects beat_1_ned_talks_med_snark: 
+Effects beat_1_ned_talks_med_snark:
     [set CurrentBeat = beat_1]
     [set Snark = Snark + 1] 
-    # [now [Not [Root]]]
 [end]
-ChoiceCondition beat_1_ned_talks_med_snark choice_1: [= CurrentBeat beat_1] # [Not [Root]]
+ChoiceCondition beat_1_ned_talks_med_snark choice_1: [= CurrentBeat beat_2]
+Speaker beat_1_ned_talks_med_snark teacher.
 
 Content beat_1_ned_talks_high_snark: Third time this week.
 ChoiceLabel beat_1_ned_talks_high_snark:  Again?!
 Conditions beat_1_ned_talks_high_snark.
 Effects beat_1_ned_talks_high_snark: 
     [set CurrentBeat = beat_1]
-    [set Snark = Snark + 2] 
-    # [now [Not [Root]]]
+    [set Snark = Snark + 2]
 [end]
-ChoiceCondition beat_1_ned_talks_high_snark choice_1: [= CurrentBeat beat_1] # [Not [Root]]
+ChoiceCondition beat_1_ned_talks_high_snark choice_1: [= CurrentBeat beat_2]
+Speaker beat_1_ned_talks_high_snark teacher.
+
+
+Content beat_2_root: So I've been busy with the project... I have a lot to talk about. 
+ChoiceLabel beat_2_root: Can we talk about the project?
+Conditions beat_2_root.
+Effects beat_2_root: 
+    [set CurrentBeat = beat_2]
+    [set Snark = Snark]
+[end]
+ChoiceCondition beat_2_root choice_1: [= CurrentBeat beat_2]
+ChoiceCondition beat_2_root choice_1: [= CurrentBeat beat_2]
+ChoiceCondition beat_2_root choice_1: [= CurrentBeat beat_2]
+Speaker beat_2_root student.
+
+
+Content beat_2_ned_high_snark:
+ChoiceLabel beat_2_ned_high_snark: 
+Conditions beat_2_ned_high_snark.
+Effects beat_2_ned_high_snark: 
+    [set CurrentBeat = beat_2]
+    [set Snark = Snark + 2]
+[end]
+ChoiceCondition beat_2_ned_high_snark choice_1: [= CurrentBeat beat_2]
+Speaker         beat_2_ned_high_snark student.
+
+
+Content     beat_2_ned_med_snark:
+ChoiceLabel beat_2_ned_med_snark:
+Conditions  beat_2_ned_med_snark.
+Effects     beat_2_ned_med_snark: 
+    [set CurrentBeat = beat_2]
+    [set Snark = Snark + 2]
+[end]
+ChoiceCondition beat_2_ned_med_snark choice_1: [= CurrentBeat beat_2]
+Speaker         beat_2_ned_med_snark student.
+
+
+Content beat_2_ned_high_snark: So I've been busy with the project... I have a lot to talk about. 
+ChoiceLabel beat_2_ned_high_snark: Can we talk about the project?
+Conditions beat_2_ned_high_snark.
+Effects beat_2_ned_high_snark: 
+    [set CurrentBeat = beat_2]
+    [set Snark = Snark + 2]
+[end]
+ChoiceCondition beat_2_root choice_1: [= CurrentBeat beat_2]
+Speaker beat_2_root student.
+
 
 ## END BEAT 1 ##
-
+ 
 Content temp: placeholder
 ChoiceLabel temp: placeholder
 Effects temp.

@@ -24,7 +24,6 @@ InitializeScene ?scene:
 # [end]
 # CheckNoFrag ?f.
 
-
 InitializeChoices:
     [BestChoices CurrentFragment ?next_best]
     [set NextBestChoices = ?next_best]
