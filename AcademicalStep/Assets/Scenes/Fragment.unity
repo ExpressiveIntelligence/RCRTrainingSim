@@ -333,8 +333,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   storyAssemblerPath: ../StoryAssemblerRedux/StoryAssembler
-  optionalScenePath: ../StoryAssemblerRedux/IRBScenes/IRBScene.step
+  optionalScenePath: Assets/Step/Academical/IRBWorkingTest.step
   sceneName: irb
+  debug: 0
 --- !u!4 &1429551393
 Transform:
   m_ObjectHideFlags: 0
