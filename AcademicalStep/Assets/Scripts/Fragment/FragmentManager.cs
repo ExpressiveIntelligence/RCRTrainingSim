@@ -12,9 +12,12 @@ public class FragmentManager : MonoBehaviour
     // Singleton instance variable
     public static FragmentManager instance = null;
 
-    // Helpful references
-    public StepManager stepManager; 
-    public GameSession gameSession; 
+    public GameSession gameSession;
+
+    // Manager orchestration
+    public StepManager stepManager;
+    public BackgroundManager backgroundManager;
+
 
     void Awake() 
     {
@@ -33,7 +36,7 @@ public class FragmentManager : MonoBehaviour
     void Start()
     {
         //get game session and stepManager
-        //safety check for stepManager
+        //perform safety checks for stepManager
         if (!this.stepManager)
         {
             //get by tag
@@ -48,13 +51,30 @@ public class FragmentManager : MonoBehaviour
             }
         }
 
+        //safety check for backgroundManager
+        if (!this.backgroundManager)
+        {
+            //get by tag
+            GameObject[] backgroundManagers = GameObject.FindGameObjectsWithTag("BackgroundManager");
+            if (backgroundManagers.Length == 0)
+            {
+                Debug.Log("ERROR: backgroundManager GameObject not found.");
+            }
+            else
+            {
+                this.backgroundManager = backgroundManagers[0].GetComponent<BackgroundManager>();
+            }
+        }
+
         //Initializes Step Interpreter
         this.stepManager.InitStep();
-
         //Render currently loaded fragment
         //TODO: Set loaded fragment in earlier menu or from file
         SerializedFragment fragment = this.stepManager.Render();
         Debug.Log(fragment.ToString());
+
+        //Instantiate scene ased on fragment load
+        this.backgroundManager.RenderBackgroundFromFragment(fragment);
     }
 
     // Update is called once per frame
@@ -65,7 +85,9 @@ public class FragmentManager : MonoBehaviour
 
 /*    void InitFragmentFromStepFragment() { }
 
-    void InitBackground();
+    void InitBackgroundFromSerializedFragment(){
+    
+    }
 
 
     void InitCharacters();

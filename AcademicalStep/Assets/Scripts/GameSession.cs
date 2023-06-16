@@ -19,12 +19,6 @@ public class GameSession : MonoBehaviour
     public StepManager stepManager = null;
     public FragmentManager fragmentManager = null;
 
-    // Player Profile Information and Save Data
-    public PlayerProfile playerProfile;
-
-    // Updated Game World Object
-    public GameWorld gameWorld;
-
     // Represents currently loaded Scene
 
     // Awake is used to instantiate class as singleton
