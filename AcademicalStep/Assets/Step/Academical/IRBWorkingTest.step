@@ -97,7 +97,7 @@ ChoiceLabel beat_1_ned_talks_med_snark: I'm on a schedule.
 Conditions beat_1_ned_talks_med_snark.
 Effects beat_1_ned_talks_med_snark:
     [set CurrentBeat = beat_1]
-    [set Snark = Snark + 1] 
+    [set Snark = Snark + 1]
 [end]
 ChoiceCondition beat_1_ned_talks_med_snark choice_1: [= CurrentBeat beat_2]
 Speaker beat_1_ned_talks_med_snark teacher.
