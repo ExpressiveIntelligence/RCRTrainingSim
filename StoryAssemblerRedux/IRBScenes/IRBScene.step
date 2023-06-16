@@ -29,7 +29,13 @@ Fragment refer_to_project_root irb.
 Fragment refer_to_project_ned_high_snark irb.
 Fragment refer_to_project_ned_med_snark irb.
 Fragment refer_to_project_ned_low_snark irb.
-Fragment refer_to_project_conclusion irb.
+Fragment refer_to_project_end irb.
+Fragment vent_irb irb.
+Fragment vent_irb_low irb.
+Fragment vent_irb_med irb.
+Fragment vent_irb_high irb.
+Fragment vent_irb_end irb.
+Fragment beat_2_root irb.
 Fragment temp irb.
 Fragment temp2 irb.
 
@@ -75,17 +81,13 @@ ChoiceLabel select_brad: Brad, Student
 # https://eis.ucsc.edu/papers/MateasSternTIDSE04.pdf
 
 
-# Brad is late and apologetic
-# Low Snark: No worries! I was late myself, it’s a busy world!
-# Mid Snark: No worries! Though we’ve got to rush, I’m on a timer.
-# High Snark: Third time this week.
 ## BEAT 1 ##
+
 Content beat_1_root:  Brad rushes in, out of breath. Sorry Prof. Ned. Missed my alarm...
 ChoiceLabel beat_1_root: Where is he?
 Conditions beat_1_root.
 Effects beat_1_root: 
     [set NedFrustration = NedFrustration + 1]
-    [set Snark = 0]
     [set CurrentBeat = beat_1]
     [set DiscourseAct = greeting]
 [end]
@@ -99,12 +101,12 @@ Content beat_1_ned_talks_low_snark: No worries! I was late myself, it's a busy w
 ChoiceLabel beat_1_ned_talks_low_snark: No worries!
 Conditions beat_1_ned_talks_low_snark.
 Effects beat_1_ned_talks_low_snark: 
-    [set Snark = Snark]
+    [set Snark = Snark + 0]
     [set CurrentBeat = beat_1]
     [set DiscourseAct = greeting]
 [end]
 ChoiceCondition beat_1_ned_talks_low_snark choice_1: 
-    [= CurrentBeat beat_2]
+    [= CurrentBeat beat_1]
 [end]
 Speaker beat_1_ned_talks_low_snark teacher.
 
@@ -128,10 +130,9 @@ Effects beat_1_ned_talks_high_snark:
     [set DiscourseAct = greeting]
 [end]
 ChoiceCondition beat_1_ned_talks_high_snark choice_1: [= CurrentBeat beat_1]
-ChoiceCondition beat_1_ned_talks_high_snark choice_1: [= CurrentBeat beat_1]
+ChoiceCondition beat_1_ned_talks_high_snark choice_2: [= CurrentBeat beat_1]
 # I think we need a way of just giving a few choices
 Speaker beat_1_ned_talks_high_snark teacher.
-
 
 # Brad asks about his Project Status
 # Low Snark: Project seems like it’s moving along great!
@@ -141,15 +142,14 @@ Content refer_to_project_root: So I've been busy with the project... I have a lo
 ChoiceLabel refer_to_project_root: Can we talk about the project?
 Conditions refer_to_project_root.
 Effects refer_to_project_root: 
-    [set Snark = Snark]
+    [set Snark = Snark + 0]
     [set CurrentBeat = beat_1]
     [set DiscourseAct = refer_to_project]
 [end]
 ChoiceCondition refer_to_project_root choice_1: [= CurrentBeat beat_1] [= DiscourseAct refer_to_project]
-ChoiceCondition refer_to_project_root choice_1: [= CurrentBeat beat_1] [= DiscourseAct refer_to_project]
-ChoiceCondition refer_to_project_root choice_1: [= CurrentBeat beat_1] [= DiscourseAct refer_to_project]
+ChoiceCondition refer_to_project_root choice_2: [= CurrentBeat beat_1] [= DiscourseAct refer_to_project]
+ChoiceCondition refer_to_project_root choice_3: [= CurrentBeat beat_1] [= DiscourseAct refer_to_project]
 Speaker refer_to_project_root student.
-
 
 Content     refer_to_project_ned_high_snark: Your project seems to be lagging - what's your update this week?
 ChoiceLabel refer_to_project_ned_high_snark: The project is lagging.
@@ -162,7 +162,6 @@ Effects     refer_to_project_ned_high_snark:
 ChoiceCondition refer_to_project_ned_high_snark choice_1: [= CurrentBeat beat_1]
 Speaker         refer_to_project_ned_high_snark teacher.
 
-
 Content     refer_to_project_ned_med_snark: Let's get started! How's the project going?
 ChoiceLabel refer_to_project_ned_med_snark: Let's get started!
 Conditions  refer_to_project_ned_med_snark.
@@ -174,50 +173,131 @@ Effects     refer_to_project_ned_med_snark:
 ChoiceCondition refer_to_project_ned_med_snark choice_1: [= CurrentBeat beat_1] [= DiscourseAct refer_to_project]
 Speaker         refer_to_project_ned_med_snark teacher.
 
-
 Content     refer_to_project_ned_low_snark: The project seems like it's moving along great!
 ChoiceLabel refer_to_project_ned_low_snark: The project is going great.
 Conditions  refer_to_project_ned_low_snark.
-Effects     refer_to_project_ned_low_snark: 
+Effects     refer_to_project_ned_low_snark:
     [set CurrentBeat = beat_1]
     [set Snark = Snark + 0]
     [set DiscourseAct = refer_to_project]
 [end]
-ChoiceCondition refer_to_project_ned_low_snark choice_1: [= CurrentBeat beat_1]
+ChoiceCondition refer_to_project_ned_low_snark choice_1:[= CurrentBeat beat_1] [= DiscourseAct refer_to_project]
+ChoiceCondition refer_to_project_ned_low_snark choice_2:[= CurrentBeat beat_1] [= DiscourseAct refer_to_project]
 Speaker         refer_to_project_ned_low_snark teacher.
 
-
-Content     refer_to_project_conclusion: Yeah well, I do have some more questions for you. 
-ChoiceLabel refer_to_project_conclusion: Continue
-Conditions  refer_to_project_conclusion.
-Effects     refer_to_project_conclusion:
+Content     refer_to_project_end: Yeah well, I do have some more questions for you. 
+ChoiceLabel refer_to_project_end: Continue
+Conditions  refer_to_project_end.
+Effects     refer_to_project_end:
     [set CurrentBeat = beat_1]
-    [set Snark = Snark + 0]
     [set DiscourseAct = refer_to_project]
 [end]
-ChoiceCondition refer_to_project_conclusion choice_1: [= CurrentBeat beat_1]
-Speaker         refer_to_project_conclusion student.
+ChoiceCondition refer_to_project_end choice_1: [= CurrentBeat beat_1] [Not [= DiscourseAct refer_to_project]]
+ChoiceCondition refer_to_project_end choice_2: [= CurrentBeat beat_1] [Not [= DiscourseAct refer_to_project]]
+Speaker         refer_to_project_end student.
 
-
+# This one doesn't make any sense - ned / brad reversal
 # Brad asks about Family and Friend
 # Low Snark: How’ve you been? Family and friends been good? It was my anniversary yesterday…
 # Mid Snark: How have things been going? Spending time with family and friends?
 # High Snark: Looking at the state of your work, you’ve probably been spending a lot of time with friends and family.
+# Content     family_and_friend_root: Yeah well, I do have some more questions for you. 
+# ChoiceLabel family_and_friend_root: Continue
+# Conditions  family_and_friend_root.
+# Effects     family_and_friend_root:
+#     [set CurrentBeat = beat_1]
+#     [set Snark = Snark + 0]
+#     [set DiscourseAct = family_and_friends]
+# [end]
+# ChoiceCondition family_and_friend_root choice_1: [= CurrentBeat beat_1]
+# Speaker         family_and_friend_root student.
+
+Content     vent_irb: I'm really frustrated with the IRB process. I've been waiting for a month and I still haven't heard back.
+ChoiceLabel vent_irb: Brad shifts his weight in his chair. 
+Conditions  vent_irb.
+Effects     vent_irb: 
+    [set CurrentBeat = beat_1]
+    [set DiscourseAct = vent_irb]
+[end]
+ChoiceCondition vent_irb choice_1: [= CurrentBeat beat_1] [= DiscourseAct vent_irb]
+ChoiceCondition vent_irb choice_2: [= CurrentBeat beat_1] [= DiscourseAct vent_irb]
+ChoiceCondition vent_irb choice_3: [= CurrentBeat beat_1] [= DiscourseAct vent_irb]
+Speaker vent_irb student.
+
 # Brad vents about IRB
 # Low Snark: I totally understand. Bureaucratic practices can be confusing and disheartening.
 # Mid Snark: It’s a pain but we have to do what we have to do.
 # High Snark: You shouldn’t disrespect practices like the IRB. Your project wouldn’t be possible without them.
+Content     vent_irb_low: I totally understand. Bureaucratic practices can be confusing and disheartening.
+ChoiceLabel vent_irb_low: I understand.
+Conditions  vent_irb_low.
+Effects     vent_irb_low: 
+    [set Snark = Snark + 0]
+    [set CurrentBeat = beat_1]
+    [set DiscourseAct = vent_irb]
+[end]
+ChoiceCondition vent_irb_low choice_1: [= CurrentBeat beat_1] [= DiscourseAct vent_irb]
+ChoiceCondition vent_irb_low choice_2: [= CurrentBeat beat_1] [= DiscourseAct vent_irb]
+ChoiceCondition vent_irb_low choice_3: [= CurrentBeat beat_1] [= DiscourseAct vent_irb]
+Speaker vent_irb_low teacher.
+
+Content     vent_irb_med: It's a pain but we have to do what we have to do.
+ChoiceLabel vent_irb_med: It's a pain.
+Conditions  vent_irb_med.
+Effects     vent_irb_med: 
+    [set Snark = Snark + 1]
+    [set CurrentBeat = beat_1]
+    [set DiscourseAct = vent_irb]
+[end]
+ChoiceCondition vent_irb_med choice_1: [= CurrentBeat beat_1] [= DiscourseAct vent_irb]
+ChoiceCondition vent_irb_med choice_2: [= CurrentBeat beat_1] [= DiscourseAct vent_irb]
+ChoiceCondition vent_irb_med choice_3: [= CurrentBeat beat_1] [= DiscourseAct vent_irb]
+Speaker vent_irb_med teacher.
+
+Content     vent_irb_high: You shouldn't disrespect practices like the IRB. Your project wouldn't be possible without them.
+ChoiceLabel vent_irb_high: The IRB is important.
+Conditions  vent_irb_high.
+Effects     vent_irb_high: 
+    [set Snark = Snark + 2]
+    [set CurrentBeat = beat_1]
+    [set DiscourseAct = vent_irb]
+[end]
+ChoiceCondition vent_irb_high choice_1: [= CurrentBeat beat_1] [= DiscourseAct vent_irb]
+ChoiceCondition vent_irb_high choice_2: [= CurrentBeat beat_1] [= DiscourseAct vent_irb]
+ChoiceCondition vent_irb_high choice_3: [= CurrentBeat beat_1] [= DiscourseAct vent_irb]
+Speaker vent_irb_high teacher.
+
+Content     vent_irb_end: *Brad fidgets* I guess you're right.
+ChoiceLabel vent_irb_end: Continue
+Conditions  vent_irb_end.
+Effects     vent_irb_end:
+    [set CurrentBeat = beat_1]
+    [set DiscourseAct = vent_irb]
+[end]
+ChoiceCondition vent_irb_end choice_1: [= CurrentBeat beat_2]
+Speaker         vent_irb_end student.
+
 # Brad notices new award on shelf
 # Low Snark: Thank you, I’m so glad you noticed! I’m really proud of the accomplishment.
 # Mid Snark: Ah, it’s nothing. Let’s get started.
 # High Snark: We’ve got a lot to do.
+
 # Brad talks about his last weekend
 # Low Snark: What a cool weekend! I went…
 # Mid Snark: That’s great! Let’s move onto the project…
 # High Snark: We’ve got a limited time, let’s focus on the project.
 
 
+## BEAT 2 ##
 
+Content     beat_2_root: Now we are at the second beat
+ChoiceLabel beat_2_root: Second beat
+Conditions  beat_2_root.I
+Effects     beat_2_root: 
+    [set CurrentBeat = beat_2]
+    [set DiscourseAct = greeting]
+[end]
+Speaker     beat_2_root student.
 
 # Content beat_2_ned_high_snark: So I've been busy with the project... I have a lot to talk about. 
 # ChoiceLabel beat_2_ned_high_snark: Can we talk about the project?
@@ -246,6 +326,7 @@ Conditions temp2.
 Want irb initialized.
 Want irb character_selected.
 Want irb inside.
+Want irb progression.
 
 # Want irb snark.
 # Want irb verysnark.
@@ -255,6 +336,7 @@ Want irb inside.
 Fulfilled character_selected: [CharacterSelected]
 Fulfilled initialized: [= Initialized true]
 Fulfilled inside: [Inside]
+Fulfilled progression: [= CurrentBeat beat_2]
 
 # Fulfilled snark: [> 0 Snark]
 # Fulfilled verysnark: [> 1 Snark]
