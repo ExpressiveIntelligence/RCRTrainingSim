@@ -1,3 +1,8 @@
+I:
+    [Initialize ?scene]
+    Scene: ?scene
+[end]
+
 Initialize ?scene:
     [InitializeScene ?scene]
     [InitializeChoices]
@@ -50,8 +55,7 @@ ShowHelp:
     |[PrintChoices]| [Paragraph] Print the choices available. [Paragraph]
 [end]
 
-# Used for the CLI only
-Select ?choice_id:
+C ?choice_id: # Used for the CLI only
     [MakeChoice ?choice_id]
     [Show] # Render the result for humans
 [end]

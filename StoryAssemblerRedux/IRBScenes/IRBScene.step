@@ -25,9 +25,13 @@ Fragment beat_1_root irb.
 Fragment beat_1_ned_talks_low_snark irb.
 Fragment beat_1_ned_talks_med_snark irb.
 Fragment beat_1_ned_talks_high_snark irb.
+Fragment refer_to_project_root irb.
+Fragment refer_to_project_ned_high_snark irb.
+Fragment refer_to_project_ned_med_snark irb.
+Fragment refer_to_project_ned_low_snark irb.
+Fragment refer_to_project_conclusion irb.
 Fragment temp irb.
 Fragment temp2 irb.
-Fragment beat_2_root irb.
 
 # Scene specific predicates
 fluent Inside.
@@ -40,6 +44,7 @@ InitialSceneState irb:
     [set NedFrustration = 0]
     [set CurrentBeat = beat_1]
     [set Snark = 0]
+    [set DiscourseAct = none]
 #     [set Misunderstanding = empty] # forest for trees, not understanding what goes into an IRB request, etc
 [end]
 
@@ -63,29 +68,40 @@ Conditions select_brad.
 ChoiceLabel select_brad: Brad, Student
 
 # ## END CHARACTER SELECT ##
+# EnforceConstant ?params.
 
+# Discouse acts: greeting, 
+# (DAReferTo ?char ?obj)
+# https://eis.ucsc.edu/papers/MateasSternTIDSE04.pdf
+
+
+# Brad is late and apologetic
+# Low Snark: No worries! I was late myself, it’s a busy world!
+# Mid Snark: No worries! Though we’ve got to rush, I’m on a timer.
+# High Snark: Third time this week.
 ## BEAT 1 ##
 Content beat_1_root:  Brad rushes in, out of breath. Sorry Prof. Ned. Missed my alarm...
 ChoiceLabel beat_1_root: Where is he?
 Conditions beat_1_root.
 Effects beat_1_root: 
     [set NedFrustration = NedFrustration + 1]
-    [set CurrentBeat = beat_1]
     [set Snark = 0]
+    [set CurrentBeat = beat_1]
+    [set DiscourseAct = greeting]
 [end]
 GoToChoice beat_1_root temp.
-ChoiceCondition beat_1_root choice_1: [= CurrentBeat beat_1]
-ChoiceCondition beat_1_root choice_2: [= CurrentBeat beat_1]
-ChoiceCondition beat_1_root choice_3: [= CurrentBeat beat_1]
+ChoiceCondition beat_1_root choice_1: [= CurrentBeat beat_1] [= DiscourseAct greeting]
+ChoiceCondition beat_1_root choice_2: [= CurrentBeat beat_1] [= DiscourseAct greeting]
+ChoiceCondition beat_1_root choice_3: [= CurrentBeat beat_1] [= DiscourseAct greeting]
 Speaker beat_1_root student.
 
 Content beat_1_ned_talks_low_snark: No worries! I was late myself, it's a busy world!
 ChoiceLabel beat_1_ned_talks_low_snark: No worries!
 Conditions beat_1_ned_talks_low_snark.
 Effects beat_1_ned_talks_low_snark: 
-    [set CurrentBeat = beat_1]
     [set Snark = Snark]
-    # [now [Not [Root]]] # Do we want to add these as first class predicates
+    [set CurrentBeat = beat_1]
+    [set DiscourseAct = greeting]
 [end]
 ChoiceCondition beat_1_ned_talks_low_snark choice_1: 
     [= CurrentBeat beat_2]
@@ -96,67 +112,122 @@ Content beat_1_ned_talks_med_snark: No worries! Though I do have a hard stop, I 
 ChoiceLabel beat_1_ned_talks_med_snark: I'm on a schedule.
 Conditions beat_1_ned_talks_med_snark.
 Effects beat_1_ned_talks_med_snark:
-    [set CurrentBeat = beat_1]
     [set Snark = Snark + 1] 
+    [set CurrentBeat = beat_1]
+    [set DiscourseAct = greeting]
 [end]
-ChoiceCondition beat_1_ned_talks_med_snark choice_1: [= CurrentBeat beat_2]
+ChoiceCondition beat_1_ned_talks_med_snark choice_1: [= CurrentBeat beat_1]
 Speaker beat_1_ned_talks_med_snark teacher.
 
 Content beat_1_ned_talks_high_snark: Third time this week.
 ChoiceLabel beat_1_ned_talks_high_snark:  Again?!
 Conditions beat_1_ned_talks_high_snark.
 Effects beat_1_ned_talks_high_snark: 
-    [set CurrentBeat = beat_1]
     [set Snark = Snark + 2]
+    [set CurrentBeat = beat_1]
+    [set DiscourseAct = greeting]
 [end]
-ChoiceCondition beat_1_ned_talks_high_snark choice_1: [= CurrentBeat beat_2]
+ChoiceCondition beat_1_ned_talks_high_snark choice_1: [= CurrentBeat beat_1]
+ChoiceCondition beat_1_ned_talks_high_snark choice_1: [= CurrentBeat beat_1]
+# I think we need a way of just giving a few choices
 Speaker beat_1_ned_talks_high_snark teacher.
 
 
-Content beat_2_root: So I've been busy with the project... I have a lot to talk about. 
-ChoiceLabel beat_2_root: Can we talk about the project?
-Conditions beat_2_root.
-Effects beat_2_root: 
-    [set CurrentBeat = beat_2]
+# Brad asks about his Project Status
+# Low Snark: Project seems like it’s moving along great!
+# Mid Snark: Let’s get started! How’s the project going?
+# High Snark: Your project seems to be lagging - what’s your update this week?
+Content refer_to_project_root: So I've been busy with the project... I have a lot to talk about. 
+ChoiceLabel refer_to_project_root: Can we talk about the project?
+Conditions refer_to_project_root.
+Effects refer_to_project_root: 
     [set Snark = Snark]
+    [set CurrentBeat = beat_1]
+    [set DiscourseAct = refer_to_project]
 [end]
-ChoiceCondition beat_2_root choice_1: [= CurrentBeat beat_2]
-ChoiceCondition beat_2_root choice_1: [= CurrentBeat beat_2]
-ChoiceCondition beat_2_root choice_1: [= CurrentBeat beat_2]
-Speaker beat_2_root student.
+ChoiceCondition refer_to_project_root choice_1: [= CurrentBeat beat_1] [= DiscourseAct refer_to_project]
+ChoiceCondition refer_to_project_root choice_1: [= CurrentBeat beat_1] [= DiscourseAct refer_to_project]
+ChoiceCondition refer_to_project_root choice_1: [= CurrentBeat beat_1] [= DiscourseAct refer_to_project]
+Speaker refer_to_project_root student.
 
 
-Content beat_2_ned_high_snark:
-ChoiceLabel beat_2_ned_high_snark: 
-Conditions beat_2_ned_high_snark.
-Effects beat_2_ned_high_snark: 
-    [set CurrentBeat = beat_2]
+Content     refer_to_project_ned_high_snark: Your project seems to be lagging - what's your update this week?
+ChoiceLabel refer_to_project_ned_high_snark: The project is lagging.
+Conditions  refer_to_project_ned_high_snark.
+Effects     refer_to_project_ned_high_snark: 
+    [set CurrentBeat = beat_1]
     [set Snark = Snark + 2]
+    [set DiscourseAct = refer_to_project]
 [end]
-ChoiceCondition beat_2_ned_high_snark choice_1: [= CurrentBeat beat_2]
-Speaker         beat_2_ned_high_snark student.
+ChoiceCondition refer_to_project_ned_high_snark choice_1: [= CurrentBeat beat_1]
+Speaker         refer_to_project_ned_high_snark teacher.
 
 
-Content     beat_2_ned_med_snark:
-ChoiceLabel beat_2_ned_med_snark:
-Conditions  beat_2_ned_med_snark.
-Effects     beat_2_ned_med_snark: 
-    [set CurrentBeat = beat_2]
-    [set Snark = Snark + 2]
+Content     refer_to_project_ned_med_snark: Let's get started! How's the project going?
+ChoiceLabel refer_to_project_ned_med_snark: Let's get started!
+Conditions  refer_to_project_ned_med_snark.
+Effects     refer_to_project_ned_med_snark: 
+    [set CurrentBeat = beat_1]
+    [set Snark = Snark + 1]
+    [set DiscourseAct = refer_to_project]
 [end]
-ChoiceCondition beat_2_ned_med_snark choice_1: [= CurrentBeat beat_2]
-Speaker         beat_2_ned_med_snark student.
+ChoiceCondition refer_to_project_ned_med_snark choice_1: [= CurrentBeat beat_1] [= DiscourseAct refer_to_project]
+Speaker         refer_to_project_ned_med_snark teacher.
 
 
-Content beat_2_ned_high_snark: So I've been busy with the project... I have a lot to talk about. 
-ChoiceLabel beat_2_ned_high_snark: Can we talk about the project?
-Conditions beat_2_ned_high_snark.
-Effects beat_2_ned_high_snark: 
-    [set CurrentBeat = beat_2]
-    [set Snark = Snark + 2]
+Content     refer_to_project_ned_low_snark: The project seems like it's moving along great!
+ChoiceLabel refer_to_project_ned_low_snark: The project is going great.
+Conditions  refer_to_project_ned_low_snark.
+Effects     refer_to_project_ned_low_snark: 
+    [set CurrentBeat = beat_1]
+    [set Snark = Snark + 0]
+    [set DiscourseAct = refer_to_project]
 [end]
-ChoiceCondition beat_2_root choice_1: [= CurrentBeat beat_2]
-Speaker beat_2_root student.
+ChoiceCondition refer_to_project_ned_low_snark choice_1: [= CurrentBeat beat_1]
+Speaker         refer_to_project_ned_low_snark teacher.
+
+
+Content     refer_to_project_conclusion: Yeah well, I do have some more questions for you. 
+ChoiceLabel refer_to_project_conclusion: Continue
+Conditions  refer_to_project_conclusion.
+Effects     refer_to_project_conclusion:
+    [set CurrentBeat = beat_1]
+    [set Snark = Snark + 0]
+    [set DiscourseAct = refer_to_project]
+[end]
+ChoiceCondition refer_to_project_conclusion choice_1: [= CurrentBeat beat_1]
+Speaker         refer_to_project_conclusion student.
+
+
+# Brad asks about Family and Friend
+# Low Snark: How’ve you been? Family and friends been good? It was my anniversary yesterday…
+# Mid Snark: How have things been going? Spending time with family and friends?
+# High Snark: Looking at the state of your work, you’ve probably been spending a lot of time with friends and family.
+# Brad vents about IRB
+# Low Snark: I totally understand. Bureaucratic practices can be confusing and disheartening.
+# Mid Snark: It’s a pain but we have to do what we have to do.
+# High Snark: You shouldn’t disrespect practices like the IRB. Your project wouldn’t be possible without them.
+# Brad notices new award on shelf
+# Low Snark: Thank you, I’m so glad you noticed! I’m really proud of the accomplishment.
+# Mid Snark: Ah, it’s nothing. Let’s get started.
+# High Snark: We’ve got a lot to do.
+# Brad talks about his last weekend
+# Low Snark: What a cool weekend! I went…
+# Mid Snark: That’s great! Let’s move onto the project…
+# High Snark: We’ve got a limited time, let’s focus on the project.
+
+
+
+
+# Content beat_2_ned_high_snark: So I've been busy with the project... I have a lot to talk about. 
+# ChoiceLabel beat_2_ned_high_snark: Can we talk about the project?
+# Conditions beat_2_ned_high_snark.
+# Effects beat_2_ned_high_snark: 
+#     [set CurrentBeat = beat_1]
+#     [set Snark = Snark + 2]
+# [end]
+# ChoiceCondition refer_to_project_root choice_1: [= CurrentBeat beat_1]
+# Speaker refer_to_project_root student.
 
 
 ## END BEAT 1 ##
