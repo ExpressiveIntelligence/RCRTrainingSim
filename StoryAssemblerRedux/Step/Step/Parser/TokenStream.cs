@@ -13,8 +13,15 @@ namespace Step.Parser
                 ? (TokenStream) new CsvFileTokenStream(reader, path)
                 : new TextFileTokenStream(reader, path);
         }
+
+        public static TokenStream FromReaderAndPath(TextReader reader, string? path)
+        {
+            if (path != null && Path.GetExtension(path) == ".csv")
+                return new CsvFileTokenStream(reader, path);
+            return new TextFileTokenStream(reader, path);
+        }
         
-        protected TokenStream(TextReader file, string filePath)
+        protected TokenStream(TextReader file, string? filePath)
         {
             FilePath = filePath;
             LineNumber = 1;
@@ -31,7 +38,7 @@ namespace Step.Parser
         /// <summary>
         /// Path to file being read from, if any
         /// </summary>
-        public readonly string FilePath;
+        public readonly string? FilePath;
 
         /// <summary>
         /// The Unicode left double quote

@@ -23,10 +23,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using System;
 using System.Collections;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Step;
 using Step.Interpreter;
 
@@ -153,7 +150,7 @@ namespace Tests
             m.Call("Test");
             Assert.AreEqual("C C B D C A Test",
                 string.Join(" ",
-                    MethodCallFrame.CurrentFrame.GoalChain.Select(f => f.Method.Task.Name)));
+                    MethodCallFrame.GoalChain(MethodCallFrame.CurrentFrame).Select(f => f.Method.Task.Name)));
         }
 
         [TestMethod]

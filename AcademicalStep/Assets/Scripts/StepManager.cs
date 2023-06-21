@@ -130,7 +130,7 @@ public class StepManager : MonoBehaviour
     {
         var renderedScene = new SerializedFragment()
         {
-            fragmentID =  Normalize(ExecuteStep("[CurrentFragment]")).ToLower(), 
+            fragmentID =  Normalize(ExecuteStep("[CurrentFragment]")), 
             content = ExecuteStep("[RenderOutputFormat]"),
             choices = ExecuteStep<SerializedChoice>("[RenderNextBestChoices]"),
             characters = ExecuteStep<SerializedCharacter>("[RenderCharacters]"),
@@ -242,12 +242,12 @@ public class StepManager : MonoBehaviour
         // switch statement on type of T, if it is a character create a Character, etc
         if (typeof(T) == typeof(SerializedChoice))
         {
-            return (T) (object) new SerializedChoice() { id = Normalize(fields[0]).ToLower(), text = Normalize(fields[1])};
+            return (T) (object) new SerializedChoice() { id = Normalize(fields[0]), text = Normalize(fields[1])};
         }
         else if (typeof(T) == typeof(SerializedCharacter))
         {
             return (T) (object) new SerializedCharacter() { 
-                id = Normalize(fields[0]).ToLower(), 
+                id = Normalize(fields[0]),
                 name = Normalize(fields[1]),
                 x = Int32.Parse(Normalize(fields[2])),
                 y = Int32.Parse(Normalize(fields[3])),

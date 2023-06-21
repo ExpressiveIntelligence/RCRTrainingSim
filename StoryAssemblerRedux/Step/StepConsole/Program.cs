@@ -85,10 +85,10 @@ namespace StepConsole
                 try
                 {
                     module = new Module("REPL");
-                    var dir = "..\\..\\..\\..\\StoryAssembler";
+                    var dir = "..\\..\\..\\..\\..\\..\\StoryAssembler";
                     module.LoadDirectory(dir);
                     Console.WriteLine("Loaded " + dir);
-                    var dir2 = "..\\..\\..\\..\\IRBScenes";
+                    var dir2 = "..\\..\\..\\..\\..\\..\\IRBScenes";
                     module.LoadDirectory(dir2);
                     Console.WriteLine("Loaded " + dir2);
 
@@ -97,6 +97,7 @@ namespace StepConsole
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.StackTrace);
                     Console.WriteLine("Press any character to reload.");
                     Console.ReadLine();
                 }

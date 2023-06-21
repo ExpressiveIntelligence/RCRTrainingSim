@@ -1,6 +1,11 @@
 task Delim.
 task ItemDelim.
 
+PreRender:
+    [verbatimCase]
+    [PrepareRender]
+[end]
+
 PrepareRender: 
     [set ErrorList = empty]
 [end]
@@ -20,8 +25,7 @@ Error.
 # Create the output format that will be JSONified by the StepManager
 # Any changes to this should be accompanied by a change with the StepManager
 RenderOutputFormat:
-    [PrepareRender]
-
+    [PreRender]
     [RenderCharacters][Br]
     [RenderFragmentContent] [Br]
     [RenderSpeaker][Br]
@@ -34,7 +38,7 @@ S: [Show]
 
 # Human readable version of Render
 Show:
-    [PrepareRender]
+    [PreRender]
     Characters: [RenderCharacters][Br]
     Content: [RenderFragmentContent] [Br]
     Fragment: [CurrentFragment] [Br]
@@ -81,8 +85,7 @@ RenderNextBestChoices: [RenderChoices NextBestChoices]
 RenderChoices ?choices: [Length ?choices 0] [add |No choices available| ErrorList]
 RenderChoices ?choices:
     [Length ?choices ?l]
-    [Br]
-        [DoAll [Member ?c ?choices] [RenderChoice ?c] [ItemDelim]] 
+    [DoAll [Member ?c ?choices] [RenderChoice ?c] [ItemDelim]] 
 [end]
 
 RenderChoice [?frag ?choice_id]:  [GetID [?frag ?choice_id]] [Delim] [ChoiceLabel ?frag]   

@@ -37,9 +37,10 @@ namespace Step.Parser
     /// </summary>
     internal class TextFileTokenStream : TokenStream
     {
-        public static string[] Tokenize(string code)
+        public static string[] Tokenize(string code, string? path = null, int lineNumber = 0)
         {
-            var stream = new TextFileTokenStream(new StringReader(code), null);
+            var stream = new TextFileTokenStream(new StringReader(code), path);
+            stream.LineNumber = lineNumber;
             return stream.Tokens.ToArray();
         }
         
@@ -48,7 +49,7 @@ namespace Step.Parser
         /// </summary>
         /// <param name="input">Stream to read from</param>
         /// <param name="filePath">Path of the stream if it comes from a file (for debug messages)</param>
-        public TextFileTokenStream(TextReader input, string filePath) : base(input, filePath)
+        public TextFileTokenStream(TextReader input, string? filePath) : base(input, filePath)
         { }
 
         #region Token buffer managment

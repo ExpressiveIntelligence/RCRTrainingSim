@@ -4,6 +4,7 @@ I:
 [end]
 
 Initialize ?scene:
+    [verbatimCase]
     [InitializeScene ?scene]
     [InitializeChoices]
     # Initialized ^CurrentScene.

@@ -1,5 +1,4 @@
 # Must declare the scene for various checks to succeed
-
 Scene irb.
 BackgroundAsset irb: |./irb_background.png|.
 
@@ -40,17 +39,13 @@ Fragment temp irb.
 Fragment temp2 irb.
 
 # Scene specific predicates
-fluent Inside.
+# fluent Inside.
 
 InitialSceneState irb:
     [set Initialized = true]
-    [now [Not [Inside]]]
-    [now [Not [CardinalChoice]]]
-    [now [Not [CharacterSelected]]]
     [set NedFrustration = 0]
-    [set CurrentBeat = beat_1]
+    [set CurrentBeat = none]
     [set Snark = 0]
-    [set DiscourseAct = none]
 #     [set Misunderstanding = empty] # forest for trees, not understanding what goes into an IRB request, etc
 [end]
 
@@ -114,7 +109,7 @@ Content beat_1_ned_talks_med_snark: No worries! Though I do have a hard stop, I 
 ChoiceLabel beat_1_ned_talks_med_snark: I'm on a schedule.
 Conditions beat_1_ned_talks_med_snark.
 Effects beat_1_ned_talks_med_snark:
-    [set Snark = Snark + 1] 
+    [set Snark = Snark + 1]
     [set CurrentBeat = beat_1]
     [set DiscourseAct = greeting]
 [end]
@@ -292,7 +287,7 @@ Speaker         vent_irb_end student.
 
 Content     beat_2_root: Now we are at the second beat
 ChoiceLabel beat_2_root: Second beat
-Conditions  beat_2_root.I
+Conditions  beat_2_root.
 Effects     beat_2_root: 
     [set CurrentBeat = beat_2]
     [set DiscourseAct = greeting]
@@ -325,7 +320,6 @@ Conditions temp2.
 [randomly]
 Want irb initialized.
 Want irb character_selected.
-Want irb inside.
 Want irb progression.
 
 # Want irb snark.
@@ -335,7 +329,6 @@ Want irb progression.
 # Fulfilled initialized: [Initialized]
 Fulfilled character_selected: [CharacterSelected]
 Fulfilled initialized: [= Initialized true]
-Fulfilled inside: [Inside]
 Fulfilled progression: [= CurrentBeat beat_2]
 
 # Fulfilled snark: [> 0 Snark]

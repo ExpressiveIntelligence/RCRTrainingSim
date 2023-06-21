@@ -26,6 +26,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -42,7 +43,7 @@ namespace Step.Interpreter
     internal static class Builtins
     {
         private static readonly object[] EmptyArray = new object[0];
-        internal static PrimitiveTask WritePrimitive;
+        internal static PrimitiveTask? WritePrimitive;
 
         /// <summary>
         /// Add the built-in primitives to the global module.
@@ -272,10 +273,12 @@ namespace Step.Interpreter
                 .Arguments("x")
                 .Documentation("type testing", "Succeeds when its argument is a tuple");
             g["BinaryTask"] = new SimplePredicate<object>("BinaryTask",
-                o => (o is Task c && c.ArgumentCount == 2))
+                o => o is Task { ArgumentCount: 2 })
                 .Arguments("x")
                 .Documentation("type testing", "Succeeds when its argument is 2-argument task");
             g["Empty"] = Cons.Empty;
+            g["EmptyMaxQueue"] = ImmutableSortedSet.Create<(object element, float priority)>(PriorityQueueComparer.Max);
+            g["EmptyMinQueue"] = ImmutableSortedSet.Create<(object element, float priority)>(PriorityQueueComparer.Min);
 
             g["CountAttempts"] = new GeneralPrimitive("CountAttempts", (args, o, bindings, p, k) =>
             {
@@ -284,7 +287,7 @@ namespace Step.Interpreter
                 int count = 0;
                 while (true)
                     if (k(o,
-                        BindingList<LogicVariable>.Bind(bindings.Unifications, (LogicVariable) args[0], count++),
+                        BindingList.Bind(bindings.Unifications, (LogicVariable) args[0]!, count++),
                         bindings.State,
                         p))
                         return true;
@@ -497,10 +500,12 @@ namespace Step.Interpreter
             return true;
         }
 
-        private static bool Throw(object[] args)
+        private static bool Throw(object?[] args)
         {
-            string Stringify(object o)
+            string Stringify(object? o)
             {
+                if (o == null)
+                    return "null";
                 var s = o.ToString();
                 if (s != "")
                     return s;
@@ -508,6 +513,19 @@ namespace Step.Interpreter
             }
 
             throw new Exception(args.Select(Stringify).Untokenize());
+        }
+
+        private class PriorityQueueComparer : IComparer<(object element, float priority)>
+        {
+            private int sign = 1;
+
+            public int Compare((object element, float priority) x, (object element, float priority) y)
+            {
+                return sign * x.Item2.CompareTo(y.Item2);
+            }
+
+            public static PriorityQueueComparer Max = new PriorityQueueComparer();
+            public static PriorityQueueComparer Min = new PriorityQueueComparer() { sign = -1 };
         }
     }
 }
