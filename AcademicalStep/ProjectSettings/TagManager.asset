@@ -6,6 +6,7 @@ TagManager:
   tags:
   - FragmentManager
   - StepManager
+  - BackgroundManager
   layers:
   - Default
   - TransparentFX
