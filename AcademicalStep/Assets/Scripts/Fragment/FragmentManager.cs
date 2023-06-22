@@ -16,8 +16,10 @@ public class FragmentManager : MonoBehaviour
 
     // Manager orchestration
     public StepManager stepManager;
+    //list of managers
     public BackgroundManager backgroundManager;
-
+    //Character Manager
+    //Choice Manager...
 
     void Awake() 
     {
