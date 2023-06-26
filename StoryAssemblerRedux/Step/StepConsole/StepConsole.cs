@@ -84,11 +84,11 @@ namespace StepConsole
             {
                 try
                 {
-                    module = new Module("REPL");
-                    var dir = "..\\..\\..\\..\\..\\..\\StoryAssembler";
+                    module = new Module("Console");
+                    var dir = "..\\..\\..\\..\\..\\StoryAssembler";
                     module.LoadDirectory(dir);
                     Console.WriteLine("Loaded " + dir);
-                    var dir2 = "..\\..\\..\\..\\..\\..\\IRBScenes";
+                    var dir2 = "..\\..\\..\\..\\..\\IRBScenes";
                     module.LoadDirectory(dir2);
                     Console.WriteLine("Loaded " + dir2);
 
