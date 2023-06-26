@@ -69,7 +69,7 @@ public class FragmentManager : MonoBehaviour
         }
 
         //Initializes Step Interpreter
-        this.stepManager.InitStep();
+        this.stepManager.InitializeStepStoryAssembler();
         //Render currently loaded fragment
         //TODO: Set loaded fragment in earlier menu or from file
         SerializedFragment fragment = this.stepManager.Render();

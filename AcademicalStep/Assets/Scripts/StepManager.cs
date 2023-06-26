@@ -49,7 +49,7 @@ public class StepManager : MonoBehaviour
         
     }
 
-    /// A temporary example of how to use the StepManager
+    /// An example of how to use the StepManager
     void UsageDemo() 
     {   
         SerializedFragment fragment = Render();
@@ -65,9 +65,9 @@ public class StepManager : MonoBehaviour
     /** 
      *  Initialize Step Library 
      */
-    public void InitStep()
+    public void InitializeStepStoryAssembler()
     {
-        this.module = LoadModule();
+        this.module = CreateModule();
         this.state = State.Empty;
 
         // Load the StoryAssembler library, implemented in Step
@@ -99,8 +99,20 @@ public class StepManager : MonoBehaviour
         }
     }
 
+    /** 
+     * Reload story assembler and create a new Step module. Does not reload the Step library.
+     * 
+    **/
+    public void Reload()
+    {
+        // Currently we can get away with calling the initialization function again,
+        // but we may need to do more in the future, so the separation may be useful. 
+        this.InitializeStepStoryAssembler();
+    }
+
     // Should be called before anything else with a scene name as defined in the Step file: 
-    // Step: Scene maze. 
+    // Step syntax:
+    //      Scene maze. 
     // the scene name would be "maze"
     string Initialize(string sceneName)
     {
@@ -176,8 +188,8 @@ public class StepManager : MonoBehaviour
     }
 
     /* 
-    * Provides direct access to the Step interpreter.
-    * Executes a step task and returns the result.
+    * This function provides direct access to the Step interpreter.
+    * It executes a step task and returns the result.
     * For more information on accepted syntax, see the Step Language Reference https://github.com/ianhorswill/Step/raw/master/Step%20Language%20Reference.docx
     *
     * @param code The Step code to execute e.g. "[MyTask argument1 argument2]"
@@ -276,7 +288,7 @@ public class StepManager : MonoBehaviour
     }
 
     // Create a Step Module object as defined in the Step C# library
-    private static Module LoadModule()
+    private static Module CreateModule()
     {
         Module module = null;
         while (module == null)
