@@ -19,17 +19,6 @@ InitializeScene ?scene:
     [InitScene CurrentScene]
 [end]
 
-# Check:
-#     [ForEach [ChoiceLabel ?f] [CheckNoFrag ?f]]
-#     [ForEach [Content ?f] [CheckNoFrag ?f]]
-# [end]
-
-# CheckNoFrag ?f:
-#     [Not [Fragment ?f CurrentScene]]
-#     Warning: no fragment found for ?f
-# [end]
-# CheckNoFrag ?f.
-
 InitializeChoices:
     [BestChoices CurrentFragment ?next_best]
     [set NextBestChoices = ?next_best]

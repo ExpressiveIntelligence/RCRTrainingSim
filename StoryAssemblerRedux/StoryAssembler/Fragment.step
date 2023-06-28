@@ -35,7 +35,7 @@ predicate Request ?fragment ?request_type ?arguments.
 # TODO Document
 fluent Expanded ?fragment ?scene.
 # TODO Document & test
-fluent Reusable ?fragment ?scene.
+fluent Reusable ?fragment ?scene. # TODO we want a way to define this without needing to include the scene
 
 # Check if a fragment is available to be visited. 
 # The conditions to be avialiable is that the fragment must be reusable or not expanded 
@@ -103,7 +103,7 @@ Visit ?frag:
 # 3. TopLevel: 
 #       Find a fragment that does not have a choice label
 
-# Returns a posible next fragment from the current fragment ?source_frag
+# Binds with fragment that can be reached (?target_frag) from the current fragment (?source_frag)
 # Side Effect: AvailableConditionalChoice will apply the effects of the new fragment
 # choice_id: will be false unless there is an associated choice_id, ie the choice type is a ConditionalChoice
 predicate AvailableNextFragment ?source_frag ?choice. # a choice is a [?target_frag ?choice_id] tuple

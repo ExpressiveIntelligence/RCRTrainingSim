@@ -148,7 +148,8 @@ public class StepManager : MonoBehaviour
             characters = ExecuteStep<SerializedCharacter>("[RenderCharacters]"),
             speakerID =  ExecuteStep("[RenderSpeaker]"), // this can be empty
             backgroundPath = ExecuteStep("[RenderBackground]"),
-            systemMessage = ExecuteStep("[Error]") // Error messages, etc. 
+            systemMessage = ExecuteStep("[Error]") // Error messages, etc.
+            // warnings = ExecuteStep("[Warnings ^CurrentScene]"), // Warning messages, etc.
         };
 
         return renderedScene;

@@ -71,6 +71,9 @@ RenderFragmentContent:
     [Different CurrentFragment root]
     [Content CurrentFragment]
 [end]
+RenderFragmentContent:
+    🌳 root 🌳
+[end]
 RenderFragmentContent: [add |No fragment available| ErrorList] 
 
 RenderSpeaker:

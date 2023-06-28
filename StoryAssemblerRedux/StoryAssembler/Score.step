@@ -6,7 +6,7 @@ ScorePath ?path ?scored_path: [Reverse ?path ?ordered_path] [ScoreCalculation ?o
 ScoredPath ?path ?score ?scored_path: [= ?scored_path [?path ?score]] 
 
 ScoreCalculation ?path 0:
-    # Paths ending with a request (dynamic node) are not allowed should not be considered
+    # Paths ending with a request (dynamic node) are not allowed and should not be considered
     [Not [Length ?path 0]]
     [Last [?last ?] ?path]
     [Request ?last ? ?]
@@ -16,6 +16,10 @@ ScoreCalculation ?path ?value:
     [SatisfactionValue ?path ?satisfied_value] 
     [set Value = ?length_value + MaxDepth * ?satisfied_value] 
     [= ?value Value]
+[end]
+
+SpeakerModeValue ?path ?value: 
+# TODO we want to allow dialogue and monologue
 [end]
 
 [predicate]
