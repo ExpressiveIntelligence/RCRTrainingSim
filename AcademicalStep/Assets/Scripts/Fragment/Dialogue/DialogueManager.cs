@@ -31,10 +31,14 @@ public class DialogueManager : MonoBehaviour
             this.InstantiateEmptyDialogueFromPrefab();
         }
 
-        //update speaker label
+        //set speaker text
         this.dialogue.SetSpeakerText(serializedFragment.speakerID);
+        
+        //set content text
         this.dialogue.SetContentText(serializedFragment.content);
 
+        //set choices
+        this.dialogue.SetChoices(serializedFragment.choices);
 
     }
 
