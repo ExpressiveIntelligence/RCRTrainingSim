@@ -31,6 +31,12 @@ public class ChoiceButton : MonoBehaviour
         }
     }
 
+    void OnMouseDown() 
+    {
+        this.transform.parent.GetComponent<Choice>().SubmitChoiceToDialogue();
+        
+    }
+
     void OnMouseExit()
     {
         if (isHover)

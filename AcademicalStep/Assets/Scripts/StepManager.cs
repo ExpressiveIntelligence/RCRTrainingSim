@@ -129,7 +129,7 @@ public class StepManager : MonoBehaviour
     // Represents a player selecting a choice
     // choice_id is the id of the choice as defined in the Step file,
     // returned by Render or PrintChoices
-    string MakeChoice(string choice_id)
+    private string MakeChoice(string choice_id)
     { 
         return ExecuteStep($"[MakeChoice {choice_id}]");
     }
@@ -180,7 +180,7 @@ public class StepManager : MonoBehaviour
     * Represents the user selecting the choice with the given id.
     * Returns the next fragment to be rendered.
     */
-    SerializedFragment Select(string choice_id)
+    public SerializedFragment Select(string choice_id)
     {
         MakeChoice(choice_id);
         if (this.debug)

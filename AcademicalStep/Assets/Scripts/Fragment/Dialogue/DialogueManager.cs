@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static GameSession;
 
 public class DialogueManager : MonoBehaviour
 {
+
     public GameObject dialoguePrefab;
     public GameObject dialogueGO;
     public Dialogue dialogue;
@@ -14,7 +16,7 @@ public class DialogueManager : MonoBehaviour
     void Start()
     {
         this.dialoguePrefab = (GameObject)Resources.Load("Dialogue");
-        
+
     }
 
     // Update is called once per frame
@@ -44,18 +46,14 @@ public class DialogueManager : MonoBehaviour
 
     public void InstantiateEmptyDialogueFromPrefab() 
     {
-        if (this.dialoguePrefab != null)
+        if (this.dialoguePrefab == null)
         {
-            //TODO: don't hardcode these coordinates, but not super urgent until we need resolution scaling.
-            this.dialogueGO = Instantiate(this.dialoguePrefab, new Vector3(5.85f, 0, -0.1f), Quaternion.identity);
-            this.dialogue = this.dialogueGO.GetComponent<Dialogue>();
-            Debug.Log("Empty dialogue instantiated.");
-
+            this.dialoguePrefab = (GameObject)Resources.Load("Dialogue");
         }
-        else
-        {
-            Debug.Log("Attempted to instantiate empty background gameobject without prefab!");
-        }
+        //TODO: don't hardcode these coordinates, but not super urgent until we need resolution scaling.
+        this.dialogueGO = Instantiate(this.dialoguePrefab, new Vector3(5.85f, 0, -0.1f), Quaternion.identity);
+        this.dialogue = this.dialogueGO.GetComponent<Dialogue>();
+        Debug.Log("Empty dialogue instantiated.");
 
     }
 }

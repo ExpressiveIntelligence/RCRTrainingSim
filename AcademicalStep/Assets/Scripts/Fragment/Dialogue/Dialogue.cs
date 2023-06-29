@@ -8,6 +8,7 @@ using TMPro;
  */
 public class Dialogue : MonoBehaviour
 {
+    public GameSession gameSession;
     //TODO: Not critical, but we could add safety checks for these references in the prefab.
     public TMP_Text speakerText;
     public TMP_Text contentText;
@@ -28,7 +29,7 @@ public class Dialogue : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        this.gameSession = GameSession.instance;
 
 
     }
@@ -37,6 +38,13 @@ public class Dialogue : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void SubmitChoiceToStoryAssembler(string choiceId) 
+    {
+
+        SerializedFragment temp = this.gameSession.stepManager.Select(choiceId.ToLower());
+        Debug.Log(temp.ToString());
     }
 
     public void SetChoices(SerializedChoice[] choices) 

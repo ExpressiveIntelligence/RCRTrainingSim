@@ -915,6 +915,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7919472533377233036, guid: 2bb7c8efa69ae2a438ac790bb73e1049, type: 3}
+      propertyPath: m_text
+      value: hah, lorem ipsum, my dude
+      objectReference: {fileID: 0}
+    - target: {fileID: 7919472533377233036, guid: 2bb7c8efa69ae2a438ac790bb73e1049, type: 3}
+      propertyPath: m_fontSize
+      value: 0.35
+      objectReference: {fileID: 0}
     - target: {fileID: 8052478527084647117, guid: 2bb7c8efa69ae2a438ac790bb73e1049, type: 3}
       propertyPath: m_Name
       value: Choice

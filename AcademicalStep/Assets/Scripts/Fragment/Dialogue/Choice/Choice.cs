@@ -26,5 +26,10 @@ public class Choice : MonoBehaviour
         this.choiceText.text = content;
     }
 
+    public void SubmitChoiceToDialogue() 
+    {
+        this.transform.parent.GetComponent<Dialogue>().SubmitChoiceToStoryAssembler(this.choiceId);
+    }
+
 
 }
