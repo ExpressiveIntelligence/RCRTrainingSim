@@ -28,7 +28,7 @@ public class BackgroundManager : MonoBehaviour
     {
         if (this.backgroundPrefab != null)
         {
-            this.background = Instantiate(this.backgroundPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            this.background = (GameObject)Instantiate(Resources.Load("Background"), new Vector3(0, 0, 0.2f), Quaternion.identity);
             this.bgSpriteRenderer = this.background.GetComponent<SpriteRenderer>();
             Debug.Log("Empty Background Instantiated.");
         }
