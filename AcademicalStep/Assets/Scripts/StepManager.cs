@@ -53,17 +53,17 @@ public class StepManager : MonoBehaviour
     void UsageDemo() 
     {   
         SerializedFragment fragment = Render();
-        var current_scene_json = JsonUtility.ToJson(fragment);
-        Debug.Log(current_scene_json);
+        var currentSceneJson = JsonUtility.ToJson(fragment);
+        Debug.Log(currentSceneJson);
         fragment = Select("welcome");
-        current_scene_json = JsonUtility.ToJson(fragment);
-        Debug.Log(current_scene_json);
+        currentSceneJson = JsonUtility.ToJson(fragment);
+        Debug.Log(currentSceneJson);
         var save = SaveState();
         Debug.Log("Save: " + save);
     }
     
     /** 
-     *  Initialize Step Library 
+     *  Initialize StoryAssembler and the Step library interface
      */
     public void InitializeStepStoryAssembler()
     {
@@ -100,8 +100,7 @@ public class StepManager : MonoBehaviour
     }
 
     /** 
-     * Reload story assembler and create a new Step module. Does not reload the Step library.
-     * 
+     * Reload story assembler and create a new Step module. Does not reload the Step DLL itself.
     **/
     public void Reload()
     {
@@ -126,18 +125,18 @@ public class StepManager : MonoBehaviour
         return ExecuteStep("[PrintChoices]");
     }
 
-    // Represents a player selecting a choice
-    // choice_id is the id of the choice as defined in the Step file,
-    // returned by Render or PrintChoices
-    string MakeChoice(string choice_id)
+    // Represents a player selecting a choice. 
+    // This function should not be used if you plan to render a fragment after making a choice. In that case, use Select() instead.
+    // <param> choiceID </param> the id of the choice as defined in the Step file, returned by Render or PrintChoices
+    private string MakeChoice(string choiceID)
     { 
-        return ExecuteStep($"[MakeChoice {choice_id}]");
+        return ExecuteStep($"[MakeChoice {choiceID}]");
     }
 
     /**
      * Parse Raw Current Step Fragment into Fragment GameObject
      * if the step parse fails for a given field, it will be null.
-     */
+    **/
     public SerializedFragment Render() 
     {
         var renderedScene = new SerializedFragment()
@@ -157,7 +156,8 @@ public class StepManager : MonoBehaviour
 
     string SaveState()
     {
-        // TODO this is a temporary example of the data format
+        // TODO this is a temporary example of the data format we want to save
+        // This has not yet been implemented
         var state = new SerializedFragmentSaveState() {
             currentFragment = "fragment_id_1",
             stateVariables = new Dictionary<string, object>() {
@@ -180,11 +180,11 @@ public class StepManager : MonoBehaviour
     * Represents the user selecting the choice with the given id.
     * Returns the next fragment to be rendered.
     */
-    SerializedFragment Select(string choice_id)
+    SerializedFragment Select(string choiceID)
     {
-        MakeChoice(choice_id);
+        MakeChoice(choiceID);
         if (this.debug)
-            Debug.Log("Rendering " + choice_id);
+            Debug.Log("Rendering " + choiceID);
         return Render();
     }
 
@@ -209,8 +209,10 @@ public class StepManager : MonoBehaviour
         }
     }
 
-    // Generic overload for ExecuteStep that parses the result into a list of serializable objects
-    // e.g. ExecuteStep<SerializedChoice>("[RenderNextBestChoices]")
+    /* 
+    * Generic overload for ExecuteStep that parses the result into a list of serializable objects
+    * e.g. ExecuteStep<SerializedChoice>("[RenderNextBestChoices]")
+    */
     public T[] ExecuteStep<T>(string code)
     {   
         string result = null;
