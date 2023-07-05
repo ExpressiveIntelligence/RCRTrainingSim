@@ -44,6 +44,7 @@ Show:
     Fragment: [CurrentFragment] [Br]
     Speaker: [RenderSpeaker][Br]
     Choices: [RenderNextBestChoices] [Br]
+    Paths: [Length AllPaths ?l] ?l [Br]
     Warnings: [Warnings CurrentScene] [Br]
     Errors: [Error] [Br]
 [end]
