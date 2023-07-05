@@ -180,7 +180,7 @@ public class StepManager : MonoBehaviour
     * Represents the user selecting the choice with the given id.
     * Returns the next fragment to be rendered.
     */
-    SerializedFragment Select(string choiceID)
+    public SerializedFragment Select(string choiceID)
     {
         MakeChoice(choiceID);
         if (this.debug)
