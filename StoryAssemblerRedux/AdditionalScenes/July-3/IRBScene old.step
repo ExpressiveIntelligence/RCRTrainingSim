@@ -1,0 +1,534 @@
+# Must declare the scene for various checks to succeed
+Scene irb.
+BackgroundAsset irb: |./irb_background.png|.
+
+Character student irb |Brad|.
+CharacterAsset student irb |./brad.png|.
+CharacterLocation student irb [0, 0].
+
+Character teacher irb |Ned|.
+CharacterAsset teacher irb |./ned.png|.
+CharacterLocation teacher irb [0, 0].
+
+# Scene specific predicates
+fluent CharacterSelected ?character. # TODO should this be a function? fluent function?
+fluent StartNudge. # By setting this true, we nudge the system to start here. 
+
+# Declare all fragments 
+# (NOTE DO NOT PUT A SPACE LINE VBETWEEN FRAGMENTS)
+[randomly]
+Fragment character_select irb.
+Fragment select_ned irb.
+Fragment select_brad irb.
+Fragment beat_1_root irb.
+Fragment beat_1_ned_talks_low_snark irb.
+Fragment beat_1_ned_talks_med_snark irb.
+Fragment beat_1_ned_talks_high_snark irb.
+Fragment refer_to_project_root irb.
+Fragment refer_to_project_ned_high_snark irb.
+Fragment refer_to_project_ned_med_snark irb.
+Fragment refer_to_project_ned_low_snark irb.
+Fragment more_questions irb.
+Fragment vent_irb irb.
+Fragment vent_irb_low irb.
+Fragment vent_irb_med irb.
+Fragment vent_irb_high irb.
+Fragment vent_irb_end irb.
+Fragment vent_irb_end_snarky irb.
+Fragment beat_2_root irb.
+Fragment beat_2_why_low irb.
+Fragment beat_2_why_mid irb.
+Fragment beat_2_why_high irb.
+Fragment beat_2_important irb.
+Fragment beat_2_important_low irb.
+Fragment beat_2_important_mid irb.
+Fragment beat_2_important_high irb.
+Fragment stand_for irb.
+Fragment stand_for_low irb.
+Fragment stand_for_mid irb.
+Fragment stand_for_high irb.
+Fragment confession irb.
+Fragment confession_low irb.
+Fragment confession_mid irb.
+Fragment confession_high irb.
+
+InitialSceneState irb:
+    [set NedFrustration = 0]
+    [set CurrentBeat = none]
+    [set DiscourseTag = none]
+    [set Snark = 0]
+    [set Knowledge = empty] 
+    [now [CharacterSelected none]]
+[end]
+
+Checkpoint irb beat_2:
+    [set CurrentBeat = beat_2]
+    [set CurrentFragment = beat_2_root]
+    [InitializeChoices]
+    [set DiscourseTag = why_do_this]
+    [set Snark = 0]
+    [set Knowledge = empty]
+    [now [CharacterSelected ned]]
+[end]
+
+## CHARACTER SELECT ##
+Content character_select: Who are you? 
+Effects character_select: [set DiscourseTag = none] [set CurrentBeat = none]
+Conditions character_select: [= CurrentBeat none]
+Reusable character_select irb.
+GoToChoice character_select select_ned.
+GoToChoice character_select select_brad.
+
+Content select_ned: You're skimming through your email, killing time before one of your students arrives for a check-in meeting about a research project that he's leading the charge on. He's been vocal about his displeasure with the slow process of getting IRB approval, which has already taken over a month.
+Effects select_ned: [now [CharacterSelected ned]] [set DiscourseTag = none] [set CurrentBeat = none]
+Conditions select_ned.
+ChoiceLabel select_ned: Ned Prescott, Advisor
+GoToChoice select_ned beat_1_root.
+Reusable select_ned irb.
+
+Content select_brad: Hi. This universe doesn't exist yet
+Effects select_brad: [now [CharacterSelected brad]] [set DiscourseTag = none] [set CurrentBeat = none]
+Conditions select_brad.
+ChoiceLabel select_brad: Brad, Student
+Reusable select_brad irb.
+
+# ## END CHARACTER SELECT ##
+# EnforceConstant ?params.
+
+# Discouse acts: greeting, 
+# (DAReferTo ?char ?obj)
+# https://eis.ucsc.edu/papers/MateasSternTIDSE04.pdf
+
+
+## BEAT 1 ##
+Content beat_1_root:  Brad rushes in, out of breath. Sorry Prof. Ned. Missed my alarm...
+ChoiceLabel beat_1_root: Where is he?
+Conditions beat_1_root: [CharacterSelected ned]
+Effects beat_1_root: 
+    [set CurrentBeat = beat_1]
+    [set DiscourseTag = greeting]
+[end]
+ChoiceCondition beat_1_root choice_1: [= CurrentBeat beat_1] [= DiscourseTag greeting]
+ChoiceCondition beat_1_root choice_2: [= CurrentBeat beat_1] [= DiscourseTag greeting]
+ChoiceCondition beat_1_root choice_3: [= CurrentBeat beat_1] [= DiscourseTag greeting]
+Speaker beat_1_root student.
+
+Content beat_1_ned_talks_low_snark: No worries! I was late myself, it's a busy world!
+ChoiceLabel beat_1_ned_talks_low_snark: No worries!
+Conditions beat_1_ned_talks_low_snark: [CharacterSelected ned]
+Effects beat_1_ned_talks_low_snark: 
+    [set Snark = Snark + 0]
+    [set CurrentBeat = beat_1]
+    [set DiscourseTag = greeting]
+[end]
+ChoiceCondition beat_1_ned_talks_low_snark choice_1: 
+    [= CurrentBeat beat_1]
+[end]
+Speaker beat_1_ned_talks_low_snark teacher.
+
+Content beat_1_ned_talks_med_snark: No worries! Though I do have a hard stop, I have another meeting soon.
+ChoiceLabel beat_1_ned_talks_med_snark: I'm on a schedule.
+Conditions beat_1_ned_talks_med_snark: [CharacterSelected ned]
+Effects beat_1_ned_talks_med_snark:
+    [set Snark = Snark + 1]
+    [set CurrentBeat = beat_1]
+    [set DiscourseTag = greeting]
+[end]
+ChoiceCondition beat_1_ned_talks_med_snark choice_1: [= CurrentBeat beat_1]
+Speaker beat_1_ned_talks_med_snark teacher.
+
+Content beat_1_ned_talks_high_snark: Third time this week.
+ChoiceLabel beat_1_ned_talks_high_snark:  Again?!
+Conditions beat_1_ned_talks_high_snark: [CharacterSelected ned]
+Effects beat_1_ned_talks_high_snark: 
+    [set Snark = Snark + 2]
+    [set CurrentBeat = beat_1]
+    [set DiscourseTag = greeting]
+[end]
+ChoiceCondition beat_1_ned_talks_high_snark choice_1: [= CurrentBeat beat_1]
+# ChoiceCondition beat_1_ned_talks_high_snark choice_2: [= CurrentBeat beat_1]
+# I think we need a way of just giving a few choices
+Speaker beat_1_ned_talks_high_snark teacher.
+
+# Brad asks about his Project Status
+# Low Snark: Project seems like it’s moving along great!
+# Mid Snark: Let’s get started! How’s the project going?
+# High Snark: Your project seems to be lagging - what’s your update this week?
+Content refer_to_project_root: So I've been busy with the project... The survey questionaire is done. The stakeholders are all onboard... I have a lot to talk about.
+ChoiceLabel refer_to_project_root: Brad sits on the edge of his seat. 
+Conditions refer_to_project_root: [CharacterSelected ned]
+Effects refer_to_project_root: 
+    [set Snark = Snark + 0]
+    [set CurrentBeat = beat_1]
+    [set DiscourseTag = refer_to_project]
+    [add discuss_project Knowledge]
+[end]
+ChoiceCondition refer_to_project_root choice_1: [= CurrentBeat beat_1] [= DiscourseTag refer_to_project]
+ChoiceCondition refer_to_project_root choice_2: [= CurrentBeat beat_1] [= DiscourseTag refer_to_project]
+ChoiceCondition refer_to_project_root choice_3: [= CurrentBeat beat_1] [= DiscourseTag refer_to_project]
+Speaker refer_to_project_root student.
+
+
+Content     refer_to_project_ned_low_snark: Well the project seems like it's moving along great!
+ChoiceLabel refer_to_project_ned_low_snark: It seems to be going along great!
+Conditions  refer_to_project_ned_low_snark: [CharacterSelected ned]
+Effects     refer_to_project_ned_low_snark:
+    [set CurrentBeat = beat_1]
+    [set Snark = Snark + 0]
+    [set DiscourseTag = refer_to_project]
+[end]
+Speaker         refer_to_project_ned_low_snark teacher.
+
+
+Content     refer_to_project_ned_med_snark: Yes, let's get started! How's the project going?
+ChoiceLabel refer_to_project_ned_med_snark: Yes?
+Conditions  refer_to_project_ned_med_snark: [CharacterSelected ned]
+Effects     refer_to_project_ned_med_snark: 
+    [set CurrentBeat = beat_1]
+    [set Snark = Snark + 1]
+    [set DiscourseTag = refer_to_project]
+[end]
+Speaker         refer_to_project_ned_med_snark teacher.
+
+Content     refer_to_project_ned_high_snark: Your project seems to be lagging - what's your update this week?
+ChoiceLabel refer_to_project_ned_high_snark: The project is lagging.
+Conditions  refer_to_project_ned_high_snark: [CharacterSelected ned]
+Effects     refer_to_project_ned_high_snark: 
+    [set CurrentBeat = beat_1]
+    [set Snark = Snark + 2]
+    [set DiscourseTag = refer_to_project]
+[end]
+Speaker         refer_to_project_ned_high_snark teacher.
+GoToChoice refer_to_project_ned_high_snark vent_irb.
+
+# This is where we would put in a request for the more questions node so that we can have a sensible choicelabel
+
+# [randomly]
+# Content     more_questions: I do have something to discuss.
+# Content     more_questions: Great, I have some questions
+# Content     more_questions: Can we get into it?
+# Repeatable  more_questions.
+# Conditions  more_questions: [CharacterSelected ned] [= DiscourseTag refer_to_project]
+# Effects     more_questions:
+#     [set CurrentBeat = beat_1]
+#     # Don't set the discourse act, ie it will be the same as before
+# [end]
+# ChoiceCondition more_questions choice_1: [= CurrentBeat beat_1] [Different DiscourseTag refer_to_project]
+# ChoiceCondition more_questions choice_2: [= CurrentBeat beat_1] [Different DiscourseTag refer_to_project]
+# ChoiceCondition more_questions choice_2: [= CurrentBeat beat_1] [Different DiscourseTag refer_to_project]
+# Speaker         more_questions student.
+
+Content     vent_irb: I'm really frustrated with the IRB process. I've been waiting for a month and I still haven't heard back.
+ChoiceLabel vent_irb: Brad shifts his weight in his chair. 
+Conditions  vent_irb: [CharacterSelected ned]
+Effects     vent_irb: 
+    [set CurrentBeat = beat_1]
+    [set DiscourseTag = vent_irb]
+[end]
+ChoiceCondition vent_irb choice_1: [= CurrentBeat beat_1] [= DiscourseTag vent_irb]
+ChoiceCondition vent_irb choice_2: [= CurrentBeat beat_1] [= DiscourseTag vent_irb]
+ChoiceCondition vent_irb choice_3: [= CurrentBeat beat_1] [= DiscourseTag vent_irb]
+Speaker vent_irb student.
+
+# Brad vents about IRB
+Content     vent_irb_low: Frustration is totally understable. Bureaucratic practices can be confusing and disheartening, but it is a requirement for our research to proceed.
+ChoiceLabel vent_irb_low: Frustration is understable.
+Conditions  vent_irb_low: [CharacterSelected ned] [= DiscourseTag vent_irb]
+Effects     vent_irb_low: 
+    [set Snark = Snark + 0]
+    [set CurrentBeat = beat_1]
+    [add we_have_to_irb Knowledge]
+[end]
+ChoiceCondition vent_irb_low choice_1: [= CurrentBeat beat_1] [= DiscourseTag vent_irb] [Member acknowledge Knowledge]
+Speaker vent_irb_low teacher.
+
+Content     vent_irb_med: It's a pain but we have to do what we have to do. Without the IRB, we can't conduct our research.
+ChoiceLabel vent_irb_med: It's a pain.
+Conditions  vent_irb_med: [CharacterSelected ned] [= DiscourseTag vent_irb]
+Effects     vent_irb_med: 
+    [set Snark = Snark + 1]
+    [set CurrentBeat = beat_1]
+    [add we_have_to_irb Knowledge]
+[end]
+ChoiceCondition vent_irb_med choice_1: [= CurrentBeat beat_1] [= DiscourseTag vent_irb] [Member acknowledge Knowledge]
+Speaker vent_irb_med teacher.
+
+Content     vent_irb_high: You shouldn't disrespect practices like the IRB. This project wouldn't be possible without this process.
+ChoiceLabel vent_irb_high: The IRB is important.
+Conditions  vent_irb_high: [CharacterSelected ned] [= DiscourseTag vent_irb]
+Effects     vent_irb_high: 
+    [set Snark = Snark + 2]
+    [set CurrentBeat = beat_1]
+    [add we_have_to_irb Knowledge]
+[end]
+ChoiceCondition vent_irb_high choice_1: [= CurrentBeat beat_1] [= DiscourseTag vent_irb] [Member acknowledge Knowledge]
+Speaker vent_irb_high teacher.
+
+
+Content     vent_irb_end_snarky: That's what you've been telling me. 
+ChoiceLabel vent_irb_end_snarky: *Brad fidgets*
+Conditions  vent_irb_end_snarky: [CharacterSelected ned] [= DiscourseTag vent_irb] [> Snark 1] [Member we_have_to_irb Knowledge]
+Effects     vent_irb_end_snarky:
+    [set CurrentBeat = beat_1]
+    [add acknowledge Knowledge]
+[end]
+Speaker         vent_irb_end_snarky student.
+
+Content     vent_irb_end: I'm sure you're right. 
+ChoiceLabel vent_irb_end: *Brad fidgets*
+Conditions  vent_irb_end: [CharacterSelected ned] [= DiscourseTag vent_irb] [Member we_have_to_irb Knowledge]
+Effects     vent_irb_end:
+    [set CurrentBeat = beat_1]
+    [add acknowledge Knowledge]
+[end]
+Speaker         vent_irb_end student.
+
+## BEAT 2 ##
+# Ned brings up status on Brad’s ongoing experiment.
+# Character Goal: Ned wants to understand the current state of Brad’s work.
+# Author Goal: Introduce IRB step of human-subjects research
+Content     beat_2_root: Well, I am eager to get into the specifics of the research project, but I guess I'm stuck until we get past this IRB. Why do we need to do it?
+Conditions  beat_2_root: [CharacterSelected ned]
+Effects     beat_2_root: 
+    [set CurrentBeat = beat_2]
+    [set DiscourseTag = why_do_this]
+[end]
+Speaker         beat_2_root student.
+ChoiceCondition beat_2_root choice_1: [= CurrentBeat beat_2] [= DiscourseTag why_do_this]
+ChoiceCondition beat_2_root choice_2: [= CurrentBeat beat_2] [= DiscourseTag why_do_this]
+ChoiceCondition beat_2_root choice_3: [= CurrentBeat beat_2] [= DiscourseTag why_do_this]
+
+Content         beat_2_why_low: That's a good question. The IRB serves an important purpose. How would you feel if you were a participant in a study and you were harmed?
+ChoiceLabel     beat_2_why_low: It's a good question.
+Conditions      beat_2_why_low: [CharacterSelected ned] [= DiscourseTag why_do_this]
+Effects         beat_2_why_low: 
+    [set CurrentBeat = beat_2]
+    [add concern Knowledge]
+[end]
+Speaker         beat_2_why_low teacher.
+ChoiceCondition beat_2_why_low choice_1: [= CurrentBeat beat_2] [Different DiscourseTag why_do_this]
+ChoiceCondition beat_2_why_low choice_2: [= CurrentBeat beat_2] [Different DiscourseTag why_do_this]
+ChoiceCondition beat_2_why_low choice_3: [= CurrentBeat beat_2] [Different DiscourseTag why_do_this]
+
+Content         beat_2_why_mid: Well, it helps us understand if the study we are trying to execute might negatively impact anyone who is involved.
+ChoiceLabel     beat_2_why_mid: Well, we need to understand our negative impact.
+Conditions      beat_2_why_mid: [CharacterSelected ned] [= DiscourseTag why_do_this]
+Effects         beat_2_why_mid: 
+    [set Snark = Snark + 1]
+    [set CurrentBeat = beat_2]
+    [add concern Knowledge]
+[end]
+Speaker         beat_2_why_mid teacher.
+ChoiceCondition beat_2_why_mid choice_1: [= CurrentBeat beat_2] [Different DiscourseTag why_do_this]
+ChoiceCondition beat_2_why_mid choice_2: [= CurrentBeat beat_2] [Different DiscourseTag why_do_this]
+ChoiceCondition beat_2_why_mid choice_3: [= CurrentBeat beat_2] [Different DiscourseTag why_do_this]
+
+Content         beat_2_why_high: It sounds like you're asking why we should care about the people interested in our study, which I know you don't mean.
+ChoiceLabel     beat_2_why_high: You're asking what?
+Conditions      beat_2_why_high: [CharacterSelected ned] [= DiscourseTag why_do_this]
+Effects         beat_2_why_high: 
+    [set Snark = Snark + 2]
+    [set CurrentBeat = beat_2]
+    [add concern Knowledge]
+[end]
+Speaker         beat_2_why_high teacher.
+ChoiceCondition beat_2_why_high choice_1: [= CurrentBeat beat_2] [Different DiscourseTag why_do_this]
+ChoiceCondition beat_2_why_high choice_2: [= CurrentBeat beat_2] [Different DiscourseTag why_do_this]
+ChoiceCondition beat_2_why_high choice_3: [= CurrentBeat beat_2] [Different DiscourseTag why_do_this]
+
+Content         beat_2_important: Okay we have to do it, but why does the university put so much importance on it?
+ChoiceLabel     beat_2_important: *Brad still seems uncomfortable*
+Conditions      beat_2_important: [CharacterSelected ned]
+Effects         beat_2_important: 
+    [set CurrentBeat = beat_2]
+    [set DiscourseTag = important]
+[end]
+Speaker         beat_2_important student.
+ChoiceCondition beat_2_important choice_1: [= CurrentBeat beat_2] [= DiscourseTag important]
+ChoiceCondition beat_2_important choice_2: [= CurrentBeat beat_2] [= DiscourseTag important]
+ChoiceCondition beat_2_important choice_3: [= CurrentBeat beat_2] [= DiscourseTag important]
+
+Content         beat_2_important_low: Good question! It's a critical piece to making sure your research is ethical. As researchers with our own biases and self-interests, an 'independent' review board ensures that a greater degree of impartiality is applied to our research.
+ChoiceLabel     beat_2_important_low: Good question!
+Conditions      beat_2_important_low: [CharacterSelected ned] [= DiscourseTag important] 
+Effects         beat_2_important_low: 
+    [set CurrentBeat = beat_2]
+    [add bias Knowledge]
+[end]
+Speaker         beat_2_important_low teacher.
+ChoiceCondition beat_2_important_low choice_1: [= CurrentBeat beat_2] [Different DiscourseTag important]
+ChoiceCondition beat_2_important_low choice_2: [= CurrentBeat beat_2] [Different DiscourseTag important]
+ChoiceCondition beat_2_important_low choice_3: [= CurrentBeat beat_2] [Different DiscourseTag important]
+
+Content         beat_2_important_mid: It's something we've all just got to do - but it's got good intentions behind it. One of the ideas is that a we may be biased by our own self-interests, so an 'independent' review board ensures that a greater degree of impartiality is applied to our research.
+ChoiceLabel     beat_2_important_mid: It has good intentions.
+Conditions      beat_2_important_mid: [CharacterSelected ned] [= DiscourseTag important]
+Effects         beat_2_important_mid: 
+    [set Snark = Snark + 1]
+    [set CurrentBeat = beat_2]
+    [add bias Knowledge]
+[end]
+Speaker         beat_2_important_mid teacher.
+ChoiceCondition beat_2_important_mid choice_1: [= CurrentBeat beat_2] [Different DiscourseTag important]
+ChoiceCondition beat_2_important_mid choice_2: [= CurrentBeat beat_2] [Different DiscourseTag important]
+ChoiceCondition beat_2_important_mid choice_3: [= CurrentBeat beat_2] [Different DiscourseTag important]
+
+Content         beat_2_important_high: Don't you know already? It ensures we don't hurt people while we research. Researchers have their own biases and self-interests, so an 'independent' review board ensures that a greater degree of impartiality is applied to our research.
+ChoiceLabel     beat_2_important_high: Don't you know already?
+Conditions      beat_2_important_high: [CharacterSelected ned] [= DiscourseTag important]
+Effects         beat_2_important_high: 
+    [set Snark = Snark + 2]
+    [set CurrentBeat = beat_2]
+    [add bias Knowledge]
+[end]
+Speaker         beat_2_important_high teacher.
+ChoiceCondition beat_2_important_high choice_1: [= CurrentBeat beat_2] [Different DiscourseTag important]
+ChoiceCondition beat_2_important_high choice_2: [= CurrentBeat beat_2] [Different DiscourseTag important]
+ChoiceCondition beat_2_important_high choice_3: [= CurrentBeat beat_2] [Different DiscourseTag important]
+
+Content         stand_for: What does IRB stand for? Incredibly Redundant Bookkeeping?
+ChoiceLabel     stand_for: What does IRB stand for?
+Conditions      stand_for: [CharacterSelected ned]
+Effects         stand_for: 
+    [set CurrentBeat = beat_2]
+    [set DiscourseTag = stand_for]
+[end]
+Speaker         stand_for student.
+ChoiceCondition stand_for choice_1: [Member inrebo Knowledge] [= CurrentBeat beat_2] [= DiscourseTag stand_for]
+ChoiceCondition stand_for choice_2: [Member inrebo Knowledge] [= CurrentBeat beat_2] [= DiscourseTag stand_for]
+ChoiceCondition stand_for choice_3: [Member inrebo Knowledge] [= CurrentBeat beat_2] [= DiscourseTag stand_for]
+
+Content     stand_for_low: So many acronyms! Institutional Review Board. They review what institutions do from an ethics perspective.
+ChoiceLabel stand_for_low: Haha, so many acronyms!
+Conditions  stand_for_low: [CharacterSelected ned] [= DiscourseTag stand_for]
+Effects     stand_for_low: 
+    [set CurrentBeat = beat_2]
+    [add inrebo Knowledge]
+[end]
+Speaker         stand_for_low teacher.
+ChoiceCondition stand_for_low choice_1: [= CurrentBeat beat_2] [Different DiscourseTag stand_for]
+ChoiceCondition stand_for_low choice_2: [= CurrentBeat beat_2] [Different DiscourseTag stand_for]
+ChoiceCondition stand_for_low choice_3: [= CurrentBeat beat_2] [Different DiscourseTag stand_for]
+
+
+Content     stand_for_mid: IRB stands for 'Institutional Review Board.'
+ChoiceLabel stand_for_mid: IRB stands for...
+Conditions  stand_for_mid: [CharacterSelected ned] [= DiscourseTag stand_for]
+Effects     stand_for_mid: 
+    [set Snark = Snark + 1]
+    [set CurrentBeat = beat_2]
+    [add inrebo Knowledge]
+[end]
+Speaker         stand_for_mid teacher.
+ChoiceCondition stand_for_mid choice_1: [= CurrentBeat beat_2] [Different DiscourseTag stand_for]
+ChoiceCondition stand_for_mid choice_2: [= CurrentBeat beat_2] [Different DiscourseTag stand_for]
+ChoiceCondition stand_for_mid choice_3: [= CurrentBeat beat_2] [Different DiscourseTag stand_for]
+
+Content     stand_for_high: How long have you been a student? It's 'Institutional Review Board...'
+ChoiceLabel stand_for_high: How long have you been a student?
+Conditions  stand_for_high: [CharacterSelected ned] [= DiscourseTag stand_for]
+Effects     stand_for_high: 
+    [set Snark = Snark + 2]
+    [set CurrentBeat = beat_2]
+    [add inrebo Knowledge]
+[end]
+Speaker         stand_for_high teacher.
+ChoiceCondition stand_for_high choice_1: [= CurrentBeat beat_2] [Different DiscourseTag stand_for]
+ChoiceCondition stand_for_high choice_2: [= CurrentBeat beat_2] [Different DiscourseTag stand_for]
+ChoiceCondition stand_for_high choice_3: [= CurrentBeat beat_2] [Different DiscourseTag stand_for]
+
+## END BEAT 2 ##
+
+## BEAT 3 ##
+
+# Brad mentions he’s begun performing surveys before hearing from the IRB.
+# Character Goal: Ned wants to make sure Brad isn’t violating codes of conduct.
+# Author Goal: Introduce main ethical conflict of scene.
+Conntent        confession: So I'll just come out and say it. I've been doing surveys before hearing from the IRB. The process was taking so long and I figured 
+ChoiceLabel     confession: *Brad looks guilty*
+Conditions      confession: [CharacterSelected ned]
+Effects         confession: 
+    [set CurrentBeat = beat_3]
+    [set DiscourseTag = confession_start]
+[end]
+Speaker         confession student.
+ChoiceCondition confession choice_1: [= DiscourseTag confession_start]
+ChoiceCondition confession choice_2: [= DiscourseTag confession_start]
+ChoiceCondition confession choice_3: [= DiscourseTag confession_start]
+
+Content         confession_low: Okay well let's talk about this. It sounds like the cat's out of the bag. Now I'd like to understand what you were thinking and discuss how to get things back above board.
+ChoiceLabel     confession_low: Let's talk about this.
+Conditions      confession_low: [CharacterSelected ned] [= CurrentBeat beat_3]
+Effects         confession_low: 
+    [set CurrentBeat = beat_3]
+    [set DiscourseTag = confession_start]
+[end]
+ChoiceCondition confession_low choice_1: [= CurrentBeat beat_3] [= DiscourseTag confession_start]
+ChoiceCondition confession_low choice_2: [= CurrentBeat beat_3] [= DiscourseTag confession_start]
+ChoiceCondition confession_low choice_3: [= CurrentBeat beat_3] [= DiscourseTag confession_start]
+Speaker         confession_low teacher.
+
+Content         confession_mid: Alright, well let's talk about what you were thinking, because I'm not sure I understand.
+ChoiceLabel     confession_mid: I'd love to know what you were thinking
+Conditions      confession_mid: [CharacterSelected ned] [= CurrentBeat beat_3]
+Effects         confession_mid: 
+    [set Snark = Snark + 1]
+    [set CurrentBeat = beat_3]
+    [set DiscourseTag = confession_start]
+[end]
+ChoiceCondition confession_mid choice_1: [= DiscourseTag confession_start]
+ChoiceCondition confession_mid choice_2: [= DiscourseTag confession_start]
+ChoiceCondition confession_mid choice_3:  [= DiscourseTag confession_start]
+Speaker         confession_mid teacher.
+
+Content         confession_high: Let's hope your project doesn't get shut down, Brad. Tell me why you've been doing surveys before hearing from the IRB. 
+ChoiceLabel     confession_high: Let's hope your project doesn't get shut down.
+Conditions      confession_high: [CharacterSelected ned] [= CurrentBeat beat_3]
+Effects         confession_high: 
+    [set Snark = Snark + 2]
+    [set CurrentBeat = beat_3]
+    [set DiscourseTag = confession_start]
+[end]
+ChoiceCondition confession_high choice_1: [= DiscourseTag confession_start]
+ChoiceCondition confession_high choice_2: [= DiscourseTag confession_start]
+ChoiceCondition confession_high choice_3: [= DiscourseTag confession_start]
+Speaker         confession_high teacher.
+
+## END BEAT 3 ##
+
+## BEAT 4 ##
+
+# Ned and Brad debate reasons and consequences of obeying IRB rules.
+# Character Goal: Have Brad understand why ignoring IRB approval can have bad consequences
+# Author Goal: Player understands why ignoring IRB approval can have bad consequences
+# Ned directs Brad to the IRB to finish off the review process:
+# Character Goal: Ned has Brad prioritize and start working on IRB approval
+# Author Goal: Provide player with links/resources/first steps to start IRB approval
+
+## END BEAT 4 ##
+
+
+# Define the Story Spec as a list of wants and fufillments
+[randomly]
+Want irb character_selected.
+Want irb progression.
+Want irb snark.
+Want irb verysnark.
+Want irb nudge.
+Want irb discuss_project.
+Want irb we_have_to_irb.
+Want irb concern.
+Want irb bias.
+Want irb acronym.
+
+[randomly]
+Fulfilled character_selected: [CharacterSelected ?any]
+Fulfilled progression: [= CurrentBeat beat_2]
+Fulfilled discuss_project: [Member discuss_project Knowledge]
+Fulfilled we_have_to_irb: [Member we_have_to_irb Knowledge]
+Fulfilled concern: [Member concern Knowledge]
+Fulfilled bias: [Member bias Knowledge]
+Fulfilled acronym: [Member inrebo Knowledge]
+Fulfilled nudge: [StartNudge]
+Fulfilled snark: [> 0 Snark]
+Fulfilled verysnark: [> 1 Snark]
