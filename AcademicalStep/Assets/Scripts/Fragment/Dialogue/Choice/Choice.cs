@@ -29,7 +29,8 @@ public class Choice : MonoBehaviour
     public void SubmitChoiceToDialogue() 
     {
         this.transform.parent.GetComponent<Dialogue>().SubmitChoiceToStoryAssembler(this.choiceId);
+        //Get new data, refresh dialogue/background/scene at top level with new data
+    
     }
-
 
 }
