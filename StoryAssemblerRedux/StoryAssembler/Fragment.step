@@ -1,15 +1,9 @@
-# Original StoryAssembler example frag: https://github.com/LudoNarrative/StoryAssembler/wiki/Creating-Scene-Content
-
-## Define the fragment attributes ##
-
-# TODO Document: choice_ids should not overlap with goto choice ids
+#### Author-facing fragment predicates ####
 
 # Required fragment attributes
 predicate Fragment ?frag ?scene. 
 predicate Effects ?frag.
-predicate ApplyEffects ?frag.
 predicate Conditions ?frag.
-predicate TestConditions ?frag.
 
 # Optional predicates
 predicate Content ?frag.
@@ -17,29 +11,28 @@ predicate Speaker ?frag ?speaker.
 predicate ChoiceLabel ?frag.
 predicate ChoiceCondition ?frag ?choice_id.
 predicate GoToChoice ?frag ?target_frag.
+fluent    Reusable ?fragment ?scene.
 
-# Declaring a request marks the ?fragment as a dynamic fragment
-# Dynamic fragments 
-# ?request_type: 'goto' or 'conditional'
-# ?arguments: 
-#   for a goto request, the id of the fragment that will complete this fragment
-#   for a conditional request, a tuple representing the condition that will satisfy the request
-# goto example:
-#       example: Request dynamicgoto completion.
-# conditional example:
-#       example: Request dynamic_frag conditional [Dating ally protagonist].
 predicate Request ?fragment ?request_type ?arguments.
 
-# Fragment fluents set during execution
+#### End author-facing fragment predicates ####
 
-# TODO Document
+
+#### Fragment fluents set during execution ####
+
+# Expanded is a fluent that is set when a fragment is visited
+# For fragments that are not marked Reusable, Expanded will disallow the fragment from being visited again
 fluent Expanded ?fragment ?scene.
-# TODO Document & test
-fluent Reusable ?fragment ?scene. # TODO we want a way to define this without needing to include the scene
 
+#### End fragment fluents set during execution ####
+
+#### Predicates used during execution ####
 # Check if a fragment is available to be visited. 
 # The conditions to be avialiable is that the fragment must be reusable or not expanded 
 predicate Available ?fragment.
+predicate ApplyEffects ?frag.
+predicate TestConditions ?frag.
+#### End predicates used during execution ####
 
 Available ?fragment: [Reusable ?fragment CurrentScene]
 Available ?fragment: [Not [Expanded ?fragment CurrentScene]]
@@ -51,8 +44,28 @@ Available ?fragment: [Not [Expanded ?fragment CurrentScene]]
 # Check if a fragment has a choice label, but does not print the text of the choice label
 predicate HasChoiceLabel ?frag.
 
+# A top level fragment is a fragment that does not have a choice label
+# These fragments are the only fragments that can be reached from the 'root' fragment
+# and are also the only fragments that will be looked at when there is no outgoing choice from the
+# current fragment.
 predicate TopLevelFragment ?fragment.
-# TODO document
+
+
+# Marking a fragment with the request predicate makes it a dynamic fragment
+# Dynamic fragments will assemble the properties of the fragment with the properties of the
+# fragment that satisfies the request. 
+# 1.) Both sets of conditions will be checked
+# 2.) The effects of both fragments will be applied
+# 3.) The choices of each fragment will be combined
+# ?request_type: 'goto' or 'conditional' which operate like GoToChoice and ChoiceCondition respectively
+# 
+# ?go_to_or_condition: 
+#   for a goto request, the id of the fragment that will complete this fragment
+#   for a conditional request, a tuple representing the condition that will satisfy the request
+# goto example:
+#       example: Request dynamicgoto completion.
+# conditional example:
+#       example: Request dynamic_frag conditional [Dating ally protagonist].
 predicate Request ?fragment ?request_type ?go_to_or_condition.
 
 TopLevelFragment ?frag: [Fragment ?frag CurrentScene] [Not [HasChoiceLabel ?frag]] # If it has a choice label it is not a top level fragment
@@ -65,7 +78,6 @@ SatisfiesChoiceCondition ?frag ?choice_id:
     [ChoiceCondition ?frag ?choice_id]
     [Fragment ?frag CurrentScene]
 [end]
-
 
 [predicate]
 ApplyEffects ?frag:
@@ -95,28 +107,35 @@ Visit ?frag:
 [end]
 
 # There are three types of choices: 
-# 1. GoTo: 
+# 1. GoTo:
 #       Go to a specific fragment based on its id
 # 2. ChoiceCondition: 
 #       Find a fragment that satisfies the choice spec 
 #       Each choice must have a choice label
 # 3. TopLevel: 
 #       Find a fragment that does not have a choice label
+# 
+# ... 4.) There are also dynamic fragments, which may be of each type. 
+#         See the 'Request' predicate above
 
 # Binds with fragment that can be reached (?target_frag) from the current fragment (?source_frag)
 # Side Effect: AvailableConditionalChoice will apply the effects of the new fragment
 # choice_id: will be false unless there is an associated choice_id, ie the choice type is a ConditionalChoice
 predicate AvailableNextFragment ?source_frag ?choice. # a choice is a [?target_frag ?choice_id] tuple
 # TODO if source_frag is not ground yet, ?args, rtype will not be either
-# TODOO if we apply the effects here, it will be slow since it will grab all possible effects
+# TODO if we apply the effects here, it will be slow since it will grab all possible effects
 [predicate]
 AvailableNextFragment ?source_frag [?target_frag ?choice_id]:
     # Get a direct go to choice or a conditional choice
+    # # Also tries to assemble dynamic fragments
     [AvailableNextHelper ?source_frag [?target_frag ?choice_id]]
+    # [FailIfRequest ?source_frag]
+    # [AvailableChoice ?source_frag [?target_frag ?choice_id]]
 [end]
 AvailableNextFragment ?source_frag [?target_frag false]:
     # Get a top level fragment (a fragment with no choice label)
     # DODO do we need the notany checks?
+    # [FailIfRequest ?source_frag]
     [AvailableTopLevelFragment ?target_frag]
 [end]
 
@@ -125,8 +144,9 @@ AvailableNextHelper ?source_frag [?target ?choice_id]:
     # If the source fragment is a dynamic node, then we need to make a request for a satisfying fragment 
     # and begin the search from the fragment that completes the request. 
     # AssembleRequest will also apply the effects of the new fragment
-    # If the source fragment is not a dynamic node, then we can begin the search from the source fragment 
-    [AssembleRequest ?source_frag ?search_origin] 
+    # If the source fragment is not a dynamic node, then we can begin the search from the source fragment
+    # ?search_origin will either take on the value of ?source_frag or the value of the fragment that completes the request 
+    [AssembleRequest ?source_frag ?search_origin]
     [AvailableChoice ?search_origin [?target ?choice_id]]
 [end]
 
@@ -146,6 +166,7 @@ AvailableChoice ?origin [?target_frag ?choice_id]:
 # Otherwise, return the source fragment
 predicate AssembleRequest ?source_frag ?response.
 AssembleRequest ?source_frag ?response:
+    # TODO Assemble request does not add the ?response to the path in the case that we have a dynamic fragment
     [Request ?source_frag ?request_type ?args]
     # Make the request for a completion node and apply its effects
     [MakeRequest ?source_frag ?request_type ?args ?response]
@@ -166,11 +187,17 @@ MakeRequest ?source condition ?search_condition ?response:
 
 [predicate]
 AvailableForRequest ?requesting ?response:
-    [NotAny [Request ?response ? ?]] # TODO I don't think we want to chain responses? If not, we can get rid of the difference check
+    [Fragment ?response CurrentScene]
     [TestConditions ?response]
+    [Different ?requesting ?response]
     [Available ?response]
-    # [Different ?requesting ?response]
 [end]
+
+[fallible]
+# FailIfRequest ?fragment: [Var ?fragment] [Throw FailIfRequest with unbound fragment]
+# FailIfRequest ?fragment: [Fragment ?fragment CurrentScene] [NotAny [Request ?fragment ? ?]] is request ?fragment
+FailIfRequest ?fragment: [NotAny [Request ?fragment ? ?]] is request ?fragment
+# FailIfRequest ?fragment: [Request ?fragment ?x ?y] ?fragment ?x ?y
 
 [predicate]
 AvailableGoToFrag ?source_frag ?target_frag:
@@ -218,3 +245,7 @@ AllAvailableTopLevelChoices ?choices:
     [FindUnique ?choice [AvailableTopLevelChoice ?choice] ?choices]
 [end]
 
+# Notes
+
+# Original StoryAssembler example frag: https://github.com/LudoNarrative/StoryAssembler/wiki/Creating-Scene-Content
+# TODO Document: choice_ids should not overlap with goto choice ids

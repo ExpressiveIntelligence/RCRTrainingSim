@@ -39,11 +39,12 @@ S: [Show]
 # Human readable version of Render
 Show:
     [PreRender]
-    Characters: [RenderCharacters][Br]
     Content: [RenderFragmentContent] [Br]
-    Fragment: [CurrentFragment] [Br]
     Speaker: [RenderSpeaker][Br]
     Choices: [RenderNextBestChoices] [Br]
+    --- [Br]
+    Characters: [RenderCharacters][Br]
+    Fragment: [CurrentFragment] [Br]
     Paths: [Length AllPaths ?l] ?l [Br]
     Warnings: [Warnings CurrentScene] [Br]
     Errors: [Error] [Br]
@@ -73,7 +74,7 @@ RenderFragmentContent:
     [Content CurrentFragment]
 [end]
 RenderFragmentContent:
-    🌳 root 🌳
+    root
 [end]
 RenderFragmentContent: [add |No fragment available| ErrorList] 
 

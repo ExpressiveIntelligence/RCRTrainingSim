@@ -9,22 +9,32 @@ initially:
 # Exposed function headers
 task BestChoices ?source_frag ?choices.
 
+# Helper function to call our FindPaths search algorithm with the correct initial state
+# The falses and empties can get confusing
 [predicate]
 AllPathsFrom ?source_frag ?paths: [FindPaths [?source_frag false] empty ?paths]
 
-# TODO we don't yet support requests in BestChoices
+# BestChoices ?frag ?choices:
+#     [Request ?frag ?rtype ?args]
+#     [AllPathsFrom ?frag ?paths] # TODO there is as bug that this seems to have 3 duplicates for each path
+#     [set AllPaths = ?paths]
+#     [MakeRequest ?frag ?rtype ?args ?response]
+# [end]
 BestChoices ?frag ?choices:
-    [AllPathsFrom ?frag ?paths]
+    [AllPathsFrom ?frag ?paths] # TODO there is as bug that this seems to have 3 duplicates for each path
     [set AllPaths = ?paths] # can use this to print
 
     [AllGoToChoices ?frag ?goto_frags]
-    [BestConditionalChoices ?frag ?paths ?conditional_choice_frags] # TODO this has to be backtracked
-    
+    # [BestConditionalChoices ?frag ?paths ?conditional_choice_frags] # TODO this has to be backtracked
+    [Backtrack [BestConditionalChoices ?frag ?paths] ?conditional_choice_frags] # TODO test this backtrack
+
+    # [Backtrack [BestRequestrChoices ?frag ?paths]] # TODO
+
     [Cat ?goto_frags ?conditional_choice_frags ?running_choices]
     [case ?running_choices] [Length 0]: 
         [BestTopLevelChoice ?paths ?best_top_level_choice ?value] # Fails if there are no top level choices
         [= ?choices [?best_top_level_choice]]
-    [else] 
+    [else]
         [= ?choices ?running_choices]
     [end]
 [end]
@@ -43,8 +53,8 @@ PotentialConditionalChoices ?frag ?paths ?potential:
             [Member ?scored_path ?paths] 
             [ScoredPath ?path ?value ?scored_path] 
             [NextStepFulfillsChoice ?path ?new_frag ?choice_id]
-            [Different ?choice_id false]
-            [=?choice [?new_frag ?choice_id ?value]]
+            [Different ?choice_id false] # Check that it is a conditional choice
+            [= ?choice [?new_frag ?choice_id ?value]]
         ]
         ?potential
     ]
@@ -96,9 +106,9 @@ BestTopLevelChoice ?paths ?choice ?value:
 [predicate]
 NextStepTopIsTopLevel ?path ?target_choice:
     [set Path = ?path]
-    [removeNext [?cur_frag ?] Path]          # The first step in the path is always the current fragment
+    [removeNext [?cur_frag ?] Path]             # The first step in the path is always the current fragment
     [removeNext ?target_choice Path]
-    [AvailableTopLevelChoice ?target_choice]  # We check if the next step in the path is a top level choice
+    [AvailableTopLevelChoice ?target_choice]    # We check if the next step in the path is a top level choice
 [end]
 
 # Find all outgoing paths from ?frag
@@ -112,62 +122,88 @@ FindPaths [?frag ?choice_id] ?path ?found_paths:
 FindPaths [?frag ?choice_id] ?path ?found_paths:
     [Var ?choice_id]
     [Throw FindPaths called with unbound choice_id]
+    case 0
 [end]
 FindPaths [?frag ?choice_id] ?path ?found_paths:
     [Length ?path MaxDepth]
     [ScorePath ?path ?scored_path]
     [= ?found_paths [?scored_path]]
+    case 1
 [end]
+# FindPaths [?frag ?choice_id] ?path ?found_paths:
+#     # If we are at a request, stop. This is a helper for debugging requests.
+#     [Request ?frag ?request_type ?args]
+#     [ScorePath ?path ?scored_path]
+#     [= ?found_paths [?scored_path]]
+# [end]
+# FindPaths [?frag ?choice_id] ?path ?found_paths:
+#     # The current fragment is the top of a dynamic fragment, ie a partial fragment that needs another fragment to complete it (denoted with the Request predicate)
+#     # 2.) 
+#     [Request ?frag ?request_type ?args]
+#     [Visit ?frag]
+#     Any ?frag ?request_type ?args
+#     [FindAll ?response [MakeRequest ?frag ?request_type ?args ?response] ?responses]
+#     [case ?responses] [Length 0] : 
+#         # There is no available completion to the dynamic fragment
+#         [ScorePath ?path ?scored_path]
+#         [= ?found_paths [?scored_path]]
+#     [else]
+#         # There is at least one available completion to the dynamic fragment
+#         # [ScorePath ?path ?scored_path]
+#         # [= ?found_paths [?scored_path]]
+
+#         [Add [?frag ?choice_id] ?path ?response_path]
+
+#         [FindAll ?paths_from_response
+#             [Begin 
+#                 [Member ?resp ?responses]
+#                 [FindPaths [?resp false] ?response_path ?paths_from_response]
+#             ]
+#             ?paths_from_responses   
+#         ]
+#         [Flatten2D ?paths_from_responses ?found_paths]
+#         [Throw ?found_paths ?paths_from_responses]
+#     [end]
+#     case 2
+# [end]
+# FindPaths [?frag ?choice_id] ?path ?found_paths:
+#     # Handle the case where the current fragment is dynamic but there are no 
+#     available fragments to complete it. This is a dead end, but its parent is a valid path.
+#     [Request ?frag ?request_type ?args]
+#     [Visit ?frag]
+#     [Throw check ?frag ?request_type ?args ?response]
+#     [NotAny [MakeRequest ?frag ?request_type ?args ?response]] 
+#     NotAny ?frag
+#     [ScorePath ?path ?scored_path]
+#     [= ?found_paths [?scored_path]]
+# [end]
 FindPaths [?frag ?choice_id] ?path ?found_paths:
-    # The current fragment is the top of a dynamic fragment and there are available fragments to complete it
-    [Request ?frag ?request_type ?args] 
-    [Visit ?frag]
-    [FindUnique ?response [MakeRequest ?frag ?request_type ?args ?response] ?responses]
-    [Add [?frag ?choice_id] ?path ?response_path]
-    [FindAll ?paths_from_response
-        [Begin 
-            [Member ?response ?responses]
-            [FindPaths [?response false] ?response_path ?paths_from_response]
-        ]
-        ?paths_from_responses
-    ]
-    [Flatten2D ?paths_from_responses ?found_paths]
-[end]
-FindPaths [?frag ?choice_id] ?path ?found_paths:
-    # Handle the case where the current fragment is dynamic but there are no 
-    # available fragments to complete it. This is a dead end, but its parent is a valid path.
-    [Request ?frag ?type ?args]
-    [Visit ?frag]
-    [NotAny [MakeRequest ?frag ?type ?args ?response]] 
-    [ScorePath ?path ?scored_path]
-    [= ?found_paths [?scored_path]]
-[end]
-FindPaths [?frag ?choice_id] ?path ?found_paths:
-    [NotAny [Request ?frag ? ?]] # The current frag is not a request
     [case ?frag] [Different root] : [Visit ?frag] [else] [end]
-    [NotAny [AvailableNextFragment ?frag ?next_choice]] 
+    [NotAny [AvailableNextFragment ?frag ?next_choice]]
     [ScorePath ?path ?scored_path]
     [= ?found_paths [?scored_path]]
+    case 4
 [end]
 FindPaths [?frag ?choice_id] ?path ?paths_from_children:
-    [NotAny [Request ?frag ? ?]] # The current frag is not a request
     [case ?frag] [Different root] : [Visit ?frag] [else]  [end]
     # All possible next fragments that can be selected are 'children' of the current fragment. Should backtrack all calls.
     [FindUnique ?next_choice [AvailableNextFragment ?frag ?next_choice] ?potential_choices]
-    [FindAll ?paths_from_child 
+    [FindUnique ?paths_from_child
         [FindAllPathsFromAChildOf ?potential_choices [?frag ?choice_id] ?path ?paths_from_child] 
         ?list_of_paths_from_children
     ]
+    case 5
     [Flatten2D ?list_of_paths_from_children ?paths_from_children]
 [end]
 
 [predicate]
 FindAllPathsFromAChildOf ?choices ?current ?current_path ?paths_from_child:
     # TODO double check that we are actually getting all children and not just the first 
-    [Not [Length ?choices 0]] # TODO the 0 was 'empty' and it seemed to work before...
-    [Member ?child ?choices] # select a choice from the potential choices 
+    [Not [Length ?choices 0]]
+    [Member ?child ?choices] # select a choice from the potential choices
     [FindPathsForChild ?child ?current ?current_path ?paths_from_child]
 [end]
+
 
 [predicate]
 FindPathsForChild ?child ?current ?current_path ?paths_from_child:

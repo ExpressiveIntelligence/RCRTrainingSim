@@ -55,6 +55,9 @@ MakeChoice ?choice_id:
     [Var ?choice_id]
     [Throw |MakeChoice needs a bound variable:| ?choice_id]
 [end]
+# MakeChoice ?choice_id:
+#     [Request ?choice_id ?rtype ?args]
+# [end]
 MakeChoice ?choice_id:
     [GoToChoice CurrentFragment ?choice_id]
     [Fragment ?choice_id CurrentScene]
@@ -79,13 +82,11 @@ MakeChoice ?choice_id:
 # Make ?fragment_id the current fragment
 UpdateCurrentFragment ?fragment_id:
     [Request ?fragment_id ?rtype ?args]
-    [Throw hi]
     [TestConditions ?fragment_id]
     [Visit ?fragment_id]
     [set CurrentFragment = ?fragment_id]
     [BestChoices ?fragment_id ?next_best]
     [set NextBestChoices = ?next_best]
-    [Break]
 [end]
 UpdateCurrentFragment ?fragment_id:
     [TestConditions ?fragment_id]

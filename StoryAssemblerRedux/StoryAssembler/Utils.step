@@ -76,18 +76,18 @@ AddHelper ?element:
     [add ?element AddTemp]
 [end]
 
-SetUnion ?l1 ?l2 ?union:
-    [set AddTemp = empty]
-    [ForEach [Member ?x ?l1] [AddHelper ?x]]
-    [ForEach [Member ?y ?l2] [Not [Member ?y ?l1]] [AddHelper ?y]]
-    [= ?union AddTemp]
-[end]
+# SetUnion ?l1 ?l2 ?union:
+#     [set AddTemp = empty]
+#     [ForEach [Member ?x ?l1] [AddHelper ?x]]
+#     [ForEach [Member ?y ?l2] [Not [Member ?y ?l1]] [AddHelper ?y]]
+#     [= ?union AddTemp]
+# [end]
 
-SetIntersection ?l1 ?l2 ?int:
-    [set AddTemp = empty]
-    [ForEach [Member ?x ?l1] [Member ?x ?l2] [AddHelper ?x]]
-    [= ?int AddTemp]
-[end]
+# SetIntersection ?l1 ?l2 ?int:
+#     [set AddTemp = empty]
+#     [ForEach [Member ?x ?l1] [Member ?x ?l2] [AddHelper ?x]]
+#     [= ?int AddTemp]
+# [end]
 
 Cat ?l1 ?l2 ?cat:
     [set AddTemp = empty]

@@ -6,12 +6,19 @@ TestDinner:
     ?paths
 [end]
 
+
+
+TestF: [F 1] true
+TestF: false
+TestAA: [TestF] [now [F 0]] [TestF] [now [Not [F 0]] [F 1]] [TestF]
+Mention ?x: [now [Mentioned ?x]]
+MentionTest: [Mention x] [Mentioned x]
+
 TestRanking:
     [InitializeScene test]
     [AllPathsFrom root ?paths]
     [ForEach [Member ?path ?paths] [Paragraph] [Write ?path]]
 [end]
-
 
 TestFindPaths:
     [Initialize test]
