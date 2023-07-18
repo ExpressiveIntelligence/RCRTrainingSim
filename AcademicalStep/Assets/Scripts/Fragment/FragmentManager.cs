@@ -86,11 +86,11 @@ public class FragmentManager : MonoBehaviour
             }
         }
 
-        //Initializes Step Interpreter
-        this.stepManager.InitializeStepStoryAssembler();
+        //Initializes Step Interpreter - TODO: do we need to render after init?
+        SerializedFragment fragment = this.stepManager.InitializeStepStoryAssembler();
 
         //Render currently loaded fragment, save to our manager for reference
-        SerializedFragment fragment = this.stepManager.Render();
+        fragment = this.stepManager.Render();
         this.currentSerializedFragment = fragment;
 
         //create history, set intro scene as first in history.

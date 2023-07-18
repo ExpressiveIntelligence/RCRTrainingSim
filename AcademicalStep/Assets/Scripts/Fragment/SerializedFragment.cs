@@ -15,7 +15,7 @@ public class SerializedFragment
     public string backgroundPath;
     public string systemMessage; // Error messages, etc.
 
-    public string ToString()
+    public override string ToString()
     {
         string temp = "";
         temp += "content: " + this.content + "\n";
