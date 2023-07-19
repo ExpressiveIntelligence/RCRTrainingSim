@@ -76,26 +76,32 @@ MakeChoice ?choice_label:
     [UpdateCurrentFragment ?choice_label]
 [end]
 
-# Make ?fragment_id the current fragment
-# UpdateCurrentFragment ?fragment_id:
-#     [Request ?fragment_id ?rtype ?args]
-#     [Throw why isnt this being hit]
-#     [TestConditions ?fragment_id]
-#     [Visit ?fragment_id]
-#     [set CurrentFragment = ?fragment_id]
-#     [BestChoices ?fragment_id ?next_best]
-#     [set NextBestChoices = ?next_best]
-# [end]
+UpdateCurrentFragment ?fragment_id:
+    [Request ?fragment_id ?rtype ?args]
+    [TestConditions ?fragment_id]
+    [Visit ?fragment_id]
+    [set DynamicParent = ?fragment_id]
+    [BestChoices ?fragment_id ?next_best]
+    [set NextBestChoices = ?next_best]
+    [Member ?m ?next_best]
+    [= [?frag_child ?] ?m]
+    [TestConditions ?frag_child]
+    [Visit ?frag_child]
+    [set CurrentFragment = ?frag_child]
+    [BestChoices ?frag_child ?new_best]
+    [set NextBestChoices = ?new_best]
+[end]
 UpdateCurrentFragment ?fragment_id:
     [TestConditions ?fragment_id]
     [Visit ?fragment_id]
+    [set DynamicParent = none]
     [set CurrentFragment = ?fragment_id]
     [BestChoices ?fragment_id ?next_best]
     [set NextBestChoices = ?next_best]
 [end]
 UpdateCurrentFragment ?fragment_id:
     [Not [TestConditions ?fragment_id]]
-    [Throw Conditions not met for ?fragment_id]
+    [Throw updateCurrentFragment conditions not met for ?fragment_id]
 [end]
 
 [predicate]

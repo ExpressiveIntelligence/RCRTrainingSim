@@ -50,13 +50,22 @@ Missing ?call ?scene:
 [end]
 Missing ? ?.
 
+[predicate]
+IllegalFragmentName dynamic.
+IllegalFragmentName direct.
+IllegalFragmentName none.
+
+[predicate]
 FragmentNameWarnings ?scene:
-    [Fragment dynamic ?scene]
-    [Throw dynamic not allowed as a fragment name]
-[end]
-FragmentNameWarnings ?scene:
-    [Fragment direct ?scene]
-    [Throw direct not allowed as a fragment name]
+    [FindAll ?frag
+        [Begin 
+            [Fragment ?frag ?scene]
+            [IllegalFragmentName ?frag]
+        ]
+        ?bad_content
+    ]
+    [Member ?m ?bad_content]
+    [Throw ?bad_content not allowed as fragment names]
 [end]
 FragmentNameWarnings ?.
 
@@ -80,6 +89,8 @@ ChoiceWarnings ?scene:
 [end]
 ChoiceWarnings ?.
 
+# We define a 'choice' as a fragment name follwed by an identifier specifying how the
+# fragment was reached in a playtrace. For instance, thorugh a choice id from the referring fragment
 [predicate]
 ChoiceInList [?frag ?choice_id] ?list:
     [Member ?m ?list]
@@ -87,8 +98,7 @@ ChoiceInList [?frag ?choice_id] ?list:
 [end]
 
 # Call ?call one time and return the result but reset variables and text output
-# Example usage: 
-#   [Backtrack [SetA ?args] ?result]
+# Example usage:  [Backtrack [SetA ?args] ?result]
 # This would call [SetA ?args ?result] exactly one time and bind the the final argument to ?result
 Backtrack ?call ?result:
     [FindAll ?intermediate_result [BacktrackHelper ?call ?intermediate_result] [?result]]

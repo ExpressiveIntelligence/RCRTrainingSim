@@ -40,6 +40,7 @@ InitialSceneState maze:
 [end]
 
 # Some other test stuff
+Content     request: We won't see this content. 
 Conditions  request: [UsedWelcome maze]
 ChoiceLabel request: Request.
 Effects     request: [now [UsedRequest maze]]
