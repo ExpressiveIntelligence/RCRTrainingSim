@@ -48,6 +48,7 @@ Show:
     Paths: [Length AllPaths ?l] ?l [Br]
     Warnings: [Warnings CurrentScene] [Br]
     Errors: [Error] [Br]
+    Paths: ^AllPaths [Br]
 [end]
 
 RenderCharacters: [NotAny [Character ? ^CurrentScene ?]]
@@ -97,6 +98,6 @@ RenderChoice [?frag ?choice_id]:  [GetID [?frag ?choice_id]] [Delim] [ChoiceLabe
 RenderChoice [?frag ?choice_id]:  [= ?frag root] [GetID [?frag ?choice_id]] [Delim] Start  
 RenderChoice [?frag ?choice_id]:   [GetID [?frag ?choice_id]] [Delim] Continue
 
-GetID [?frag ?choice_id]: [Different ?choice_id false] ?choice_id/WriteVerbatim
+GetID [?frag ?choice_id]: [Different ?choice_id direct] ?choice_id/WriteVerbatim
 GetID [?frag ?choice_id]: [Fragment ?frag CurrentScene] ?frag/WriteVerbatim
 GetID ?x: ?x

@@ -4,31 +4,22 @@ initially:
     [set MaxDepth = 3] # The maximum depth of the search tree
     [now [DebugMode]]
     [set AllPaths = empty] # A list of all paths found in the search tree, for debug
-[end]`
+[end]
 
 # Exposed function headers
 task BestChoices ?source_frag ?choices.
 
 # Helper function to call our FindPaths search algorithm with the correct initial state
-# The falses and empties can get confusing
+# The directs and empties can get confusing
 [predicate]
-AllPathsFrom ?source_frag ?paths: [FindPaths [?source_frag false] empty ?paths]
+AllPathsFrom ?source_frag ?paths: [FindPaths [?source_frag direct] empty ?paths]
 
-# BestChoices ?frag ?choices:
-#     [Request ?frag ?rtype ?args]
-#     [AllPathsFrom ?frag ?paths] # TODO there is as bug that this seems to have 3 duplicates for each path
-#     [set AllPaths = ?paths]
-#     [MakeRequest ?frag ?rtype ?args ?response]
-# [end]
 BestChoices ?frag ?choices:
     [AllPathsFrom ?frag ?paths] # TODO there is as bug that this seems to have 3 duplicates for each path
     [set AllPaths = ?paths] # can use this to print
 
     [AllGoToChoices ?frag ?goto_frags]
-    # [BestConditionalChoices ?frag ?paths ?conditional_choice_frags] # TODO this has to be backtracked
     [Backtrack [BestConditionalChoices ?frag ?paths] ?conditional_choice_frags] # TODO test this backtrack
-
-    # [Backtrack [BestRequestrChoices ?frag ?paths]] # TODO
 
     [Cat ?goto_frags ?conditional_choice_frags ?running_choices]
     [case ?running_choices] [Length 0]: 
@@ -53,7 +44,7 @@ PotentialConditionalChoices ?frag ?paths ?potential:
             [Member ?scored_path ?paths] 
             [ScoredPath ?path ?value ?scored_path] 
             [NextStepFulfillsChoice ?path ?new_frag ?choice_id]
-            [Different ?choice_id false] # Check that it is a conditional choice
+            [Different ?choice_id direct] # Check that it is a conditional choice
             [= ?choice [?new_frag ?choice_id ?value]]
         ]
         ?potential
@@ -89,7 +80,7 @@ SaveMaxValChoiceToChoices ?choice_id ?potential:
 [predicate]
 NextStepFulfillsChoice ?path ?next_frag ?linking_choice_id:
     [set Path = ?path]
-    [removeNext [?cur_frag ?] Path] 
+    [removeNext [?cur_frag ?] Path]
     [removeNext [?next_frag ?linking_choice_id] Path]
 [end]
 
@@ -157,7 +148,7 @@ FindPaths [?frag ?choice_id] ?path ?found_paths:
 #         [FindAll ?paths_from_response
 #             [Begin 
 #                 [Member ?resp ?responses]
-#                 [FindPaths [?resp false] ?response_path ?paths_from_response]
+#                 [FindPaths [?resp direct] ?response_path ?paths_from_response]
 #             ]
 #             ?paths_from_responses   
 #         ]
@@ -182,28 +173,27 @@ FindPaths [?frag ?choice_id] ?path ?found_paths:
     [NotAny [AvailableNextFragment ?frag ?next_choice]]
     [ScorePath ?path ?scored_path]
     [= ?found_paths [?scored_path]]
-    case 4
 [end]
 FindPaths [?frag ?choice_id] ?path ?paths_from_children:
     [case ?frag] [Different root] : [Visit ?frag] [else]  [end]
-    # All possible next fragments that can be selected are 'children' of the current fragment. Should backtrack all calls.
+    # All possible next fragments that can be selected are 'children' of the current fragment. 
+    # FindUnique and FindAll will backtrack all AvailableNextFragment calls
     [FindUnique ?next_choice [AvailableNextFragment ?frag ?next_choice] ?potential_choices]
     [FindUnique ?paths_from_child
         [FindAllPathsFromAChildOf ?potential_choices [?frag ?choice_id] ?path ?paths_from_child] 
         ?list_of_paths_from_children
     ]
-    case 5
     [Flatten2D ?list_of_paths_from_children ?paths_from_children]
 [end]
 
 [predicate]
 FindAllPathsFromAChildOf ?choices ?current ?current_path ?paths_from_child:
     # TODO double check that we are actually getting all children and not just the first 
+    # TODO really do this ^ I think it may be a bug...
     [Not [Length ?choices 0]]
     [Member ?child ?choices] # select a choice from the potential choices
     [FindPathsForChild ?child ?current ?current_path ?paths_from_child]
 [end]
-
 
 [predicate]
 FindPathsForChild ?child ?current ?current_path ?paths_from_child:

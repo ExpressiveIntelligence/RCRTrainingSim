@@ -75,7 +75,7 @@ MakeChoice ?choice_id:
 [end]
 MakeChoice ?choice_id:
     [AvailableTopLevelFragment ?choice_id] # TODO I think this logic needs to be thought through
-    [GetFromNextBestChoices ?choice_id false]
+    [GetFromNextBestChoices ?choice_id direct]
     [UpdateCurrentFragment ?choice_id]
 [end]
 

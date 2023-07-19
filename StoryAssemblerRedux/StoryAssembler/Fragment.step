@@ -119,43 +119,38 @@ Visit ?frag:
 #         See the 'Request' predicate above
 
 # Binds with fragment that can be reached (?target_frag) from the current fragment (?source_frag)
-# Side Effect: AvailableConditionalChoice will apply the effects of the new fragment
-# choice_id: will be false unless there is an associated choice_id, ie the choice type is a ConditionalChoice
+# SIDE EFFECT: AvailableConditionalChoice will apply the effects of the new fragment, so this needs to be backtracked when used
+# choice_id: will be 'direct' unless there is an associated choice_id, ie the choice type is a ConditionalChoice
 predicate AvailableNextFragment ?source_frag ?choice. # a choice is a [?target_frag ?choice_id] tuple
-# TODO if source_frag is not ground yet, ?args, rtype will not be either
 # TODO if we apply the effects here, it will be slow since it will grab all possible effects
 [predicate]
 AvailableNextFragment ?source_frag [?target_frag ?choice_id]:
     # Get a direct go to choice or a conditional choice
-    # # Also tries to assemble dynamic fragments
-    [AvailableNextHelper ?source_frag [?target_frag ?choice_id]]
-    # [FailIfRequest ?source_frag]
-    # [AvailableChoice ?source_frag [?target_frag ?choice_id]]
+    # Also tries to assemble dynamic fragments
+    [AvailableNextFragmentHelper ?source_frag [?target_frag ?choice_id]]
 [end]
-AvailableNextFragment ?source_frag [?target_frag false]:
+AvailableNextFragment ?source_frag [?target_frag direct]:
     # Get a top level fragment (a fragment with no choice label)
     # DODO do we need the notany checks?
-    # [FailIfRequest ?source_frag]
     [AvailableTopLevelFragment ?target_frag]
 [end]
 
 [predicate]
-AvailableNextHelper ?source_frag [?target ?choice_id]:
-    # If the source fragment is a dynamic node, then we need to make a request for a satisfying fragment 
-    # and begin the search from the fragment that completes the request. 
-    # AssembleRequest will also apply the effects of the new fragment
-    # If the source fragment is not a dynamic node, then we can begin the search from the source fragment
-    # ?search_origin will either take on the value of ?source_frag or the value of the fragment that completes the request 
-    [AssembleRequest ?source_frag ?search_origin]
-    [AvailableChoice ?search_origin [?target ?choice_id]]
+AvailableNextFragmentHelper ?source_frag [?target dynamic]:
+    [Request ?source_frag ?request_type ?args]
+    [MakeRequest ?source_frag ?request_type ?args ?target]
+[end]
+AvailableNextFragmentHelper ?source_frag [?target ?choice_id]:
+    [Fragment ?source_frag CurrentScene] 
+    [NotAny [Request ?source_frag ? ?]]
+    [AvailableChoice ?source_frag [?target ?choice_id]]
 [end]
 
 # All goto and conditional choices
 [predicate]
-AvailableChoice ?origin [?target_frag false]:
+AvailableChoice ?origin [?target_frag direct]:
     [AvailableGoToFrag ?origin ?target_frag]
 [end]
-[predicate]
 AvailableChoice ?origin [?target_frag ?choice_id]:
     [AvailableConditionalChoice ?origin ?choice_id ?target_frag]
 [end]
@@ -163,41 +158,45 @@ AvailableChoice ?origin [?target_frag ?choice_id]:
 # Check that the ?source frag is a dynamic node
 # If so, execute a request for a satisfying fragment
 # and apply its effects
-# Otherwise, return the source fragment
-predicate AssembleRequest ?source_frag ?response.
-AssembleRequest ?source_frag ?response:
-    # TODO Assemble request does not add the ?response to the path in the case that we have a dynamic fragment
-    [Request ?source_frag ?request_type ?args]
-    # Make the request for a completion node and apply its effects
-    [MakeRequest ?source_frag ?request_type ?args ?response]
-[end]
-AssembleRequest ?source_frag ?source_frag: [Fragment ?source_frag CurrentScene] [NotAny [Request ?source_frag ? ?]]
+# # Otherwise, return the source fragment
+# predicate AssembleAndMakeRequest ?source_frag ?response.
+# AssembleAndMakeRequest ?source_frag ?response:
+#     # TODO Assemble request does not add the ?response to the path in the case that we have a dynamic fragment
+#     [Request ?source_frag ?request_type ?args]
+#     # Make the request for a completion node and apply its effects
+#     [MakeRequest ?source_frag ?request_type ?args ?response]
+# [end]
+# AssembleAndMakeRequest ?source_frag ?source_frag: [Fragment ?source_frag CurrentScene] [NotAny [Request ?source_frag ? ?]]
 
-# SIDE EFFECT: potentially applies the Effects of ?response
+# Make a request from the dynamic ?source node
+# SIDE EFFECT: applies the Effects of ?response
+# Before calling this task, ?source must be verified as a [Request]
 [predicate]
 MakeRequest ?source goto ?go_to_frag ?go_to_frag:
     # If we've reached here we know we have a dynamic fragment with a goto request
     [AvailableForRequest ?source ?go_to_frag]
+    [ApplyEffects ?go_to_frag]
 [end]
 MakeRequest ?source condition ?search_condition ?response:
     [AvailableForRequest ?source ?response]
     [ApplyEffects ?response]
     [Call ?search_condition] # Check the necessary condition # TODO make sure this is checking using the CheckCondition rather than Condition
+    # [Throw MakeRequest with ?source ?search_condition ?response]
 [end]
 
 [predicate]
 AvailableForRequest ?requesting ?response:
     [Fragment ?response CurrentScene]
     [TestConditions ?response]
-    [Different ?requesting ?response]
+    [FailIfRequest ?response] # [Different ?requesting ?response]
     [Available ?response]
 [end]
 
 [fallible]
-# FailIfRequest ?fragment: [Var ?fragment] [Throw FailIfRequest with unbound fragment]
-# FailIfRequest ?fragment: [Fragment ?fragment CurrentScene] [NotAny [Request ?fragment ? ?]] is request ?fragment
-FailIfRequest ?fragment: [NotAny [Request ?fragment ? ?]] is request ?fragment
-# FailIfRequest ?fragment: [Request ?fragment ?x ?y] ?fragment ?x ?y
+FailIfRequest ?fragment: [NotAny [Request ?fragment ? ?]]
+
+[predicate]
+IsRequest ?fragment: [Request ?fragment ? ?]
 
 [predicate]
 AvailableGoToFrag ?source_frag ?target_frag:
@@ -207,7 +206,7 @@ AvailableGoToFrag ?source_frag ?target_frag:
 [end]
 
 [predicate]
-AvailableGoToChoice ?source_frag [?target_frag false]:
+AvailableGoToChoice ?source_frag [?target_frag direct]:
     [AvailableGoToFrag ?source_frag ?target_frag]
 [end]
 
@@ -236,7 +235,7 @@ AvailableTopLevelFragment ?frag:
 [end]
 
 [predicate]
-AvailableTopLevelChoice [?frag false]:
+AvailableTopLevelChoice [?frag direct]:
     [AvailableTopLevelFragment ?frag]
 [end]
 

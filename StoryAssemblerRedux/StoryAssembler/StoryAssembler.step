@@ -51,42 +51,41 @@ C ?choice_id: # Used for the CLI only
 [end]
 
 # The mechanism for the user to select a fragment
-MakeChoice ?choice_id:
-    [Var ?choice_id]
-    [Throw |MakeChoice needs a bound variable:| ?choice_id]
+MakeChoice ?choice_label:
+    [Var ?choice_label]
+    [Throw |MakeChoice needs a bound variable:| ?choice_label]
 [end]
-MakeChoice ?choice_id:
-    [GoToChoice CurrentFragment ?choice_id]
-    [Fragment ?choice_id CurrentScene]
-    [Not [TestConditions ?choice_id]]
-    [Throw Conditions not met for ?choice_id]
+MakeChoice ?choice_label:
+    [GoToChoice CurrentFragment ?choice_label]
+    [Fragment ?choice_label CurrentScene]
+    [Not [TestConditions ?choice_label]]
+    [Throw Conditions not met for ?choice_label]
 [end]
-MakeChoice ?choice_id:
-    [GoToChoice CurrentFragment ?choice_id]
-    [Fragment ?choice_id CurrentScene] # TODO no fragment case
-    [UpdateCurrentFragment ?choice_id]
+MakeChoice ?choice_label:
+    [GoToChoice CurrentFragment ?choice_label]
+    [Fragment ?choice_label CurrentScene]
+    [UpdateCurrentFragment ?choice_label]
 [end]
-MakeChoice ?choice_id:
-    [GetFromNextBestChoices ?fragment_id ?choice_id]
+MakeChoice ?choice_label:
+    [GetFromNextBestChoices ?fragment_id ?choice_label]
     [UpdateCurrentFragment ?fragment_id]
 [end]
-MakeChoice ?choice_id:
-    [AvailableTopLevelFragment ?choice_id] # TODO I think this logic needs to be thought through
-    [GetFromNextBestChoices ?choice_id false]
-    [UpdateCurrentFragment ?choice_id]
+MakeChoice ?choice_label:
+    [AvailableTopLevelFragment ?choice_label] # TODO I think this logic needs to be thought through
+    [GetFromNextBestChoices ?choice_label direct]
+    [UpdateCurrentFragment ?choice_label]
 [end]
 
 # Make ?fragment_id the current fragment
-UpdateCurrentFragment ?fragment_id:
-    [Request ?fragment_id ?rtype ?args]
-    [Throw hi]
-    [TestConditions ?fragment_id]
-    [Visit ?fragment_id]
-    [set CurrentFragment = ?fragment_id]
-    [BestChoices ?fragment_id ?next_best]
-    [set NextBestChoices = ?next_best]
-    [Break]
-[end]
+# UpdateCurrentFragment ?fragment_id:
+#     [Request ?fragment_id ?rtype ?args]
+#     [Throw why isnt this being hit]
+#     [TestConditions ?fragment_id]
+#     [Visit ?fragment_id]
+#     [set CurrentFragment = ?fragment_id]
+#     [BestChoices ?fragment_id ?next_best]
+#     [set NextBestChoices = ?next_best]
+# [end]
 UpdateCurrentFragment ?fragment_id:
     [TestConditions ?fragment_id]
     [Visit ?fragment_id]
