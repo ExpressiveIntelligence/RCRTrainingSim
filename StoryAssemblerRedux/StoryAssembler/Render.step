@@ -72,12 +72,28 @@ RenderBackground.
 
 RenderFragmentContent:
     [Different CurrentFragment root]
-    [Content CurrentFragment]
+    [DisplayDynamic [Content]]
 [end]
 RenderFragmentContent:
     root
 [end]
 RenderFragmentContent: [add |No fragment available| ErrorList] 
+
+[retriable]
+DisplayDynamic ?call: 
+    [Call ?call CurrentFragment] # Try to call the content of the current fragment
+[end]
+DisplayDynamic ?call:
+    [Different DynamicParent none]
+    [Call ?call DynamicParent] # Call the dynamic parent fragment
+[end]
+DisplayDynamic ?call: [DefaultDisplay ?call]
+DisplayDynamic ?call.
+
+[retriable]
+DefaultDisplay [Content]: root
+DefaultDisplay [RenderSpeaker]: narrator
+DefaultDisplay ?.
 
 RenderSpeaker:
     [Different CurrentFragment root]

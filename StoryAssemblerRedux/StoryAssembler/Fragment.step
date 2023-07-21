@@ -57,7 +57,7 @@ predicate TopLevelFragment ?fragment.
 # 1.) Both sets of conditions will be checked
 # 2.) The effects of both fragments will be applied
 # 3.) The choices of each fragment will be combined
-# ?request_type: 'goto' or 'conditional' which operate like GoToChoice and ChoiceCondition respectively
+# ?request_type: 'goto' or 'condition' which operate like GoToChoice and ChoiceCondition respectively
 # 
 # ?go_to_or_condition: 
 #   for a goto request, the id of the fragment that will complete this fragment
@@ -65,7 +65,7 @@ predicate TopLevelFragment ?fragment.
 # goto example:
 #       example: Request dynamicgoto completion.
 # conditional example:
-#       example: Request dynamic_frag conditional [Dating ally protagonist].
+#       example: Request dynamic_frag condition [Dating ally protagonist].
 predicate Request ?fragment ?request_type ?go_to_or_condition.
 
 TopLevelFragment ?frag: [Fragment ?frag CurrentScene] [Not [HasChoiceLabel ?frag]] # If it has a choice label it is not a top level fragment
@@ -180,15 +180,14 @@ MakeRequest ?source goto ?go_to_frag ?go_to_frag:
 MakeRequest ?source condition ?search_condition ?response:
     [AvailableForRequest ?source ?response]
     [ApplyEffects ?response]
-    [Call ?search_condition] # Check the necessary condition # TODO make sure this is checking using the CheckCondition rather than Condition
-    # [Throw MakeRequest with ?source ?search_condition ?response]
+    [Call ?search_condition] # Check that the response satisfies the condition
 [end]
 
 [predicate]
 AvailableForRequest ?requesting ?response:
     [Fragment ?response CurrentScene]
     [TestConditions ?response]
-    [FailIfRequest ?response] # [Different ?requesting ?response]
+    [FailIfRequest ?response] # [Different ?requesting ?response] # Currently don't allow chaining dynamic nodes...
     [Available ?response]
 [end]
 

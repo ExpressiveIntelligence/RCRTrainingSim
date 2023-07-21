@@ -43,8 +43,9 @@ InitialSceneState maze:
 Content     request: We won't see this content. 
 Conditions  request: [UsedWelcome maze]
 ChoiceLabel request: Request.
-Effects     request: [now [UsedRequest maze]]
-Request     request goto good.
+Effects     request.
+# Request     request goto good.
+Request     request condition [UsedRequest maze].
 
 Content     good: You made it. I'm so happy for you.
 ChoiceLabel good: Made it.
@@ -52,8 +53,8 @@ Conditions  good.
 Effects     good: [now [UsedRequest maze]]
 GoToChoice  good enter.
 
-Content     better: You made it. I'm so happy for you.
-ChoiceLabel better: Made it.
+Content     better: You made it better! I'm so happy for you. Even happier. 
+ChoiceLabel better: Better
 Conditions  better.
 Effects     better: [now [UsedRequest maze] [Best maze]]
 GoToChoice  better enter.
