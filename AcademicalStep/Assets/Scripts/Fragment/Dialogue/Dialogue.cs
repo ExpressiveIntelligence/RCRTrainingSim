@@ -44,7 +44,9 @@ public class Dialogue : MonoBehaviour
     {
 
         SerializedFragment temp = this.gameSession.stepManager.Select(choiceId.ToLower());
-        Debug.Log(temp.ToString());
+        this.gameSession.fragmentManager.currentSerializedFragment = temp;
+        this.gameSession.fragmentManager.fragmentHistory.Add(temp);
+        this.gameSession.fragmentManager.RenderFromCurrentFragment();
     }
 
     public void SetChoices(SerializedChoice[] choices) 
@@ -97,7 +99,6 @@ public class Dialogue : MonoBehaviour
 
     public void SetChoiceAtIndex(int index, Choice choice) 
     {
-        Debug.Log("Reached choice insert");
        this.choices[index] = choice;        
     }
 

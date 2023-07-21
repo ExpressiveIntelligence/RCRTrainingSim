@@ -14,6 +14,8 @@ public class StepManager : MonoBehaviour
     public string optionalScenePath; // If desired, you can specify an additional path to a file containing your current scene (e.g. "Assets/Scripts/Scenes/Maze.step")
     public string sceneName;
 
+    public GameSession gameSession;
+
     public bool debug = false;
 
     private Module module;
@@ -35,12 +37,27 @@ public class StepManager : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
+
+        //Get gameSession reference
     }
 
     // Start is called before the first frame update
     void Start()
     {
-
+        //safety check for gameSession
+        if (!this.gameSession)
+        {
+            //get by tag
+            GameObject[] gameSessions = GameObject.FindGameObjectsWithTag("GameSession");
+            if (gameSessions.Length == 0)
+            {
+                Debug.Log("ERROR: GameSession GameObject not found.");
+            }
+            else
+            {
+                this.gameSession = gameSessions[0].GetComponent<GameSession>();
+            }
+        }
     }
 
     // Update is called once per frame
@@ -65,7 +82,7 @@ public class StepManager : MonoBehaviour
     /** 
      *  Initialize StoryAssembler and the Step library interface
      */
-    public void InitializeStepStoryAssembler()
+    public SerializedFragment InitializeStepStoryAssembler()
     {
         this.module = CreateModule();
         this.state = State.Empty;
@@ -97,16 +114,18 @@ public class StepManager : MonoBehaviour
                 Debug.Log("Selecting choice: " + fragment.choices[0].id);
             Select(fragment.choices[0].id);
         }
+
+        return fragment;
     }
 
     /** 
-     * Reload story assembler and create a new Step module. Does not reload the Step DLL itself.
+     * Reload story assembler and create a new Step module - returns the new current fragment. Does not reload the Step DLL itself.
     **/
-    public void Reload()
+    public SerializedFragment Reload()
     {
         // Currently we can get away with calling the initialization function again,
         // but we may need to do more in the future, so the separation may be useful. 
-        this.InitializeStepStoryAssembler();
+        return this.InitializeStepStoryAssembler();
     }
 
     // Should be called before anything else with a scene name as defined in the Step file: 

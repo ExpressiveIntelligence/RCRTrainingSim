@@ -66,7 +66,7 @@ public class BackgroundManager : MonoBehaviour
             else 
             {
                 Debug.Log("Background image path corrupted. Please provide appropriate path to resource in authoring tool. Provided path: " + serializedFragment.backgroundPath);
-                this.bgSpriteRenderer.color = Color.red;
+                this.bgSpriteRenderer.color = Color.black;
             }
         }
 
