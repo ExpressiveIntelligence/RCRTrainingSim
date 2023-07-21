@@ -21,6 +21,9 @@ public class FragmentManager : MonoBehaviour
     public DialogueManager dialogueManager;
     //Choice Manager...
 
+    public SerializedFragment currentSerializedFragment;
+    public List<SerializedFragment> fragmentHistory;
+
     void Awake() 
     {
         if (instance == null)
@@ -83,16 +86,25 @@ public class FragmentManager : MonoBehaviour
             }
         }
 
-        //Initializes Step Interpreter
-        this.stepManager.InitializeStepStoryAssembler();
-        //Render currently loaded fragment
-        //TODO: Set loaded fragment in earlier menu or from file
-        SerializedFragment fragment = this.stepManager.Render();
-        Debug.Log(fragment.ToString());
+        //Initializes Step Interpreter - TODO: do we need to render after init?
+        SerializedFragment fragment = this.stepManager.InitializeStepStoryAssembler();
+
+        //Render currently loaded fragment, save to our manager for reference
+        fragment = this.stepManager.Render();
+        this.currentSerializedFragment = fragment;
+
+        //create history, set intro scene as first in history.
+        this.fragmentHistory = new List<SerializedFragment>();
+        this.fragmentHistory.Add(this.currentSerializedFragment);
 
         //Instantiate scene ased on fragment load
-        this.backgroundManager.RenderBackgroundFromFragment(fragment);
-        this.dialogueManager.RenderDialogueFromFragment(fragment);
+        this.RenderFromCurrentFragment();
+    }
+
+    public void RenderFromCurrentFragment() 
+    {
+        this.backgroundManager.RenderBackgroundFromFragment(this.currentSerializedFragment);
+        this.dialogueManager.RenderDialogueFromFragment(this.currentSerializedFragment);
     }
 
     // Update is called once per frame
@@ -100,6 +112,7 @@ public class FragmentManager : MonoBehaviour
     {
         
     }
+
 
 /*    void InitFragmentFromStepFragment() { }
 
