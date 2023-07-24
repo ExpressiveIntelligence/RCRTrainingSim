@@ -15,7 +15,30 @@ Warnings ?scene:
     [Missing [Conditions] ?scene]
     [Missing [Effects] ?scene]
     [ChoiceWarnings ?scene]
+    [FragmentNameWarnings ?scene]
+    # [OverlapCheck ?scene]
 [end]
+
+# OverlapCheck ?scene: 
+#     [once]
+#         [DoOverLapCheck ?scene]
+#     [else]
+#     [end]
+# [end]
+
+# [predicate]
+# DoOverLapCheck ?scene:
+#     [FindAll ?f
+#         [Begin
+#             [Fragment ?f ?scene]
+#             [ChoiceCondition ?f2 ?f]
+#         ]
+#         ?overlaps
+#     ]
+#     [Member ?m ?overlaps]
+#     [Throw |Error, these fragment names overlap with choice ids| ?overlaps]
+# [end]
+# DoOverLapCheck ?.
 
 Missing ?call ?scene:
     [FindAll ?frag
@@ -26,6 +49,25 @@ Missing ?call ?scene:
     Warning, these ?call/WriteVerbatim declarations have no fragments: ?bad_content/WriteVerbatim
 [end]
 Missing ? ?.
+
+[predicate]
+IllegalFragmentName dynamic.
+IllegalFragmentName direct.
+IllegalFragmentName none.
+
+[predicate]
+FragmentNameWarnings ?scene:
+    [FindAll ?frag
+        [Begin 
+            [Fragment ?frag ?scene]
+            [IllegalFragmentName ?frag]
+        ]
+        ?bad_content
+    ]
+    [Member ?m ?bad_content]
+    [Throw ?bad_content not allowed as fragment names]
+[end]
+FragmentNameWarnings ?.
 
 GoToWarnings ?scene:
     [FindAll ?frag
@@ -47,6 +89,8 @@ ChoiceWarnings ?scene:
 [end]
 ChoiceWarnings ?.
 
+# We define a 'choice' as a fragment name follwed by an identifier specifying how the
+# fragment was reached in a playtrace. For instance, thorugh a choice id from the referring fragment
 [predicate]
 ChoiceInList [?frag ?choice_id] ?list:
     [Member ?m ?list]
@@ -54,8 +98,7 @@ ChoiceInList [?frag ?choice_id] ?list:
 [end]
 
 # Call ?call one time and return the result but reset variables and text output
-# Example usage: 
-#   [Backtrack [SetA ?args] ?result]
+# Example usage:  [Backtrack [SetA ?args] ?result]
 # This would call [SetA ?args ?result] exactly one time and bind the the final argument to ?result
 Backtrack ?call ?result:
     [FindAll ?intermediate_result [BacktrackHelper ?call ?intermediate_result] [?result]]
@@ -76,18 +119,18 @@ AddHelper ?element:
     [add ?element AddTemp]
 [end]
 
-SetUnion ?l1 ?l2 ?union:
-    [set AddTemp = empty]
-    [ForEach [Member ?x ?l1] [AddHelper ?x]]
-    [ForEach [Member ?y ?l2] [Not [Member ?y ?l1]] [AddHelper ?y]]
-    [= ?union AddTemp]
-[end]
+# SetUnion ?l1 ?l2 ?union:
+#     [set AddTemp = empty]
+#     [ForEach [Member ?x ?l1] [AddHelper ?x]]
+#     [ForEach [Member ?y ?l2] [Not [Member ?y ?l1]] [AddHelper ?y]]
+#     [= ?union AddTemp]
+# [end]
 
-SetIntersection ?l1 ?l2 ?int:
-    [set AddTemp = empty]
-    [ForEach [Member ?x ?l1] [Member ?x ?l2] [AddHelper ?x]]
-    [= ?int AddTemp]
-[end]
+# SetIntersection ?l1 ?l2 ?int:
+#     [set AddTemp = empty]
+#     [ForEach [Member ?x ?l1] [Member ?x ?l2] [AddHelper ?x]]
+#     [= ?int AddTemp]
+# [end]
 
 Cat ?l1 ?l2 ?cat:
     [set AddTemp = empty]
@@ -148,3 +191,4 @@ Last ?last ?list:
     [set Reversed = ?reversed]
     [removeNext ?last Reversed]
 [end]
+

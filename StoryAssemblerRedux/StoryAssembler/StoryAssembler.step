@@ -5,19 +5,20 @@ I:
 
 Initialize ?scene:
     [verbatimCase]
-    [InitializeScene ?scene]
+    [InitializeSceneGlobals ?scene]
+    [ResetScene ?scene]
     [InitializeChoices]
-    # Initialized ^CurrentScene.
-    # Currently at fragment ^CurrentFragment. [Br]
     [Warnings ?scene]
 [end]
 
-InitializeScene ?scene: 
+InitializeSceneGlobals ?scene:
     [set CurrentFragment = root]
     [Scene ?scene]
     [set CurrentScene = ?scene]
-    [InitScene CurrentScene]
+    [InitScene CurrentScene] # Calls the scene's init task
 [end]
+
+ResetScene ?scene: [ForEach [Fragment ?frag ?scene] [Unvisit ?frag ?scene]]
 
 InitializeChoices:
     [BestChoices CurrentFragment ?next_best]
@@ -50,41 +51,58 @@ C ?choice_id: # Used for the CLI only
     [Show] # Render the result for humans
 [end]
 
-MakeChoice ?choice_id:
-    [Var ?choice_id]
-    [Throw |MakeChoice needs a bound variable:| ?choice_id]
+# The mechanism for the user to select a fragment
+MakeChoice ?choice_label:
+    [Var ?choice_label]
+    [Throw |MakeChoice needs a bound variable:| ?choice_label]
 [end]
-MakeChoice ?choice_id:
-    [GoToChoice CurrentFragment ?choice_id]
-    [Fragment ?choice_id CurrentScene]
-    [Not [TestConditions ?choice_id]]
-    [Throw Conditions not met for ?choice_id]
+MakeChoice ?choice_label:
+    [GoToChoice CurrentFragment ?choice_label]
+    [Fragment ?choice_label CurrentScene]
+    [Not [TestConditions ?choice_label]]
+    [Throw Conditions not met for ?choice_label]
 [end]
-MakeChoice ?choice_id:
-    [GoToChoice CurrentFragment ?choice_id]
-    [Fragment ?choice_id CurrentScene] # TODO no fragment case
-    [UpdateCurrentFragment ?choice_id]
+MakeChoice ?choice_label:
+    [GoToChoice CurrentFragment ?choice_label]
+    [Fragment ?choice_label CurrentScene]
+    [UpdateCurrentFragment ?choice_label]
 [end]
-MakeChoice ?choice_id:
-    [GetFromNextBestChoices ?fragment_id ?choice_id]
+MakeChoice ?choice_label:
+    [GetFromNextBestChoices ?fragment_id ?choice_label]
     [UpdateCurrentFragment ?fragment_id]
 [end]
-MakeChoice ?choice_id:
-    [AvailableTopLevelFragment ?choice_id] # TODO I think this logic needs to be thought through
-    [GetFromNextBestChoices ?choice_id false]
-    [UpdateCurrentFragment ?choice_id]
+MakeChoice ?choice_label:
+    [AvailableTopLevelFragment ?choice_label] # TODO I think this logic needs to be thought through
+    [GetFromNextBestChoices ?choice_label direct]
+    [UpdateCurrentFragment ?choice_label]
 [end]
 
 UpdateCurrentFragment ?fragment_id:
+    [Request ?fragment_id ?rtype ?args]
     [TestConditions ?fragment_id]
     [Visit ?fragment_id]
+    [set DynamicParent = ?fragment_id]
+    [BestChoices ?fragment_id ?next_best]
+    [set NextBestChoices = ?next_best]
+    [Member ?m ?next_best]
+    [= [?frag_child ?] ?m]
+    [TestConditions ?frag_child]
+    [Visit ?frag_child]
+    [set CurrentFragment = ?frag_child]
+    [BestChoices ?frag_child ?new_best]
+    [set NextBestChoices = ?new_best]
+[end]
+UpdateCurrentFragment ?fragment_id:
+    [TestConditions ?fragment_id]
+    [Visit ?fragment_id]
+    [set DynamicParent = none]
     [set CurrentFragment = ?fragment_id]
     [BestChoices ?fragment_id ?next_best]
     [set NextBestChoices = ?next_best]
 [end]
 UpdateCurrentFragment ?fragment_id:
     [Not [TestConditions ?fragment_id]]
-    [Throw Conditions not met for ?fragment_id]
+    [Throw updateCurrentFragment conditions not met for ?fragment_id]
 [end]
 
 [predicate]

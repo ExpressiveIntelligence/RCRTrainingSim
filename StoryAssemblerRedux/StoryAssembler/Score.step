@@ -14,7 +14,7 @@ ScoreCalculation ?path 0:
 ScoreCalculation ?path ?value: 
     [LengthValue ?path ?length_value]
     [SatisfactionValue ?path ?satisfied_value] 
-    [set Value = ?length_value + MaxDepth * ?satisfied_value] 
+    [set Value = ?satisfied_value + ?length_value]
     [= ?value Value]
 [end]
 
@@ -29,7 +29,12 @@ LengthValue ?path ?value:
 [end]
 
 SatisfactionValue ?path ?value: [Length ?path 0] [= ?value 0]
-SatisfactionValue ?path ?value: [WantsSatisfied ?value]
+SatisfactionValue ?path ?value: 
+    [WantsSatisfied ?wants] 
+    [set M = MaxDepth + 1]
+    [set V = ?wants * M]
+    [= ?value V]
+[end]
 
 WantsSatisfied ?count:
     [FindAll ?want_id [FulfilledInScene ?want_id] ?satisfied_wants]

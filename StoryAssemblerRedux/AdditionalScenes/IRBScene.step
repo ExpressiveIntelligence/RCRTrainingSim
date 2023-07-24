@@ -141,7 +141,7 @@ Content select_ned: You're skimming through your email, killing time before one 
 Effects select_ned: [now [CharacterSelected ned]] [set DiscourseTag = none] [set CurrentBeat = none]
 Conditions select_ned.
 ChoiceLabel select_ned: Ned Prescott, Advisor
-GoToChoice select_ned suggestion.
+# GoToChoice select_ned suggestion. # Checkpoint
 GoToChoice select_ned root_1.
 GoToChoice select_ned def.
 Reusable select_ned irb.
@@ -179,14 +179,14 @@ Content     brad:
 
     More troublingly, he has a habit of procrastinating and occasionally seems out of place in your field. Really, though, he's not a horrible student, and he's always come through eventually on the projects he's worked on.
 [end]
-ChoiceLabel brad: Your student, Brad Chillingsworth
+ChoiceLabel brad: Ruminate about Brad. 
 Conditions  brad: [= CurrentBeat beat_1] [= DiscourseTag waiting]
 Effects     brad.
 GoToChoice  brad root_1. # would be nice to be able to 'go back'
 # Reusable    brad irb.
 
 Content     beat_1_ned_talks_low_snark: "No worries! I was late myself, it's a busy world!" You smile at Brad, who seems to be a bit flustered.
-ChoiceLabel beat_1_ned_talks_low_snark: No worries!
+ChoiceLabel beat_1_ned_talks_low_snark: "No worries!" # TODO make dialogue choices quote surrounded
 Conditions  beat_1_ned_talks_low_snark: [CharacterSelected ned] [= CurrentBeat beat_1]
 Effects     beat_1_ned_talks_low_snark: 
     [set DiscourseTag = greeting]
@@ -249,8 +249,8 @@ Conditions  refer_to_project_ned_low_snark: [CharacterSelected ned] [= CurrentBe
 Effects     refer_to_project_ned_low_snark:
     [set DiscourseTag = refer_to_project]
 [end]
-Speaker         refer_to_project_ned_low_snark teacher.
-GoToChoice      refer_to_project_ned_low_snark vent_irb.
+Speaker     refer_to_project_ned_low_snark teacher.
+GoToChoice  refer_to_project_ned_low_snark vent_irb.
 
 Content     refer_to_project_ned_med_snark: "Yes, let's get started! How is the IRB approval process going?""
 ChoiceLabel refer_to_project_ned_med_snark: Yes?
@@ -259,8 +259,8 @@ Effects     refer_to_project_ned_med_snark:
     [set Snark = Snark + 1]
     [set DiscourseTag = refer_to_project]
 [end]
-Speaker         refer_to_project_ned_med_snark teacher.
-GoToChoice      refer_to_project_ned_med_snark vent_irb.
+Speaker     refer_to_project_ned_med_snark teacher.
+GoToChoice  refer_to_project_ned_med_snark vent_irb.
 
 Content     refer_to_project_ned_high_snark: "That's what you said last week! Anyway, how is the IRB approval process going?"
 ChoiceLabel refer_to_project_ned_high_snark: That's what you said last week
@@ -269,45 +269,25 @@ Effects     refer_to_project_ned_high_snark:
     [set Snark = Snark + 2]
     [set DiscourseTag = refer_to_project]
 [end]
-Speaker         refer_to_project_ned_high_snark teacher.
-GoToChoice refer_to_project_ned_high_snark vent_irb. # TODO let's get rid of this as a goto
+Speaker     refer_to_project_ned_high_snark teacher.
+GoToChoice  refer_to_project_ned_high_snark vent_irb. # TODO let's get rid of this as a goto
 
-# This is where we would put in a request for the more questions node so that we can have a sensible choicelabel
-
-# [randomly]
-# Content     more_questions: I do have something to discuss.
-# Content     more_questions: Great, I have some questions
-# Content     more_questions: Can we get into it?
-# Repeatable  more_questions.
-# Conditions  more_questions: [CharacterSelected ned] [= DiscourseTag refer_to_project]
-# Effects     more_questions:
-#     [set CurrentBeat = beat_1]
-#     # Don't set the discourse act, ie it will be the same as before
-# [end]
-# ChoiceCondition more_questions a: [= CurrentBeat beat_1] [Different DiscourseTag refer_to_project]
-# ChoiceCondition more_questions b: [= CurrentBeat beat_1] [Different DiscourseTag refer_to_project]
-# ChoiceCondition more_questions b: [= CurrentBeat beat_1] [Different DiscourseTag refer_to_project]
-# Speaker         more_questions student.
-
-Content     vent_irb: 
+Content         vent_irb:
     Brad looks frustrated. "We're still waiting! It's a minimal-risk proposal, too. I mean, we're literally just recording interviews. I don't get why it's taking so long. I've been waiting for a month and I still haven't heard back."
 [end]
-ChoiceLabel vent_irb: Brad gazes out the window and sighs.
-Conditions  vent_irb: [CharacterSelected ned]
-Effects     vent_irb:
-    [set CurrentBeat = beat_1]
-    [set DiscourseTag = vent_irb]
-[end]
+ChoiceLabel     vent_irb: Brad gazes out the window and sighs.
+Conditions      vent_irb: [CharacterSelected ned]
+Effects         vent_irb: [set CurrentBeat = beat_1] [set DiscourseTag = vent_irb]
 ChoiceCondition vent_irb a: [= DiscourseTag vent_irb]
 ChoiceCondition vent_irb b: [= DiscourseTag vent_irb]
 ChoiceCondition vent_irb c: [= DiscourseTag vent_irb]
 Speaker         vent_irb student.
 
 
-Content     vent_irb_low: You get it, but have long ago learned to approach the IRB with a stoic demeanor. "Frustration is understable. But we have to do what we have to do. Without the IRB, we can't conduct our research."
-ChoiceLabel vent_irb_low: Frustration is understable.
-Conditions  vent_irb_low: [CharacterSelected ned] [= CurrentBeat beat_1] [= DiscourseTag vent_irb]
-Effects     vent_irb_low:
+Content         vent_irb_low: You get it, but have long ago learned to approach the IRB with a stoic demeanor. "Frustration is understable. But we have to do what we have to do. Without the IRB, we can't conduct our research."
+ChoiceLabel     vent_irb_low: Frustration is understable.
+Conditions      vent_irb_low: [CharacterSelected ned] [= CurrentBeat beat_1] [= DiscourseTag vent_irb]
+Effects         vent_irb_low:
     [add we_have_to_irb Knowledge]
 [end]
 ChoiceCondition vent_irb_low a: [= CurrentBeat beat_1] [= DiscourseTag vent_irb] [Member acknowledge Knowledge]
@@ -331,7 +311,7 @@ Effects     vent_irb_high:
     [set Snark = Snark + 2]
     [add we_have_to_irb Knowledge]
 [end]
-ChoiceCondition vent_irb_high a: [= DiscourseTag vent_irb] [Member acknowledge Knowledge]
+ChoiceCondition vent_irb_high a: [Member acknowledge Knowledge]
 Speaker         vent_irb_high teacher.
 
 Content     vent_irb_end_snarky: Brad's hand goes for a paper weight before quickly retracting his hand. "That's what you've been telling me." 
@@ -412,7 +392,7 @@ ChoiceCondition beat_2_important c: [= DiscourseTag important]
 Content         beat_2_important_low: "Good question! It's a critical piece to making sure your research is ethical. As researchers with our own biases and self-interests, an 'independent' review board ensures that a greater degree of impartiality is applied to our research. The law states that each university establish their own IRB to oversee the research of their faculty and students."
 ChoiceLabel     beat_2_important_low: Good question!
 Conditions      beat_2_important_low: [CharacterSelected ned] [= DiscourseTag important] [= CurrentBeat beat_2]
-Effects         beat_2_important_low: 
+Effects         beat_2_important_low:
     [set CurrentBeat = beat_2]
     [add bias Knowledge]
 [end]
@@ -422,7 +402,7 @@ ChoiceCondition beat_2_important_low a: [Different DiscourseTag important]
 Content         beat_2_important_mid: "It's something we've all just got to do - but it's got good intentions behind it. One of the ideas is that we may be biased by our own self-interests, so an 'independent' review board ensures that a greater degree of impartiality is applied to our research. The law states that each university establish their own IRB to oversee the research of their faculty and students."
 ChoiceLabel     beat_2_important_mid: It has good intentions.
 Conditions      beat_2_important_mid: [CharacterSelected ned] [= DiscourseTag important] [= CurrentBeat beat_2]
-Effects         beat_2_important_mid: 
+Effects         beat_2_important_mid:
     [set Snark = Snark + 1]
     [add bias Knowledge]
 [end]
@@ -671,3 +651,21 @@ Fulfilled end: [= DiscourseTag end]
 # [end]
 # ChoiceCondition vent_irb_low a: [= CurrentBeat beat_1] [= DiscourseTag vent_irb] [Member acknowledge Knowledge]
 # Speaker         vent_irb_low teacher.
+
+
+# This is where we would put in a request for the more questions node so that we can have a sensible choicelabel
+
+# [randomly]
+# Content     more_questions: I do have something to discuss.
+# Content     more_questions: Great, I have some questions
+# Content     more_questions: Can we get into it?
+# Repeatable  more_questions.
+# Conditions  more_questions: [CharacterSelected ned] [= DiscourseTag refer_to_project]
+# Effects     more_questions:
+#     [set CurrentBeat = beat_1]
+#     # Don't set the discourse act, ie it will be the same as before
+# [end]
+# ChoiceCondition more_questions a: [= CurrentBeat beat_1] [Different DiscourseTag refer_to_project]
+# ChoiceCondition more_questions b: [= CurrentBeat beat_1] [Different DiscourseTag refer_to_project]
+# ChoiceCondition more_questions b: [= CurrentBeat beat_1] [Different DiscourseTag refer_to_project]
+# Speaker         more_questions student.

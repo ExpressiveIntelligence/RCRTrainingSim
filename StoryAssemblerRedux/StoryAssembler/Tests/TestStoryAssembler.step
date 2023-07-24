@@ -6,16 +6,23 @@ TestDinner:
     ?paths
 [end]
 
+
+
+TestF: [F 1] true
+TestF: false
+TestAA: [TestF] [now [F 0]] [TestF] [now [Not [F 0]] [F 1]] [TestF]
+Mention ?x: [now [Mentioned ?x]]
+MentionTest: [Mention x] [Mentioned x]
+
 TestRanking:
-    [InitializeScene test]
+    [InitializeSceneGlobals test]
     [AllPathsFrom root ?paths]
     [ForEach [Member ?path ?paths] [Paragraph] [Write ?path]]
 [end]
 
-
 TestFindPaths:
     [Initialize test]
-    [FindPaths [root false] empty ?paths]
+    [FindPaths [root direct] empty ?paths]
     ?paths
 [end]
 
@@ -167,7 +174,7 @@ TestWantConditions:
 [end]
 
 Y:
-    [X root false empty ?x]
+    [X root direct empty ?x]
     ?x
 [end]
 
@@ -175,7 +182,8 @@ X ?frag ?choice_id ?path ?paths_from_children:
     [Initialize test]
 
     [case ?frag] [Different root] : [Visit ?frag] [else]  [end]
-    # All possible next fragments that can be selected are 'children' of the current fragment. Should backtrack all calls.
+    # All possible next fragments that can be selected are 'children' of the current fragment. 
+    # FindUnique and FindAll backtrack all calls
     [FindUnique ?next_choice [AvailableNextFragment ?frag ?next_choice] ?potential_choices]
     [FindAll ?paths_from_child [FindAllPathsFromAChildOf ?potential_choices [?frag ?choice_id] ?path ?paths_from_child] ?list_of_paths_from_children]
     [Flatten2D ?list_of_paths_from_children ?paths_from_children]
@@ -274,7 +282,7 @@ TestTupleInList:
 [end]
 
 TestMaze:
-    [InitializeScene maze]
+    [InitializeSceneGlobals maze]
     [AllPathsFrom root ?paths]
     [ForEach [Member ?path ?paths] [Paragraph] [Write ?path]]
 [end]

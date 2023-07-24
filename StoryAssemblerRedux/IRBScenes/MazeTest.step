@@ -1,0 +1,160 @@
+# Must declare the scene for various checks to succeed
+Scene maze.
+
+Character ally maze |Alice|.
+CharacterAsset ally maze |alice.png|.
+CharacterLocation ally maze [0, 0].
+BackgroundAsset maze: |maze.png|.
+
+# Declare all storylets (fragments)
+[randomly]
+Fragment welcome maze.
+Fragment enter maze.
+Fragment go_in maze.
+Fragment turn_around maze.
+Fragment end maze.
+Fragment l maze.
+Fragment s maze.
+Fragment r maze.
+Fragment mice maze.
+Fragment keyboards maze.
+Fragment sleep maze.
+Fragment grue maze.
+Fragment confused maze.
+Fragment request maze.
+Fragment good maze.
+Fragment better maze.
+
+# Scene specific predicates
+fluent Inside maze.
+fluent CardinalChoice maze.
+fluent Initialized maze.
+
+InitialSceneState maze:
+    [now [Not [Initialized maze]]]
+    [now [Not [CardinalChoice maze]]]
+    [now [Not [Inside maze]]]
+    [now [Not [UsedWelcome maze]]]
+    [now [Not [UsedRequest maze]]]
+    [now [Not [Best maze]]]
+[end]
+
+# Some other test stuff
+Content     request: We won't see this content. 
+Conditions  request: [UsedWelcome maze]
+ChoiceLabel request: Request.
+Effects     request.
+# Request     request goto good.
+Request     request condition [UsedRequest maze].
+
+Content     good: You made it. I'm so happy for you.
+ChoiceLabel good: Made it.
+Conditions  good.
+Effects     good: [now [UsedRequest maze]]
+GoToChoice  good enter.
+
+Content     better: You made it better! I'm so happy for you. Even happier. 
+ChoiceLabel better: Better
+Conditions  better.
+Effects     better: [now [UsedRequest maze] [Best maze]]
+GoToChoice  better enter.
+
+Content welcome: Welcome to the ENDLESS MAZE.
+Effects welcome: [now [UsedWelcome maze]]
+Conditions welcome.
+GoToChoice welcome enter.
+GoToChoice welcome request.
+
+ChoiceLabel enter: Come to. 
+Content enter: In front of you looms a high brick wall. Inset in the wall is a modest black door. Above the door, a sign reads "THE ENDLESS MAZE" in a neat government font.
+Conditions enter.
+Effects enter. # no effects
+[randomly]
+GoToChoice enter go_in.
+GoToChoice enter turn_around.
+Reusable enter maze.
+
+ChoiceLabel go_in: Open the door.
+Content go_in: The door glides open soundlessly. A damp breeze doesn't notice you as it passes.
+Conditions go_in: [Not [Inside maze]]
+Effects go_in: [now [Inside maze]]
+Reusable go_in maze.
+[randomly]
+ChoiceCondition go_in go_in: [CardinalChoice maze]
+ChoiceCondition go_in choice_b: [CardinalChoice maze]
+ChoiceCondition go_in choice_c_to_do_should_check_no_duplicates_here: [CardinalChoice maze]
+
+ChoiceLabel turn_around: Turn around.
+Content turn_around: You turn around and walk back. Surrounding you is a vast, empty plane. It is dark blue and stretches on forever.
+Conditions turn_around: [Not [Inside maze]]
+Effects turn_around.
+GoToChoice turn_around end.
+Reusable turn_around maze.
+
+
+ChoiceLabel end: Walk.
+Content end: As you walk further from the door, the brick wall vanishes to a horizon. With each countless step, your sense of time and self gradually fade...
+Conditions end: [Not [Inside maze]]
+Effects end.
+Reusable end maze.
+GoToChoice end enter.
+
+ChoiceLabel r: Go right.
+Content r: You go right.
+Conditions r: [Inside maze] [Not [CardinalChoice maze]]
+Effects r: [now [CardinalChoice maze]]
+Reusable r maze.
+
+ChoiceLabel l: Go left.
+Content l: You go left.
+Conditions l: [Inside maze] [Not [CardinalChoice maze]]
+Effects l: [now [CardinalChoice maze]]
+Reusable l maze.
+
+ChoiceLabel s: Walk ahead.
+Content s: You go straight.
+Conditions s: [Inside maze] [Not [CardinalChoice maze]]
+Effects s: [now [CardinalChoice maze]]
+Reusable s maze.
+
+Content keyboards: You are surrounded by keyboards. The sound of clacking fills chamber. You are surrounded by keyboards.
+Conditions keyboards: [Inside maze] [CardinalChoice maze]
+Effects keyboards: [now [Not [CardinalChoice maze]]]
+Reusable keyboards maze.
+
+Content mice: You are surrounded by cute mice of all varieties. Trackpads and magic mice and mice with wheels. You hear scurrying, a muffled squeak in the distance.
+Conditions mice: [Inside maze] [CardinalChoice maze]
+Effects mice: [now [Not [CardinalChoice maze]]]
+Reusable mice maze.
+
+Content confused: Though you haven't been in this game - maze - long, you already forget which way you came from. Turning around, there are three paths, each of which you may have just emerged from. 
+Conditions confused: [Inside maze] [Not [CardinalChoice maze]]
+Effects confused.
+Reusable confused maze.
+ChoiceCondition confused choice_a: [CardinalChoice maze]
+ChoiceCondition confused choice_b: [CardinalChoice maze]
+ChoiceCondition confused choice_c_to_do_should_check_no_duplicates_here: [CardinalChoice maze]
+
+ChoiceLabel sleep: This is a good spot for a nap!
+Content sleep: You lie down and close your eyes. It has been quite the adventure, but you are ready to wake up in your bed, assuming this has been a digital dream.
+Conditions sleep: [Inside maze]
+Effects sleep.
+
+Content grue: You are likely to be eaten by a grue.
+Conditions grue: [Inside maze]
+Effects grue.
+
+# Define the Story Spec as a list of wants and fufillments
+[randomly]
+Want maze initialized.
+Want maze inside.
+Want maze use1.
+Want maze use2.
+Want maze best.
+
+[randomly]
+Fulfilled initialized: [Initialized maze]
+Fulfilled inside: [Inside maze]
+Fulfilled use1: [UsedWelcome maze]
+Fulfilled use2: [UsedRequest maze]
+Fulfilled best: [Best maze]

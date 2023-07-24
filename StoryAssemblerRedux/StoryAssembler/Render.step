@@ -39,14 +39,16 @@ S: [Show]
 # Human readable version of Render
 Show:
     [PreRender]
-    Characters: [RenderCharacters][Br]
     Content: [RenderFragmentContent] [Br]
-    Fragment: [CurrentFragment] [Br]
     Speaker: [RenderSpeaker][Br]
     Choices: [RenderNextBestChoices] [Br]
+    --- [Br]
+    Characters: [RenderCharacters][Br]
+    Fragment: [CurrentFragment] [Br]
     Paths: [Length AllPaths ?l] ?l [Br]
     Warnings: [Warnings CurrentScene] [Br]
     Errors: [Error] [Br]
+    Paths: ^AllPaths [Br]
 [end]
 
 RenderCharacters: [NotAny [Character ? ^CurrentScene ?]]
@@ -70,12 +72,28 @@ RenderBackground.
 
 RenderFragmentContent:
     [Different CurrentFragment root]
-    [Content CurrentFragment]
+    [DisplayDynamic [Content]]
 [end]
 RenderFragmentContent:
-    🌳 root 🌳
+    root
 [end]
 RenderFragmentContent: [add |No fragment available| ErrorList] 
+
+[retriable]
+DisplayDynamic ?call: 
+    [Call ?call CurrentFragment] # Try to call the content of the current fragment
+[end]
+DisplayDynamic ?call:
+    [Different DynamicParent none]
+    [Call ?call DynamicParent] # Call the dynamic parent fragment
+[end]
+DisplayDynamic ?call: [DefaultDisplay ?call]
+DisplayDynamic ?call.
+
+[retriable]
+DefaultDisplay [Content]: root
+DefaultDisplay [RenderSpeaker]: narrator
+DefaultDisplay ?.
 
 RenderSpeaker:
     [Different CurrentFragment root]
@@ -96,6 +114,6 @@ RenderChoice [?frag ?choice_id]:  [GetID [?frag ?choice_id]] [Delim] [ChoiceLabe
 RenderChoice [?frag ?choice_id]:  [= ?frag root] [GetID [?frag ?choice_id]] [Delim] Start  
 RenderChoice [?frag ?choice_id]:   [GetID [?frag ?choice_id]] [Delim] Continue
 
-GetID [?frag ?choice_id]: [Different ?choice_id false] ?choice_id/WriteVerbatim
+GetID [?frag ?choice_id]: [Different ?choice_id direct] ?choice_id/WriteVerbatim
 GetID [?frag ?choice_id]: [Fragment ?frag CurrentScene] ?frag/WriteVerbatim
 GetID ?x: ?x
