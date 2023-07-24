@@ -106,6 +106,9 @@ Visit ?frag:
     [ApplyEffects ?frag]
 [end]
 
+# Used for reseting a scene to its initial conditions
+Unvisit ?frag ?scene: [now [Not [Expanded ?frag ?scene]]]
+
 # There are three types of choices: 
 # 1. GoTo:
 #       Go to a specific fragment based on its id

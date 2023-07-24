@@ -5,19 +5,20 @@ I:
 
 Initialize ?scene:
     [verbatimCase]
-    [InitializeScene ?scene]
+    [InitializeSceneGlobals ?scene]
+    [ResetScene ?scene]
     [InitializeChoices]
-    # Initialized ^CurrentScene.
-    # Currently at fragment ^CurrentFragment. [Br]
     [Warnings ?scene]
 [end]
 
-InitializeScene ?scene:
+InitializeSceneGlobals ?scene:
     [set CurrentFragment = root]
     [Scene ?scene]
     [set CurrentScene = ?scene]
-    [InitScene CurrentScene]
+    [InitScene CurrentScene] # Calls the scene's init task
 [end]
+
+ResetScene ?scene: [ForEach [Fragment ?frag ?scene] [Unvisit ?frag ?scene]]
 
 InitializeChoices:
     [BestChoices CurrentFragment ?next_best]

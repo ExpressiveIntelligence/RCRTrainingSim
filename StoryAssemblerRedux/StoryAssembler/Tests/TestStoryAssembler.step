@@ -15,7 +15,7 @@ Mention ?x: [now [Mentioned ?x]]
 MentionTest: [Mention x] [Mentioned x]
 
 TestRanking:
-    [InitializeScene test]
+    [InitializeSceneGlobals test]
     [AllPathsFrom root ?paths]
     [ForEach [Member ?path ?paths] [Paragraph] [Write ?path]]
 [end]
@@ -282,7 +282,7 @@ TestTupleInList:
 [end]
 
 TestMaze:
-    [InitializeScene maze]
+    [InitializeSceneGlobals maze]
     [AllPathsFrom root ?paths]
     [ForEach [Member ?path ?paths] [Paragraph] [Write ?path]]
 [end]

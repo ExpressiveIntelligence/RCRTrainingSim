@@ -21,14 +21,13 @@ PrintCharacter ?char_id ?scene:
 [end]
 
 InitScene ?scene:
-    [InitialSceneState ?scene]
+    [InitialSceneState ?scene] # Each scene should define an InitialSceneState task
 [end]
 
 CompleteStorySpec ?scene:
     [Scene ?scene]
     [Not [IncompleteStorySpec ?scene]]
 [end]
-
 
 # # A Want is an element in a story spec 
 # A Want is attached to a scene, and can be fulfilled
