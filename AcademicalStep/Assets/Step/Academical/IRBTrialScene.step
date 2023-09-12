@@ -17,7 +17,7 @@ CharacterAsset teacher irb |./ned.png|.
 CharacterLocation teacher irb [0, 0].
 
 # Scene specific predicates
-fluent CharacterSelected ?character. # TODO should this be a function? fluent function?
+fluent CharacterSelected ?character. 
 
 # Declare all fragments 
 # (NOTE: DO NOT PUT A SPACE LINE VBETWEEN FRAGMENTS)
@@ -69,7 +69,7 @@ InitialSceneState irb:
     [set CurrentBeat = none]
     [set DiscourseTag = none]
     [set Snark = 0]
-    [set Knowledge = empty] 
+    [set Knowledge = empty]
     [now [CharacterSelected none]]
 [end]
 
@@ -130,7 +130,7 @@ SnarkMixIn low ?threshold:
 SnarkMixIn ? ?.
 
 ## CHARACTER SELECT ##
-Content select: Who are you? 
+Content select: Who are you?
 Effects select: [set DiscourseTag = none] [set CurrentBeat = none]
 Conditions select: [= CurrentBeat none]
 Reusable select irb.

@@ -47,14 +47,14 @@ Effects     request.
 # Request     request goto good.
 Request     request condition [UsedRequest maze].
 
-Content     good: You made it. I'm so happy for you.
-ChoiceLabel good: Made it.
+Content     good: You made it. I'm happy for you.
+ChoiceLabel good: This is just a test fragment. 
 Conditions  good.
 Effects     good: [now [UsedRequest maze]]
 GoToChoice  good enter.
 
-Content     better: You made it better! I'm so happy for you. Even happier. 
-ChoiceLabel better: Better
+Content     better: You made it better! I'm so very happy for you.
+ChoiceLabel better: If you're seeing this, the test is working correctly. Otherwise, disregard.
 Conditions  better.
 Effects     better: [now [UsedRequest maze] [Best maze]]
 GoToChoice  better enter.

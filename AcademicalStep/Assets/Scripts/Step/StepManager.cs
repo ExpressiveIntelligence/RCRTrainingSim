@@ -13,7 +13,6 @@ public class StepManager : MonoBehaviour
     public string storyAssemblerPath; // The path to the StoryAssembler step implmentation
     public string optionalScenePath; // If desired, you can specify an additional path to a file containing your current scene (e.g. "Assets/Scripts/Scenes/Maze.step")
     public string sceneName;
-
     public GameSession gameSession;
 
     public bool debug = false;
