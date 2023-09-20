@@ -57,11 +57,16 @@ namespace Step
         /// <inheritdoc />
         public override string ToString()
         {
+            return ToStringRecursive(this);
+        }
+
+        private string ToStringRecursive(object obj)
+        {
             var b = new StringBuilder();
             b.Append('(');
 
             var count = 0;
-            foreach (var e in this)
+            foreach (var e in (IEnumerable)obj)
             {
                 if (count == 10)
                 {
@@ -70,7 +75,15 @@ namespace Step
                 }
                 if (count++ != 0)
                     b.Append(' ');
-                b.Append(e);
+
+                if (e is Object[] innerArray)
+                {
+                    b.Append(ToStringRecursive(innerArray));
+                }
+                else
+                {
+                    b.Append(e?.ToString());
+                }
             }
 
             b.Append(')');
