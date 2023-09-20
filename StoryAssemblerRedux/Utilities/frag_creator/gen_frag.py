@@ -4,12 +4,18 @@
 # 4. Create credentials for your project. You'll get a JSON file which you should save securely, as it contains sensitive information.
 
 
+# To run this file cd into this directory and run `python gen_frag.py`
+
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
-import re
+import re, sys
 
-scene_name = ""
+sys.path.append("../frag_utils/")
+# import the file "../frag_utils/frag_utils.py"
+from frag_utils import step_template
+
+scene = ""
 
 def read_google_sheet(tab_name):
     # Define the scope for the Google Sheets API
@@ -60,7 +66,6 @@ def clean_row(row):
         row[key] = clean_cell(row[key])
     return row
 
-
 # Content select_ned: You're skimming through your email, killing time before one of your students arrives for a check-in meeting about a research project that he's leading the charge on. He's been vocal about his displeasure with the slow process of getting IRB approval, which has already taken over a month.
 # Effects select_ned: [now [CharacterSelected ned]] [set DiscourseTag = none] [set CurrentBeat = none]
 # Conditions select_ned.
@@ -73,18 +78,33 @@ def clean_row(row):
 def split_data(string_to_split):
     return re.split(r'[ ,]+', row.gotochoices)
 
+def multi(content):
+    """
+    Format content for step methods which have multiple lines.
+    Content         vent_irb:
+        Brad looks frustrated. "We're still waiting! It's a minimal-risk proposal, too. I mean, we're literally just recording interviews. I don't get why it's taking so long. I've been waiting for a month and I still haven't heard back."
+    [end]
+    """
+    content = content.strip()
+    if "\n" in content:
+        content = re.sub(r'\n', r'\n\t', content) # each new line should be indented
+        content = f"\n\t{content}\n[end]"
+    return content
+
 def create_frag(row):
     if not row.id:
-        return None
+        return None, None
+    frag_name = row.id
     
     if(row.step_code):
-        return row.step_code
+        return frag_name, row.step_code
 
     code = ""
     if row.content:
-        code += f"Content {row.id}: {row.content}\n" 
+        content = multi(row.content)
+        code += f"Content {row.id}: {content}\n"
     if row.speaker:
-        code += f"Speaker {row.id}: {row.speaker}.\n"
+        code += f"Speaker {row.id} {row.speaker}.\n"
     if row.choice_label:
         code += f"ChoiceLabel {row.id}: {row.choice_label}\n"
     if row.gotochoices:
@@ -102,19 +122,24 @@ def create_frag(row):
     else: 
         code += f"Conditions {row.id}.\n"
     if row.reusable:
-        code += f"Reusable {row.id}.\n"
+        code += f"Reusable {row.id} {scene}.\n"
 
     code += "\n"
 
-    return code
+    return frag_name, code
 
 
 
-scene_name = input("Scene name: ")
+# scene = input("Scene name: ")
+scene = "e0001"
 
 # Read the Google Sheets data and print it
-tab_name = 'T0001_Fragments'
-df = read_google_sheet(tab_name)
+threads = ["T0001"]
+df = pd.DataFrame()
+for thread in threads:
+    tab_name = f'{thread}_Fragments'
+    thread_df = read_google_sheet(tab_name)
+    df = df.append(thread_df)
 # snake case the labels in pandas
 # clean the rows
 df.columns = df.columns.str.replace(' ', '_').str.lower()
@@ -122,9 +147,47 @@ print(df.keys())
 
 # clean the rows
 df = df.apply(clean_row, axis=1)
-for index, row in df.iterrows():
-    code = create_frag(row)
-    if code: 
-        print(code)
 
-print(df)
+fragment_declarations = ""
+fragments = ""
+
+# Create an entry fragment
+first_frag_name = df.iloc[0].id
+fragment_declarations += f"Fragment entry {scene}.\n"
+fragments += f"""Content entry: Welcome to StepAdemical!
+Conditions  entry.
+Effects     entry.
+GoToChoice  entry {first_frag_name}.\n
+"""
+
+for index, row in df.iterrows():
+    frag_name, frag_code = create_frag(row)
+    if frag_name:
+        fragment_declarations += f"Fragment {frag_name} {scene}.\n"
+    if frag_code: 
+        print(frag_code)
+        fragments += frag_code
+
+code = fragment_declarations + "\n\n" + fragments
+
+predicates = "# No Predicates"
+initial_state = "# No Initial State"
+characters = f"""
+Character student {scene} |Brad|.
+CharacterAsset student {scene} |./brad.png|.
+CharacterLocation student {scene} [0, 0].
+
+Character teacher {scene} |Ned|.
+CharacterAsset teacher {scene} |./ned.png|.
+CharacterLocation teacher {scene} [0, 0]."""
+wants = "Want scene want_id."
+fulfillments = "Fulfilled want_id: [Condition]"
+code = step_template.format(**locals())
+
+# Write to a file which is specified in the command line, if none is specified, write to a default file
+file_name = sys.argv[1] if len(sys.argv) > 1 else "GeneratedScene.step"
+with open(file_name, "w") as f:
+    f.write(code)
+    f.close()
+
+print(f"Successfully wrote to {file_name}")
