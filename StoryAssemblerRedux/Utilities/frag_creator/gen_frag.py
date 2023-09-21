@@ -65,8 +65,10 @@ def clean_row(row):
         return None
     if row.request:
         row.request = True
-    if row.reusable:
+    if row.reusable and (row.reusable.lower() == "true"):
         row.reusable = True
+    else:
+        row.reusable = False
     # for each cell
     for key in row.keys():
         row[key] = clean_cell(row[key])
@@ -130,7 +132,7 @@ def create_frag(row):
 scene = "e0001"
 
 # Read the Google Sheets data and print it
-threads = ["T0001"]
+threads = ["T0001", "T0002"]
 df = pd.DataFrame()
 for thread in threads:
     tab_name = f'{thread}_Fragments'
@@ -150,7 +152,7 @@ fragments = ""
 # Create an entry fragment
 first_frag_name = df.iloc[0].id
 fragment_declarations += f"Fragment entry {scene}.\n"
-fragments += f"""Content entry: Welcome to StepAdemical!
+fragments += f"""Content entry: Welcome to Academical!
 Conditions  entry.
 Effects     entry.
 GoToChoice  entry {first_frag_name}.\n
@@ -166,8 +168,10 @@ for index, row in df.iterrows():
 
 code = fragment_declarations + "\n\n" + fragments
 
-predicates = "# No Predicates"
-initial_state = "# No Initial State"
+# predicates = "# No Predicates"
+predicates ="""fluent PleasantriesOver ?scene."""
+# initial_state = "# No Initial State"
+initial_state = "[Not [PleasantriesOver e0001]]"
 characters = f"""Character student {scene} |Brad|.
 CharacterAsset student {scene} |./brad.png|.
 CharacterLocation student {scene} [0, 0].
@@ -177,7 +181,7 @@ CharacterAsset teacher {scene} |./ned.png|.
 CharacterLocation teacher {scene} [0, 0]."""
 assets = f"BackgroundAsset {scene}: |./scene_name_background.png|."
 wants = "Want scene want_id."
-fulfillments = "Fulfilled want_id: [Condition]"
+fulfillments = "Fulfilled want_id: [Expanded entry CurrentScene]"
 code = step_template.format(**locals())
 
 # Write to a file which is specified in the command line, if none is specified, write to a default file
