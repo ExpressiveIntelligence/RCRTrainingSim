@@ -15,7 +15,7 @@ public class StepManager : MonoBehaviour
     public string sceneName;
     public GameSession gameSession;
 
-    public bool debug = false;
+    public bool extraDebugLogging = true;
 
     private Module module;
     private State state;
@@ -88,30 +88,37 @@ public class StepManager : MonoBehaviour
 
         // Load the StoryAssembler library, implemented in Step
         LoadStoryAssembler();
-        Debug.Log(
-            "Loaded StoryAssembler: " + storyAssemblerLoaded + 
-            " and optional scene: " + optionalScenePathLoaded
-        );
+        string debugMessage = storyAssemblerLoaded ? "StoryAssembler Loaded." : "StoryAssembler FAILED to Load.";
+        debugMessage += optionalScenePathLoaded ? " Optional scene loaded." : " Optional scene FAILED to load.";
+        Debug.Log(debugMessage);
         
         this.subItem = ExecuteStep("[Delim]");
         this.itemDelim = ExecuteStep("[ItemDelim]");
 
         Initialize(this.sceneName);
+
+        bool doReRender = false;
+
         // We need to call Render once to get the first fragment
         SerializedFragment fragment = Render();
         // Check the length of choices
-        if (this.debug)
+        if (this.extraDebugLogging)
             Debug.Log("Choices: " + fragment.choices.Length);
         if (fragment.choices.Length == 0) {
             Debug.Log("No choices found from the root fragment");
         } else if (fragment.choices.Length > 1) {
             Debug.Log("Warning: StoryAssembler returned multiple choices from the root");
-            Select(fragment.choices[0].id);
+            doReRender = true;
         } else {
             // There should only be one choice if StoryAssembler is working nominally
-            if (this.debug)
+            if (this.extraDebugLogging)
                 Debug.Log("Selecting choice: " + fragment.choices[0].id);
-            Select(fragment.choices[0].id);
+            doReRender = true;
+        }
+
+        if (doReRender) {
+            string choice = fragment.choices[0].id.ToLower(); // We shouldn't have to lower case: TODO call verbatm case in Step
+            fragment = Select(choice); 
         }
 
         return fragment;
@@ -201,7 +208,7 @@ public class StepManager : MonoBehaviour
     public SerializedFragment Select(string choiceID)
     {
         MakeChoice(choiceID);
-        if (this.debug)
+        if (this.extraDebugLogging)
             Debug.Log("Rendering " + choiceID);
         return Render();
     }
@@ -218,7 +225,7 @@ public class StepManager : MonoBehaviour
     public string ExecuteStep(string code)
     {   
         try {
-            if (this.debug)
+            if (this.extraDebugLogging)
                 Debug.Log("Executing Step: " + code);
             return ParseAndExecute(code);
         } catch (Exception e) {

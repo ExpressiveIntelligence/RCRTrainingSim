@@ -1,0 +1,199 @@
+# Declare the scene
+Scene e0001.
+
+# Declare the characters and locations
+
+Character student e0001 |Brad|.
+CharacterAsset student e0001 |./brad.png|.
+CharacterLocation student e0001 [0, 0].
+
+Character teacher e0001 |Ned|.
+CharacterAsset teacher e0001 |./ned.png|.
+CharacterLocation teacher e0001 [0, 0].
+
+# Declare all fragments
+[randomly]
+Fragment entry e0001.
+Fragment outside e0001.
+Fragment bus e0001.
+Fragment grill e0001.
+Fragment play_off e0001.
+Fragment enter e0001.
+Fragment youre_late e0001.
+Fragment no_worries e0001.
+Fragment doubt e0001.
+Fragment relief e0001.
+Fragment reflect e0001.
+Fragment remind e0001.
+Fragment lament e0001.
+Fragment overworked e0001.
+Fragment silence e0001.
+Fragment subjects e0001.
+
+
+# Scene specific predicates
+# No Predicates
+
+InitialSceneState e0001: 
+# No Initial State
+[end]
+
+# Fragments
+Content entry: Welcome to StepAdemical!
+Conditions  entry.
+Effects     entry.
+GoToChoice  entry outside.
+
+Content outside: Brad reached the door and grasped the handle, motioning to push it inwards. Then he halted, wiping sweat from underneath his glasses. He took a deep breath, trying to calm his racing heart before knocking on the door. This was the moment he had been anxious for all week. Would he come clean? But he was already late, too late to come up with a game plan. Hoping he had the wherewithall for the conversation, he put his hand on the door.
+Speaker outside brad.
+ChoiceLabel outside: Ned's office
+GoToChoice outside bus.
+GoToChoice outside grill.
+GoToChoice outside play_off.
+Effects outside.
+Conditions outside.
+Reusable outside e0001.
+
+Content bus: Brad stood outside the professor's office, his hand still on the doornob. He took a moment to gather his thoughts. The unreliable public transportation in this town! Inexcusable really. But the frustration wasn't useful.
+Speaker bus brad.
+ChoiceLabel bus: Brad reflects on being late
+GoToChoice bus enter.
+Effects bus.
+Conditions bus.
+Reusable bus e0001.
+
+Content grill: Brad knew that Ned had a reputation for being passionate, but not unfair. He'd always been a bit tough on Brad, despite his outward kindness. He was sharp and was probably going to detect that Brad had something to hide. The first thought of Brad's was to come clean, he's going to find out eventually. But the other side of him realized that he had a lot of control over this project, perhaps he could slip one through. It's Ned's fault after all that the approval took so long to submit.
+Speaker grill brad.
+ChoiceLabel grill: Brad reflects that Ned might grill him
+GoToChoice grill enter.
+GoToChoice grill lament.
+Effects grill.
+Conditions grill.
+Reusable grill e0001.
+
+Content play_off: 
+	He glanced at his reflection in the window; his face was flushed, glasses slightly askew, and hair tousled from stress. A deep inhale and slowly released exhale were meant to calm his nerves but only highlighted the laborious beating of his heart within his chest. He was late, and his mind was frantic, scurrying to come up with a plausible excuse. But his every thought was overwhelmed by the mistake he'd made. 
+	
+	Facing the facts, Brad considered coming clean. After all, every mistake was just a lesson in disguise. But then a rebellious thought sparked within him. This was his research, his work. The reality was that the delay had jeopardized his own progress. Surely he could lay this down carefully to Ned by telling him simply that he was on track, no need to dive too deeply into it. As Brad gripped the doorknob once more, he decided there and then - he would take control of the situation, even if it entailed ommitting some of the truth.
+[end]
+Speaker play_off brad.
+ChoiceLabel play_off: Brad considers playing off his mistake
+GoToChoice play_off enter.
+GoToChoice play_off lament.
+Effects play_off.
+Conditions play_off.
+Reusable play_off e0001.
+
+Content enter: 
+	Brad squared his shoulders, taking one last glance at his disheveled reflection, before stepping soundlessly into Professor Ned's office. Ned's office was well organized - memorabilia from past psychology forums, a dog toy in the shape of a brain, a few student papers and a desktop computer to his left.
+	Ned, with his furrowed brow and piercing gaze, was waiting for him. His impunctual arrival clearly hadn't slipped his notice and the evident tension was etched on Brad's face. The surroundings seemed to blur as Brad approached Ned's desk. The words buzzed around his head in a chorusing cyclone, a mingling of honesty and calculated discretion. His heartbeat opened his mouth, ready to deliver his carefully constructed report. No more stalling. His research, his rules.
+[end]
+Speaker enter ned.
+ChoiceLabel enter: Enter the office
+GoToChoice enter youre_late.
+Effects enter.
+Conditions enter.
+Reusable enter e0001.
+
+Content youre_late: "Ah there you are!" Says Ned cheerfully. "I was beginning to wonder if we'd cancelled this week."
+Speaker youre_late ned.
+ChoiceLabel youre_late: You're late...
+GoToChoice youre_late no_worries.
+Effects youre_late.
+Conditions youre_late.
+Reusable youre_late e0001.
+
+Content no_worries: Ned continues, "No worries, it's just us!" He smiles, "But I do have a hard stop, I have a lecture right after this."
+Speaker no_worries ned.
+ChoiceLabel no_worries: Ned continues
+GoToChoice no_worries doubt.
+GoToChoice no_worries relief.
+GoToChoice no_worries reflect.
+Effects no_worries.
+Conditions no_worries.
+Reusable no_worries e0001.
+
+Content doubt: 
+	Brad can't tell if he's being truthful or just relieving the tension. In either case, it catches him off guard. 
+	
+	"There was a problem with the buses..." Brad starts lamely, but then cuts himself off.
+[end]
+Speaker doubt brad.
+ChoiceLabel doubt: Is he just saying that?
+GoToChoice doubt remind.
+Effects doubt.
+Conditions doubt.
+Reusable doubt e0001.
+
+Content relief: 
+	Maybe playing off his mistake might be the better option. After all, Ned seemed to be in a good mood and Brad didn't want to ruin that. Perhaps this will be easier than expected.
+	
+	Relief washes over Brad as he contemplates playing off his mistake.He smiles and says, "Yeah, those buses can be really unreliable sometimes. Sorry for being late, Ned."
+	
+	Ned nods understandingly, seemingly accepting Brad's explanation. The tension in the room eases slightly, and Brad feels a sense of relief.
+[end]
+Speaker relief brad.
+ChoiceLabel relief: He's not mad!
+GoToChoice relief remind.
+Effects relief.
+Conditions relief.
+Reusable relief e0001.
+
+Content reflect: Brad found out pretty soon after arriving at the lab that he had not been Ned's first choice of student. Ned's first choice student eended up at another university, and Brad had recieved the acceptance notice. Brad sometimes wondered if letting him in instead was just a labor requirement. Ned was hard on Brad, had him double and triple check his data, show up early to their lab meetings (to curb his tendency to arrive late), and was quick to correct his spoken mistakes. He was a brilliant researcher and Brad valued his attention, when he recieved it.
+Speaker reflect brad.
+ChoiceLabel reflect: Reflect on Ned
+GoToChoice reflect remind.
+Effects reflect.
+Conditions reflect.
+Reusable reflect e0001.
+
+Content remind: Ned interrupts Brad's thought. "Remind me where you're at again? Were you able to start on those surveys yet." He paused and with some emphasis added "Or are we still sitting on them?" He glanced his stack of notes, and Brad couldn't be sure if was annoyed. Ned continues, "I think we had decided we wanted to interview the children as well as their parents, is that right?"
+Speaker remind ned.
+ChoiceLabel remind: Ned interrupts
+Effects remind.
+Conditions remind.
+Reusable remind e0001.
+
+Content lament: Brad dreaded the impending assumption that he hadn't gotten anything done this week. Sure there had been weeks where he'd been more focused on his semi-pro hacky sack career, and Ned had noticed. But he'd been in the lab the past seven days! Surely this time he deserved some recognition.
+Speaker lament brad.
+ChoiceLabel lament: Ned sometimes assumes Brad's laziness
+GoToChoice lament youre_late.
+GoToChoice lament overworked.
+GoToChoice lament silence.
+GoToChoice lament subjects.
+Effects lament.
+Conditions lament.
+Reusable lament e0001.
+
+Content overworked: In reality, this was too much. Some of Brad's friends were in a lab that encouraged a four day work week. How can someone who was pretty okay being overworked still have a reputation of laziness?
+Speaker overworked brad.
+ChoiceLabel overworked: Brad is overworked
+GoToChoice overworked youre_late.
+Effects overworked.
+Conditions overworked.
+Reusable overworked e0001.
+
+Content silence: There is a moment of silence as Brad struggles to find something to say. The moment stretches to a few seconds. Ned looks on expectantly.
+Speaker silence brad.
+ChoiceLabel silence: What should I say?
+GoToChoice silence youre_late.
+Effects silence.
+Conditions silence.
+Reusable silence e0001.
+
+Content subjects: Brad's mind races, contemplating the participant surveys he had conducted over the past week. He had been so proud of his progress, even though he wasn't technically supposed to start yet. He managed to find a way around the IRB requirements and he is quite pleased with all that he accomplished despite the challenges. Perhaps he will get the grant he's gunning for after all.
+Speaker subjects brad.
+ChoiceLabel subjects: Recognize the work Brad put in
+GoToChoice subjects youre_late.
+Effects subjects.
+Conditions subjects.
+Reusable subjects e0001.
+
+# Declare the StorySpec
+[randomly]
+Want e0001 outside.
+Want e0001 silence.
+
+[randomly]
+Fulfilled outside: [Expanded outside e0001]
+Fulfilled silence: [Expanded silence e0001]

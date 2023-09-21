@@ -461,10 +461,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   storyAssemblerPath: ../StoryAssemblerRedux/StoryAssembler
-  optionalScenePath: Assets/Step/Academical/IRBWorkingTest.step
-  sceneName: irb
+  optionalScenePath: Assets/Resources/Academical/GeneratedScene1.step
+  sceneName: e0001
   gameSession: {fileID: 1354342498}
-  debug: 0
+  extraDebugLogging: 1
 --- !u!4 &1429551393
 Transform:
   m_ObjectHideFlags: 0
