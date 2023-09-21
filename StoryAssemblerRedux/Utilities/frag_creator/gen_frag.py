@@ -1,18 +1,24 @@
+# This utility script is 
+
 # 1. Go to the Google Developers Console: https://console.developers.google.com/
 # 2. Create a new project or select an existing one.
 # 3. Enable the Google Sheets API for your project.
 # 4. Create credentials for your project. You'll get a JSON file which you should save securely, as it contains sensitive information.
 
 
-# To run this file cd into this directory and run `python gen_frag.py`
+# To run th3e script:
+# 1. Install the python requirements found in the requirements.txt file
+#   pip install -r requirements.txt
+# 2. run the script:
+#   python gen_frag.py
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
 import re, sys
 
-sys.path.append("../frag_utils/")
 # import the file "../frag_utils/frag_utils.py"
+sys.path.append("../frag_utils/")
 from frag_utils import step_template
 
 scene = ""
@@ -65,15 +71,6 @@ def clean_row(row):
     for key in row.keys():
         row[key] = clean_cell(row[key])
     return row
-
-# Content select_ned: You're skimming through your email, killing time before one of your students arrives for a check-in meeting about a research project that he's leading the charge on. He's been vocal about his displeasure with the slow process of getting IRB approval, which has already taken over a month.
-# Effects select_ned: [now [CharacterSelected ned]] [set DiscourseTag = none] [set CurrentBeat = none]
-# Conditions select_ned.
-# ChoiceLabel select_ned: Ned Prescott, Advisor
-# # GoToChoice select_ned suggestion. # Checkpoint
-# GoToChoice select_ned root_1.
-# GoToChoice select_ned def.
-# Reusable select_ned irb.
 
 def split_data(string_to_split):
     return re.split(r'[ ,]+', row.gotochoices)
@@ -129,7 +126,6 @@ def create_frag(row):
     return frag_name, code
 
 
-
 # scene = input("Scene name: ")
 scene = "e0001"
 
@@ -172,14 +168,14 @@ code = fragment_declarations + "\n\n" + fragments
 
 predicates = "# No Predicates"
 initial_state = "# No Initial State"
-characters = f"""
-Character student {scene} |Brad|.
+characters = f"""Character student {scene} |Brad|.
 CharacterAsset student {scene} |./brad.png|.
 CharacterLocation student {scene} [0, 0].
 
 Character teacher {scene} |Ned|.
 CharacterAsset teacher {scene} |./ned.png|.
 CharacterLocation teacher {scene} [0, 0]."""
+assets = f"BackgroundAsset {scene}: |./scene_name_background.png|."
 wants = "Want scene want_id."
 fulfillments = "Fulfilled want_id: [Condition]"
 code = step_template.format(**locals())

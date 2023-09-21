@@ -2,6 +2,9 @@ step_template = \
 """# Declare the scene
 Scene {scene}.
 
+# Declare asset paths
+{assets}
+
 # Declare the characters and locations
 {characters}
 

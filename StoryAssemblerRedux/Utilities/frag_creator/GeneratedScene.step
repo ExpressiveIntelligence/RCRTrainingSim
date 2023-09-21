@@ -1,8 +1,10 @@
 # Declare the scene
 Scene e0001.
 
-# Declare the characters and locations
+# Declare asset paths
+BackgroundAsset e0001: |./scene_name_background.png|.
 
+# Declare the characters and locations
 Character student e0001 |Brad|.
 CharacterAsset student e0001 |./brad.png|.
 CharacterLocation student e0001 [0, 0].
@@ -46,7 +48,7 @@ GoToChoice  entry outside.
 
 Content outside: Brad reached the door and grasped the handle, motioning to push it inwards. Then he halted, wiping sweat from underneath his glasses. He took a deep breath, trying to calm his racing heart before knocking on the door. This was the moment he had been anxious for all week. Would he come clean? But he was already late, too late to come up with a game plan. Hoping he had the wherewithall for the conversation, he put his hand on the door.
 Speaker outside brad.
-ChoiceLabel outside: Ned's office
+ChoiceLabel outside: Brad stands outside Ned's Office
 GoToChoice outside bus.
 GoToChoice outside grill.
 GoToChoice outside play_off.
@@ -139,7 +141,7 @@ Effects relief.
 Conditions relief.
 Reusable relief e0001.
 
-Content reflect: Brad found out pretty soon after arriving at the lab that he had not been Ned's first choice of student. Ned's first choice student eended up at another university, and Brad had recieved the acceptance notice. Brad sometimes wondered if letting him in instead was just a labor requirement. Ned was hard on Brad, had him double and triple check his data, show up early to their lab meetings (to curb his tendency to arrive late), and was quick to correct his spoken mistakes. He was a brilliant researcher and Brad valued his attention, when he recieved it.
+Content reflect: Brad found out pretty soon after arriving at the lab that he had not been Ned's first choice of student. Ned's pick ended up at another university, and Brad had recieved the acceptance notice. Brad sometimes wondered if letting him in instead was just a labor requirement. Ned was hard on Brad, had him double and triple check his data, show up early to their lab meetings (to curb his tendency to arrive late), and was quick to correct his spoken mistakes. He was a brilliant researcher and Brad valued his attention, when he recieved it.
 Speaker reflect brad.
 ChoiceLabel reflect: Reflect on Ned
 GoToChoice reflect remind.
@@ -147,7 +149,7 @@ Effects reflect.
 Conditions reflect.
 Reusable reflect e0001.
 
-Content remind: Ned interrupts Brad's thought. "Remind me where you're at again? Were you able to start on those surveys yet." He paused and with some emphasis added "Or are we still sitting on them?" He glanced his stack of notes, and Brad couldn't be sure if was annoyed. Ned continues, "I think we had decided we wanted to interview the children as well as their parents, is that right?"
+Content remind: Ned interrupts Brad's thought. "Remind me where you're at again? Were you able to start on those surveys yet?" He paused and with some emphasis added "Or are we still sitting on them?" He glanced his stack of notes, and Brad couldn't be sure if was annoyed. Ned continues, "I think we had decided we wanted to interview the children as well as their parents, is that right?"
 Speaker remind ned.
 ChoiceLabel remind: Ned interrupts
 Effects remind.
@@ -189,11 +191,11 @@ Effects subjects.
 Conditions subjects.
 Reusable subjects e0001.
 
-# # Declare the StorySpec
-# [randomly]
-# Want e0001 outside.
-# Want e0001 silence.
 
-# [randomly]
-# Fulfilled outside: [Expanded outside]
-# Fulfilled silence: [Expanded silence]
+
+# Declare the StorySpec
+[randomly]
+Want scene want_id.
+
+[randomly]
+Fulfilled want_id: [Condition]
