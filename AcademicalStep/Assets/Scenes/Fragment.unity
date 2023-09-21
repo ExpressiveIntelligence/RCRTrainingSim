@@ -464,7 +464,7 @@ MonoBehaviour:
   optionalScenePath: Assets/Resources/Academical/GeneratedScene1.step
   sceneName: e0001
   gameSession: {fileID: 1354342498}
-  extraDebugLogging: 1
+  extraDebugLogging: 0
 --- !u!4 &1429551393
 Transform:
   m_ObjectHideFlags: 0
