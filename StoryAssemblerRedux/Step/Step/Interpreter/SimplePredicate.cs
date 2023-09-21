@@ -26,6 +26,14 @@ namespace Step.Interpreter
             MethodCallFrame? predecessor, Step.Continuation k)
         {
             ArgumentCountException.Check(Name, 0, arglist);
+
+            if (this.Name == "Break")
+            {
+                Console.WriteLine("[Unifications]");
+                for (var cell = env.Unifications; cell != null; cell = cell.Next)
+                    Console.WriteLine(cell.Variable.ToString() + " = " + cell.Value.ToString());
+            }
+
             return implementation()
                    && k(output, env.Unifications, env.State, predecessor);
         }

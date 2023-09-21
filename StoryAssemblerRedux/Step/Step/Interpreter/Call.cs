@@ -154,7 +154,6 @@ namespace Step.Interpreter
             switch (target)
             {
                 case Task p:
-
                     return p.Call(arglist, output, env, predecessor,
                         (newOutput, u, s, newPredecessor) => Continue(newOutput, new BindingEnvironment(env, u, s), k, newPredecessor));
 

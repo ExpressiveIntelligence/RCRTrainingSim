@@ -502,15 +502,24 @@ namespace Step.Interpreter
 
         private static bool Throw(object?[] args)
         {
+            
+
             string Stringify(object? o)
             {
-                if (o == null)
-                    return "null";
-                var s = o.ToString();
-                if (s != "")
-                    return s;
-                return o.GetType().Name;
+                if (o == null) return "null";
+
+                if (o is string s) return s;
+
+                if (o is object[] array)
+                {
+                    string[] elements = array.Select(element => Stringify(element)).ToArray();
+                    return $"[{string.Join(", ", elements)}]";
+                }
+
+                return o.ToString();
             }
+
+
 
             throw new Exception(args.Select(Stringify).Untokenize());
         }
