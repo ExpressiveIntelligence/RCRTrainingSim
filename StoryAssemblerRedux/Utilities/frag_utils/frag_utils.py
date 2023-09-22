@@ -8,9 +8,7 @@ Scene {scene}.
 # Scene specific predicates
 {predicates}
 
-InitialSceneState {scene}: 
-    {initial_state}
-[end]
+InitialSceneState {scene}: {initial_state}
 
 # Declare the characters and locations
 {characters}

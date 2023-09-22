@@ -170,17 +170,20 @@ code = fragment_declarations + "\n\n" + fragments
 
 # predicates = "# No Predicates"
 predicates ="""fluent PleasantriesOver ?scene."""
-# initial_state = "# No Initial State"
-initial_state = "[Not [PleasantriesOver e0001]]"
-characters = f"""Character student {scene} |Brad|.
-CharacterAsset student {scene} |./brad.png|.
-CharacterLocation student {scene} [0, 0].
 
-Character teacher {scene} |Ned|.
-CharacterAsset teacher {scene} |./ned.png|.
-CharacterLocation teacher {scene} [0, 0]."""
+# initial_state = "# No Initial State"
+initial_state = multi("""[Not [PleasantriesOver e0001]]
+[set BradInsecurityToNed = 0]""")
+
+characters = f"""Character brad {scene} |Brad|.
+CharacterAsset brad {scene} |./brad.png|.
+CharacterLocation brad {scene} [c0, 0].
+
+Character ned {scene} |Ned|.
+CharacterAsset ned {scene} |./ned.png|.
+CharacterLocation ned {scene} [0, 0]."""
 assets = f"BackgroundAsset {scene}: |./scene_name_background.png|."
-wants = "Want scene want_id."
+wants = f"Want {scene} want_id."
 fulfillments = "Fulfilled want_id: [Expanded entry CurrentScene]"
 code = step_template.format(**locals())
 
