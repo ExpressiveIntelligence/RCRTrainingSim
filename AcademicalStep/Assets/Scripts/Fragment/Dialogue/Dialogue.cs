@@ -51,7 +51,6 @@ public class Dialogue : MonoBehaviour
 
     public void SetChoices(SerializedChoice[] choices) 
     {
-        Debug.Log("Choice Length: " + choices.Length);
         //TODO: Hack because of a race condition in start isn't assigning this in time.
         if (this.choices.Length == 0 || this.choices == null)
         {
