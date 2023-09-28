@@ -292,6 +292,8 @@ public class StepManager : MonoBehaviour
                 x = Int32.Parse(Normalize(fields[2])),
                 y = Int32.Parse(Normalize(fields[3])),
                 assetPath = Normalize(fields[4]),
+                pose = Normalize(fields[5]),
+                expression = Normalize(fields[6])
             };
         }
         else

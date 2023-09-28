@@ -13,10 +13,13 @@ predicate ChoiceCondition ?frag ?choice_id.
 predicate GoToChoice ?frag ?target_frag.
 fluent    Reusable ?fragment ?scene.
 
+# Optional predicates for visualization
+predicate Pose ?frag ?pose.
+predicate Expression ?frag ?expression.
+
 predicate Request ?fragment ?request_type ?arguments.
 
 #### End author-facing fragment predicates ####
-
 
 #### Fragment fluents set during execution ####
 

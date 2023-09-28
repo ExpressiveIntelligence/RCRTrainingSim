@@ -10,6 +10,8 @@ public class SerializedCharacter
     public string id;
     public string name;
     public string assetPath;
+    public string pose;
+    public string expression;
     public int x;
     public int y; 
 }
