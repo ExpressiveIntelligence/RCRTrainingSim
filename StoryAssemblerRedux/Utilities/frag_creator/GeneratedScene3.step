@@ -4,12 +4,14 @@ Scene e0001.
 # Declare asset paths
 BackgroundAsset e0001: |./scene_name_background.png|.
 
-# Scene specific predicates
 fluent PleasantriesOver ?scene.
+fluent Checkpoint ?thread ?frag.
 
-InitialSceneState e0001: 
-	[Not [PleasantriesOver e0001]]
+InitialSceneState e0001:
+	[now [Not [PleasantriesOver e0001]]]
+	[now [Not [Checkpoint ?thread ?frag]]]
 	[set BradInsecurityToNed = 0]
+	[set Thread = none]
 [end]
 
 # Declare the characters and locations

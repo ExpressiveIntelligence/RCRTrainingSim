@@ -48,7 +48,7 @@ def read_google_sheet(tab_name):
 
 
 ['ID', 'Cloud ID', 'Notes', 'Content', 'Speaker', 'Choice Label',
-       'GoToChoices', 'ChoiceConditions', 'Effects', 'Conditions', 'Reusable',
+       'GoToChoices', 'conditionalchoice', 'Effects', 'Conditions', 'Reusable',
        'Request', 'Expression', 'Pose', 'Step Code', 'AI Generated Ideas']
 
 def clean_cell(cell):
@@ -56,15 +56,17 @@ def clean_cell(cell):
     if not isinstance(cell, str):
         return cell
     # replace "n/a" with empty
-    cell = cell.replace("n/a", "")
+    cell = cell.replace("n/a", "").replace("N/A", "")
+    if cell == "":
+        return None
     # turn Request and Reusable into booleans, replacing their string values
     return cell
 
 def clean_row(row):
     if not row.id:
         return None
-    if row.request:
-        row.request = True
+    # if row.request:
+    #     row.request = True
     if row.reusable and (row.reusable.lower() == "true"):
         row.reusable = True
     else:
@@ -75,7 +77,25 @@ def clean_row(row):
     return row
 
 def split_data(string_to_split):
-    return re.split(r'[ ,]+', row.gotochoices)
+    return re.split(r'[ ,]+', string_to_split)
+
+def split_task_call(string_to_split):
+    # [this is a task] [another] -> ['[this is a task]', '[another]']
+    # however, [Text [task1] [task2]] -> ['[Text [task1] [task2]]']
+    tasks = []
+    current_task = ""
+    open_brackets = 0
+    for char in string_to_split:
+        if char == '[':
+            open_brackets += 1
+        if char == ']':
+            open_brackets -= 1
+        current_task += char
+        if open_brackets == 0:
+            tasks.append(current_task)
+            current_task = ""
+    return tasks
+
 
 def multi(content):
     """
@@ -109,11 +129,11 @@ def create_frag(row):
     if row.gotochoices:
         for token in split_data(row.gotochoices):
             code += f"GoToChoice {row.id} {token}.\n"
-    if row.choiceconditions:
-        for i, token in enumerate(split_data(row.choiceconditions)):
-            code += f"ChoiceCondition {row.id} {'a' * i}: {token}.\n"
+    if row.conditionalchoice:
+        for i, token in enumerate(split_task_call(row.conditionalchoice)):
+            code += f"ChoiceCondition {row.id} {row.id + '_' + 'c' * (i + 1)}: {multi(token)}\n"
     if row.effects:
-        code += f"Effects {row.id}: {row.effects}\n"
+        code += f"Effects {row.id}: {multi(row.effects)}\n"
     else:
         code += f"Effects {row.id}.\n"
     if row.conditions:
@@ -122,7 +142,10 @@ def create_frag(row):
         code += f"Conditions {row.id}.\n"
     if row.reusable:
         code += f"Reusable {row.id} {scene}.\n"
-
+    if row.expression:
+        code += f"Expression {row.id} {row.expression}.\n"
+    if row.pose:
+        code += f"Pose {row.id} {row.pose}.\n"
     code += "\n"
 
     return frag_name, code
@@ -132,12 +155,14 @@ def create_frag(row):
 scene = "e0001"
 
 # Read the Google Sheets data and print it
-threads = ["T0001", "T0002"]
+threads = ["T0001", "T0002", "T0003"]
 df = pd.DataFrame()
 for thread in threads:
     tab_name = f'{thread}_Fragments'
     thread_df = read_google_sheet(tab_name)
-    df = df.append(thread_df)
+    # add the thread to the running df
+    df = pd.concat([df, thread_df], ignore_index=True)
+
 # snake case the labels in pandas
 # clean the rows
 df.columns = df.columns.str.replace(' ', '_').str.lower()
@@ -169,11 +194,14 @@ for index, row in df.iterrows():
 code = fragment_declarations + "\n\n" + fragments
 
 # predicates = "# No Predicates"
-predicates ="""fluent PleasantriesOver ?scene."""
+predicates ="""fluent PleasantriesOver ?scene.
+[function]
+fluent Check ?thread ?frag."""
 
 # initial_state = "# No Initial State"
 initial_state = multi("""[Not [PleasantriesOver e0001]]
-[set BradInsecurityToNed = 0]""")
+[set BradInsecurityToNed = 0]
+[set Thread = none]""")
 
 characters = f"""Character brad {scene} |Brad|.
 CharacterAsset brad {scene} |./brad.png|.
@@ -183,8 +211,10 @@ Character ned {scene} |Ned|.
 CharacterAsset ned {scene} |./ned.png|.
 CharacterLocation ned {scene} [0, 0]."""
 assets = f"BackgroundAsset {scene}: |./scene_name_background.png|."
-wants = f"Want {scene} want_id."
-fulfillments = "Fulfilled want_id: [Expanded entry CurrentScene]"
+wants = f"""Want {scene} entry.
+Want {scene} three."""
+fulfillments = """Fulfilled entry: [Expanded entry CurrentScene]
+Fulfilled three: [= Thread insecurity]"""
 code = step_template.format(**locals())
 
 # Write to a file which is specified in the command line, if none is specified, write to a default file

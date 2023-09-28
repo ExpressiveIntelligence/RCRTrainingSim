@@ -6,10 +6,13 @@ BackgroundAsset e0001: |./scene_name_background.png|.
 
 # Scene specific predicates
 fluent PleasantriesOver ?scene.
+[function]
+fluent Check ?thread ?frag.
 
 InitialSceneState e0001: 
 	[Not [PleasantriesOver e0001]]
 	[set BradInsecurityToNed = 0]
+	[set Thread = none]
 [end]
 
 # Declare the characters and locations
@@ -39,6 +42,9 @@ Fragment lament e0001.
 Fragment overworked e0001.
 Fragment silence e0001.
 Fragment subjects e0001.
+Fragment phd e0001.
+Fragment phd_alt_1 e0001.
+Fragment phd_alt_2 e0001.
 Fragment t0002_start e0001.
 Fragment slides e0001.
 Fragment phd e0001.
@@ -54,10 +60,23 @@ Fragment what_else_transition e0001.
 Fragment stress e0001.
 Fragment need_success e0001.
 Fragment project e0001.
-Fragment project_status e0001.
 Fragment survey_design e0001.
 Fragment approval e0001.
 Fragment paper e0001.
+Fragment t_start_fix e0001.
+Fragment t0003_start e0001.
+Fragment stressed e0001.
+Fragment different_today e0001.
+Fragment say_something e0001.
+Fragment exit_bad e0001.
+Fragment grants_funding e0001.
+Fragment dissapointed_feeling e0001.
+Fragment frazzled e0001.
+Fragment really_hard e0001.
+Fragment apologizes e0001.
+Fragment accept_apology e0001.
+Fragment doubt_apology e0001.
+Fragment thanks e0001.
 
 
 # Fragments
@@ -68,12 +87,14 @@ GoToChoice  entry outside.
 
 Content outside: Brad reached the door and grasped the handle, motioning to push it inwards. Then he halted, wiping sweat from underneath his glasses. He took a deep breath, trying to calm his racing heart before knocking on the door. This was the moment he had been anxious for all week. Would he come clean? But he was already late, too late to come up with a game plan. Hoping he had the wherewithall for the conversation, he put his hand on the door.
 Speaker outside brad.
-ChoiceLabel outside: Brad stands outside Ned's Office
+ChoiceLabel outside: Brad stands outside Ned's ofice
 GoToChoice outside bus.
 GoToChoice outside grill.
 GoToChoice outside play_off.
 Effects outside.
 Conditions outside.
+Expression outside angry.
+Pose outside dancing.
 
 Content bus: Brad took a moment to gather his thoughts. The unreliable public transportation in this town! Inexcusable really. But the frustration wasn't useful.
 Speaker bus brad.
@@ -196,130 +217,361 @@ GoToChoice subjects youre_late.
 Effects subjects.
 Conditions subjects.
 
-Content t0002_start: Brad and Ned had dozens of these meetings in the past - they would go through his progress, talk a bit about what's new in the field, maybe sprinkle in some idle chit-chat here and there. They generally used a shared document to track- Brad mentally paused - did he remember to update the document before heading to bed yesterday? He felt an embarrasing warm flush rise from his chest.
-Speaker t0002_start brad.
-GoToChoice t0002_start slides.
-Effects t0002_start.
-Conditions t0002_start: [PleasantriesOver e0001]
-
-Content slides: Maybe he could wing it - they've done these meetings so many times he could probably remember what they needed to review... What was it - they always checked in on classwork, his overall graduation status, they always have some new document or submission to take care of. He knew there was always some drama happening in the school, and that they generally ended up talking about it in one way or another as well.
-Speaker slides brad.
-ChoiceLabel slides: todo
-Effects slides.
-Conditions slides.
-
-Content phd: todo
-ChoiceLabel phd: todo
-GoToChoice phd phd_r.
+Speaker phd brad.
+ChoiceLabel phd: Brad recognizes that he put in a lot of work
 Effects phd.
 Conditions phd.
 
-Content phd_r: todo
-ChoiceLabel phd_r: todo
-Effects phd_r.
+Content phd_alt_1: content 1
+Effects phd_alt_1.
+Conditions phd_alt_1.
+
+Content phd_alt_2: content 2
+Effects phd_alt_2.
+Conditions phd_alt_2.
+
+Content t0002_start: Brad and Ned had dozens of these meetings in the past - they would go through his progress, talk a bit about what's new in the field, maybe sprinkle in some idle chit-chat here and there. They generally used a shared document to track- Brad mentally paused - did he remember to update the document before heading to bed yesterday? He felt an embarrasing warm flush rise from his chest.
+Speaker t0002_start brad.
+GoToChoice t0002_start slides.
+ChoiceCondition t0002_start t0002_start_c: [Different Thread agenda]
+Effects t0002_start: 
+	[set BradInsecurityToNed = BradInsecurityToNed + 1]
+	[set Thread = agenda] 
+	[now [Check agenda t0002_start]]
+[end]
+Conditions t0002_start: [PleasantriesOver e0001]
+Reusable t0002_start e0001.
+
+Content slides: Maybe he could wing it - they've done these meetings so many times he could probably remember what they needed to review... What was it - they always checked in on classwork, his overall graduation status, they always have some new document or submission to take care of. He knew there was always some drama happening in the school, and that they generally ended up talking about it in one way or another as well.
+Speaker slides brad.
+ChoiceLabel slides: ...Ok, time to improvise.
+GoToChoice slides phd.
+GoToChoice slides classes.
+GoToChoice slides department.
+GoToChoice slides admin.
+ChoiceCondition slides slides_c: [Different Thread agenda]
+Effects slides: [set Thread = agenda]
+Conditions slides.
+
+Content phd: 
+	"I feel like I've made a decent dent on degree progress - as a newly minted candidate I feel like I'm nearly at the finish line! What do you think I should focus on next?"
+	
+	Brad tried to sound confident.
+[end]
+Speaker phd brad.
+ChoiceLabel phd: PhD Progress! Always a solid bet.
+GoToChoice phd phd_r.
+ChoiceCondition phd phd_c: [Different Thread agenda]
+Effects phd: [set Thread = agenda]
+Conditions phd.
+
+Content phd_r: 
+	"You're right, you're doing a great job! Though, I will say, the official requirements of the degree are a small part of the picture. For you to be a successful researcher, and to secure additional funding, we've really got to work on you getting quality research out the door in the next year."
+	
+	Brad had heard this refrain before and understood it well - publishing was the key to his career success, if he was looking beyond the degree. He also wanted immediate funding, as he wasn't sure how that was quite going to work out in the coming two years. There wasn't an easy answer that they could put down in a meeting.
+	
+	"What else is on the docket?"
+[end]
+Speaker phd_r ned.
+ChoiceLabel phd_r: Ned responds...
+GoToChoice phd_r what_else.
+ChoiceCondition phd_r phd_r_c: [Different Thread agenda]
+Effects phd_r: [set Thread = agenda]
 Conditions phd_r.
 
-Content classes: todo
-ChoiceLabel classes: todo
+Content classes: 
+	Brad knew Ned liked students who stayed involved in new research - maybe auditing the class of a younger instructor could help build out his skills. Brad also had a friend in the computer science department doing some interdisciplinary research that would be an obvious pick for such an exercise.
+	
+	"Should I be auditing anything right now? It may be a good idea for me to build out diverse skills and network right now."
+[end]
+Speaker classes brad.
+ChoiceLabel classes: Any classes to audit this semester?
 GoToChoice classes classes_r.
-Effects classes.
+ChoiceCondition classes classes_c: [Different Thread agenda]
+Effects classes: [set Thread = agenda]
 Conditions classes.
 
-Content classes_r: todo
-ChoiceLabel classes_r: todo
+Content classes_r: 
+	"Auditing is a great thing to do and can really help out departments and instructors. That being said, I'd be mistaken if I said I thought it was a priority for you right now - perhaps if you were still exploring topics or were well established in your research agenda. Right now I think you'll benefit more from depth on your current projects."
+	
+	Brad understood where Ned was coming from - he already felt fairly overworked and overwhelmed. New directions probably weren't going to help right now.
+[end]
+Speaker classes_r ned.
+ChoiceLabel classes_r: Ned glances at the clock
 GoToChoice classes_r what_else.
-Effects classes_r.
+ChoiceCondition classes_r classes_r_c: [Different Thread agenda]
+Effects classes_r: [set Thread = agenda]
 Conditions classes_r.
 
-Content department: todo
-ChoiceLabel department: todo
+Content department: 
+	"The department has seemed to be embroiled in a bunch of stuff lately - what's going on with Katherine and company?"
+	
+	Brad knew that Ned often worked with Katherine, and there had been some controversy about her lab recently. Brad and Ned normally ended up gossiping at some point in these meetings anyways, couldn't hurt to broach it early.
+[end]
+Speaker department brad.
+ChoiceLabel department: There's been a lot of department drama.
 GoToChoice department department_r.
-Effects department.
+ChoiceCondition department department_c: [Different Thread agenda]
+Effects department: [set Thread = agenda]
 Conditions department.
 
-Content department_r: todo
-ChoiceLabel department_r: todo
+Content department_r: 
+	"No need to worry about that right now - I wouldn't say department politics are a place you want to spend too much time as a student."
+	
+	Brad knew Ned was right, but was surprised at the quick shutdown. He couldn't help take the comment as somewhat of a slight.
+[end]
+Speaker department_r ned.
+ChoiceLabel department_r: Ned responds to department drama
 GoToChoice department_r what_else.
-Effects department_r.
+ChoiceCondition department_r department_r_c: [Different Thread agenda]
+Effects department_r: 
+	[set BradInsecurityToNed = BradInsecurityToNed + 1]
+	[set Thread = agenda]
+[end]
 Conditions department_r.
 
-Content admin: todo
-ChoiceLabel admin: todo
+Content admin: 
+	"Always a lot of deadlines going around - any key deadlines or administrivia I've got to hop on?"
+	
+	Sometimes Brad felt like his degree was more tracking an endless wall of shifting administrative rules and networks instead of research. He could always count on a few deadlines, forms, or other business to be brought up in these meetings.
+[end]
+Speaker admin brad.
+ChoiceLabel admin: Always forms and admin work to do.
 GoToChoice admin admin_r.
-Effects admin.
+ChoiceCondition admin admin_c: [Different Thread agenda]
+Effects admin: [set Thread = agenda]
 Conditions admin.
 
-Content admin_r: todo
-ChoiceLabel admin_r: todo
-Effects admin_r.
+Content admin_r: 
+	"I think you're at a point where the deadlines are going to be driven by what you want to publish and where. We've got a lot of momentum on our Moral Development project, perhaps that's a good place for us to focus this meeting? I believe we have a bunch of important up-front admin work to do on it anyways with the IRB."
+	
+	Ned and Brad had been working on a project involving the moral development of children. There wasn't a high risk or intervention anywhere - just some surveys given over time to parents and their children. Brad was fairly excited about the project and was certain it was going to open doors for him. He was so excited, in fact, that he had already started to interview parents with the survey he and Ned had developed.
+	
+	"How are you feeling about it? What do we need to get done next?"
+[end]
+Speaker admin_r ned.
+ChoiceLabel admin_r: Ned responds to admininistration point
+GoToChoice admin_r stress.
+GoToChoice admin_r project.
+ChoiceCondition admin_r admin_r_c: [Different Thread agenda]
+Effects admin_r: [set Thread = agenda]
 Conditions admin_r.
 
-Content what_else: todo
-ChoiceLabel what_else: todo
+Content what_else: "What else have we got on the agenda for today?"
+Speaker what_else ned.
+ChoiceLabel what_else: Ned asks, what else?
 GoToChoice what_else stress.
 GoToChoice what_else project.
-Effects what_else.
+ChoiceCondition what_else what_else_c: [Different Thread agenda]
+Effects what_else: 
+	[set Thread = agenda]
+	[now [Check agenda what_else]]
+[end]
 Conditions what_else.
 Reusable what_else e0001.
 
-Content what_else_transition: Let's get back on topic - we have a lot of things to go over.
+Content what_else_transition: "Thank you for bringing that up, Brad. We're still a bit limited on time - let's get back to business to make sure we make the most of it."
 Speaker what_else_transition ned.
-ChoiceLabel what_else_transition: todo
-Effects what_else_transition.
+ChoiceLabel what_else_transition: Ned asks, what else? (Transition)
+ChoiceCondition what_else_transition what_else_transition_c: [Different Thread agenda]
+Effects what_else_transition: [set Thread = agenda]
 Conditions what_else_transition.
 Reusable what_else_transition e0001.
 
-Content stress: todo
-ChoiceLabel stress: todo
+Content stress: 
+	Brad reflected on the project. He's been so excited about it that it's been consuming most of his time - but he'd be lying if he said that his motivation was purely interest. The project had such a direct line to potential future publications, funding, and success that it seemed like his entire degree hinged on its success. The fear motivated him, but sometimes he spent mornings looking in the mirror, worrying about losing his hair from the stress.
+	
+	"It's great but - the pressure is honestly a little high. It can be hard to cope."
+[end]
+Speaker stress brad.
+ChoiceLabel stress: The project is exciting but... Stressful!
 GoToChoice stress need_success.
-Effects stress.
+ChoiceCondition stress stress_c: [Different Thread agenda]
+Effects stress: [set Thread = agenda]
 Conditions stress.
 Reusable stress e0001.
 
-Content need_success: todo
-ChoiceLabel need_success: todo
+Content need_success: 
+	"I get it - you're at a point where rubber is hitting the road. It's easy to get overwhelmed in this space, but we can make it easier by just taking things one step at a time. The smaller we can make tasks on the project, the easier this whole thing will get!"
+	
+	Brad appreciated Ned's brand of productive optimism, but didn't quite feel like the advice helped assuage his doubts. Does he mean to get organized?
+	
+	"Speaking of - let's dive into some details there. What are you up to right now on it?"
+[end]
+Speaker need_success ned.
+ChoiceLabel need_success: TODO - can't be empty if linked to directly
 GoToChoice need_success project_status.
-Effects need_success.
+ChoiceCondition need_success need_success_c: [Different Thread agenda]
+Effects need_success: 
+	[set Thread = agenda]
+	[set BradInsecurityToNed = BradInsecurityToNed + 1]
+[end]
 Conditions need_success.
 
-Content project: todo
-ChoiceLabel project: todo
-GoToChoice project project_status.
-Effects project.
+Content project: 
+	Their project had been the result of Brad's MS work along with two years of careful exploration and planning with Ned. They worked in field of Moral Psychology, and were looking to see how children's moral development changed over time. The survey had taken eons to design, but after back-and-forths and pilot testing within the lab most in the group viewed it as ready to go.
+	
+	The population pool had to be large and diverse, so Brad had been very focused on the task of beginning to recruit and build out a base for the study. He had even gotten a wave of early response from parents that he had thought would be perfect data to highlight how smoothly things were going. 
+	
+	That being said, Brad was fuzzy on the complete cycle of research. He was vaguely aware of some forms and committees that needed to be engaged (what did Ned call it - "HERB"?). He also knew there were some deadlines for abstracts that he needed to be proactive about.
+[end]
+Speaker project brad.
+ChoiceLabel project: This project has been an odyssey.
+GoToChoice project survey_design.
+GoToChoice project approval.
+GoToChoice project paper.
+ChoiceCondition project project_c: [Different Thread agenda]
+Effects project: [set Thread = agenda]
 Conditions project.
 Reusable project e0001.
 
-Content project_status: todo
-ChoiceLabel project_status: todo
-GoToChoice project_status survey_design.
-GoToChoice project_status approval.
-GoToChoice project_status paper.
-Effects project_status.
-Conditions project_status.
-Reusable project_status e0001.
-
-Content survey_design: todo
-ChoiceLabel survey_design: todo
-Effects survey_design.
+Content survey_design: DEMO END - TODO: THREAD ON SURVEYING
+Speaker survey_design brad.
+ChoiceLabel survey_design: Report on the finished survey.
+ChoiceCondition survey_design survey_design_c: [Different Thread agenda]
+Effects survey_design: [set Thread = agenda]
 Conditions survey_design.
 Reusable survey_design e0001.
 
-Content approval: todo
-ChoiceLabel approval: todo
-Effects approval.
+Content approval: DEMO END - TODO: THREAD ON IRB DEFINITION
+Speaker approval brad.
+ChoiceLabel approval: Ask about administrative tasks.
+ChoiceCondition approval approval_c: [Different Thread agenda]
+Effects approval: [set Thread = agenda]
 Conditions approval.
 
-Content paper: todo
-ChoiceLabel paper: todo
-Effects paper.
+Content paper: DEMO END - TODO: THREAD ON WRITING
+Speaker paper brad.
+ChoiceLabel paper: See what Ned wants to write about.
+ChoiceCondition paper paper_c: [Different Thread agenda]
+Effects paper: [set Thread = agenda]
 Conditions paper.
 Reusable paper e0001.
+
+Content t_start_fix: There he goes again, thought Brad.
+Speaker t_start_fix brad.
+ChoiceLabel t_start_fix: Brad examines the reasons for his disorganization
+GoToChoice t_start_fix t0003_start.
+ChoiceCondition t_start_fix t_start_fix_c: [Check agenda CurrentFragment]
+Effects t_start_fix: [set Thread = insecurity]
+Conditions t_start_fix: [>= BradInsecurityToNed 3]
+Reusable t_start_fix e0001.
+
+Content t0003_start: He really thinks that I don't have what it takes to be a researcher. Maybe he's right.
+Speaker t0003_start brad.
+ChoiceLabel t0003_start: Brad spirals
+GoToChoice t0003_start stressed.
+GoToChoice t0003_start different_today.
+GoToChoice t0003_start say_something.
+ChoiceCondition t0003_start t0003_start_c: [Check agenda CurrentFragment]
+Effects t0003_start: [set Thread = insecurity]
+Conditions t0003_start: [>= BradInsecurityToNed 3]
+Reusable t0003_start e0001.
+
+Content stressed: The problem, thought Brad to himself, is that I'm too overwhelmed by everything there is to do. On top of pounding out the survey design, I have to conduct the surveys! Getting the IRB proposal took me weeks of late nights. There's just too much riding on this...
+Speaker stressed brad.
+ChoiceLabel stressed: Brad thinks "I'm stressed"
+GoToChoice stressed grants_funding.
+ChoiceCondition stressed stressed_c: [Check agenda CurrentFragment]
+Effects stressed: [set Thread = insecurity]
+Conditions stressed: [Expanded t0003_start CurrentScene]
+
+Content different_today: It must be different today, thought Brad. The amounts of money you need to do university level research is mind-boggling.
+Speaker different_today brad.
+ChoiceLabel different_today: Brad thinks "I'ts different today, there are money expectations"
+GoToChoice different_today grants_funding.
+ChoiceCondition different_today different_today_c: [Check agenda CurrentFragment]
+Effects different_today: [set Thread = insecurity]
+Conditions different_today: [Expanded t0003_start CurrentScene]
+
+Content say_something: Brad decided that he should just speak to these insecurities. Getting it out might feel better. On the other hand, he's already made the progress. Why not push through and try to get into Ned's good graces? Surely all this progress will get him some points with his advisor.
+Speaker say_something brad.
+ChoiceLabel say_something: "I should just say something"
+GoToChoice say_something exit_bad.
+GoToChoice say_something dissapointed_feeling.
+ChoiceCondition say_something say_something_c: [Check agenda CurrentFragment]
+Effects say_something: [set Thread = insecurity]
+Conditions say_something: [Expanded t0003_start CurrentScene]
+
+Content exit_bad: 
+	There isn't a great way to bring up the stress, rather than focusing on the negatives, let's focus on the work at hand instead... 
+	
+	Still, Brad felt a little defeated having made this decision. These thoughts will stay bottled up.
+[end]
+Speaker exit_bad brad.
+ChoiceLabel exit_bad: "Let's focus on the progress I've made"
+ChoiceCondition exit_bad exit_bad_c: [Check agenda CurrentFragment]
+Effects exit_bad: [set Thread = insecurity]
+Conditions exit_bad: [Expanded t0003_start CurrentScene]
+
+Content grants_funding: TODO grants funding, rent, inflation
+Speaker grants_funding brad.
+ChoiceLabel grants_funding: "Let's talk funding"
+GoToChoice grants_funding frazzled.
+ChoiceCondition grants_funding grants_funding_c: [Check agenda CurrentFragment]
+Effects grants_funding: [set Thread = insecurity]
+Conditions grants_funding: [Expanded t0003_start CurrentScene]
+
+Content dissapointed_feeling: Nearly before Brad felt that he had mustered the courage to say something, he found himself talking. "I get the sense you're dissapointed in my output recently."
+Speaker dissapointed_feeling ned.
+ChoiceLabel dissapointed_feeling: "I'm stressed, Ned"
+GoToChoice dissapointed_feeling frazzled.
+ChoiceCondition dissapointed_feeling dissapointed_feeling_c: [Check agenda CurrentFragment]
+Effects dissapointed_feeling: [set Thread = insecurity]
+Conditions dissapointed_feeling: [Expanded t0003_start CurrentScene]
+
+Content frazzled: TODO: Ned - quizzical - you seem frazzled, everything okay?
+Speaker frazzled ned.
+ChoiceLabel frazzled: Ned is quizzicial
+GoToChoice frazzled really_hard.
+ChoiceCondition frazzled frazzled_c: [Check agenda CurrentFragment]
+Effects frazzled: [set Thread = insecurity]
+Conditions frazzled: [Expanded t0003_start CurrentScene]
+
+Content really_hard: Brad: TODO Trying really hard but I feel like I keep dissapointing
+Speaker really_hard brad.
+ChoiceLabel really_hard: Brad says "I feel like I'm dissapointing"
+GoToChoice really_hard apologizes.
+ChoiceCondition really_hard really_hard_c: [Check agenda CurrentFragment]
+Effects really_hard: [set Thread = insecurity]
+Conditions really_hard: [Expanded t0003_start CurrentScene]
+
+Content apologizes: Ned: TODO ned apologizes, empathizes reaffirms, strengthins, something (?)
+Speaker apologizes ned.
+ChoiceLabel apologizes: Ned apologizes
+GoToChoice apologizes accept_apology.
+GoToChoice apologizes doubt_apology.
+ChoiceCondition apologizes apologizes_c: [Check agenda CurrentFragment]
+Effects apologizes: [set Thread = insecurity]
+Conditions apologizes: [Expanded t0003_start CurrentScene]
+
+Content accept_apology: TODO: Brad accepts the apology
+ChoiceLabel accept_apology: Brad accepts the apology
+GoToChoice accept_apology thanks.
+ChoiceCondition accept_apology accept_apology_c: [Check agenda CurrentFragment]
+Effects accept_apology: [set Thread = insecurity]
+Conditions accept_apology: [Expanded t0003_start CurrentScene]
+
+Content doubt_apology: TODO: Brad doubts the apology
+ChoiceLabel doubt_apology: Brad doubts the apology
+GoToChoice doubt_apology thanks.
+ChoiceCondition doubt_apology doubt_apology_c: [Check agenda CurrentFragment]
+Effects doubt_apology: [set Thread = insecurity]
+Conditions doubt_apology: [Expanded t0003_start CurrentScene]
+
+Content thanks: TODO: Thanks, back to business
+ChoiceLabel thanks: Back to business
+ChoiceCondition thanks thanks_c: [Check agenda CurrentFragment]
+Effects thanks: [set Thread = insecurity]
+Conditions thanks: [Expanded t0003_start CurrentScene]
 
 
 
 # Declare the StorySpec
 [randomly]
-Want e0001 want_id.
+Want e0001 entry.
+Want e0001 three.
 
 [randomly]
-Fulfilled want_id: [Expanded entry CurrentScene]
+Fulfilled entry: [Expanded entry CurrentScene]
+Fulfilled three: [= Thread insecurity]
