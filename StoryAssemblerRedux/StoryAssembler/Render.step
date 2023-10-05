@@ -61,8 +61,6 @@ RenderCharacter ?id ?scene:
     [PrintName ?id ?scene] [Delim]
     [RenderLocation ?id ?scene] [Delim]
     [PrintAsset ?id ?scene] [Delim]
-    [RenderPose] [Delim]
-    [RenderExpression] [Delim]
 [end]
 RenderCharacter ?id ?scene.
 
@@ -72,26 +70,17 @@ RenderLocation ?char_id ?scene: [add |No location found| ErrorList] -1 [Delim] -
 RenderBackground: [BackgroundAsset CurrentScene] 
 RenderBackground.
 
-RenderPose: [Pose CurrentFragment ?pose] ?pose/WriteVerbatim
-RenderPose: default
+RenderTags:
+    [DoAll 
+        [Tag CurrentFragment ?key ?value] 
+        [RenderTag ?frag ?key ?value]
+        [ItemDelim]
+    ]
+[end]
+RenderTags.
 
-RenderExpression: [Expression CurrentFragment ?expression] ?expression/WriteVerbatim
-RenderExpression: default
-
-# this is a sketch, probably not needed 9.23.23
-# RenderForground: 
-#     [Pose CurrentFragment ?pose] 
-#     [Expression CurrentFragment ?expression]
-#      ?pose/WriteVerbatim [Delim] ?expression/WriteVerbatim
-# [end]
-# RenderForground: 
-#     [Pose CurrentFragment ?pose]
-#      ?pose/WriteVerbatim [Delim] default
-# [end]
-# RenderForground:     
-#     [Expression CurrentFragment ?expression]
-#      default [Delim] ?expression/WriteVerbatim
-# [end]
+# TODO we need to know what to do for default expressions and poses
+RenderTag ?frag ?key ?value: ?key/WriteVerbatim [Delim] ?value/WriteVerbatim
 
 RenderFragmentContent:
     [Different CurrentFragment root]

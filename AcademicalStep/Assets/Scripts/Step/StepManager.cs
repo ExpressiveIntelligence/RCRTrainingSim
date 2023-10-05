@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Step;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 public class StepManager : MonoBehaviour
 {
@@ -172,9 +173,14 @@ public class StepManager : MonoBehaviour
             characters = ExecuteStep<SerializedCharacter>("[RenderCharacters]"),
             speakerID =  ExecuteStep("[RenderSpeaker]"), // this can be empty
             backgroundPath = ExecuteStep("[RenderBackground]"),
-            systemMessage = ExecuteStep("[Error]") // Error messages, etc.
+            systemMessage = ExecuteStep("[Error]"), // Error messages, etc.
             // warnings = ExecuteStep("[Warnings ^CurrentScene]"), // Warning messages, etc.
         };
+
+        // there is a more elegant way of doing this
+        KeyValuePair<string, string>[] tagsArray = ExecuteStep<KeyValuePair<string, string>>("[RenderTags]");
+        renderedScene.tags = tagsArray.ToDictionary(tuple => tuple.Key, tuple => tuple.Value);
+        Debug.Log(renderedScene);
 
         return renderedScene;
     }
@@ -190,7 +196,7 @@ public class StepManager : MonoBehaviour
                 {"LearningGoalProgress", 4},
             },
             characters = new SerializedCharacter[] { 
-                new SerializedCharacter() { id = "samantha", name = "Samantha", assetPath = "Assets/Scripts/Scenes/Characters/samantha.png", x=1, y=10 },
+                new SerializedCharacter() { id = "samantha", name = "Samantha", x=1, y=10 },
             }
         };
         return JsonUtility.ToJson(state);
@@ -217,6 +223,8 @@ public class StepManager : MonoBehaviour
     * This function provides direct access to the Step interpreter.
     * It executes a step task and returns the result.
     * For more information on accepted syntax, see the Step Language Reference https://github.com/ianhorswill/Step/raw/master/Step%20Language%20Reference.docx
+    * The default implementation of this function will return a string, there is an overloaded generic version 
+    * that will parse the result into a list of objects of type T.
     *
     * @param code The Step code to execute e.g. "[MyTask argument1 argument2]"
     * @return The result of the execution. 
@@ -280,21 +288,23 @@ public class StepManager : MonoBehaviour
 
     private T InitStepItem<T>(object[] fields) {
         // switch statement on type of T, if it is a character create a Character, etc
-        if (typeof(T) == typeof(SerializedChoice))
+        if (typeof(T) == typeof(KeyValuePair<string, string>)) { // Right now we only support two item tuples
+            return (T) (object) new KeyValuePair<string, string>(Normalize(fields[0]), Normalize(fields[1]));
+        }
+        else if (typeof(T) == typeof(SerializedChoice))
         {
             return (T) (object) new SerializedChoice() { id = Normalize(fields[0]), text = Normalize(fields[1])};
         }
         else if (typeof(T) == typeof(SerializedCharacter))
         {
-            return (T) (object) new SerializedCharacter() { 
-                id = Normalize(fields[0]),
-                name = Normalize(fields[1]),
-                x = Int32.Parse(Normalize(fields[2])),
-                y = Int32.Parse(Normalize(fields[3])),
-                assetPath = Normalize(fields[4]),
-                pose = Normalize(fields[5]),
-                expression = Normalize(fields[6])
+            SerializedCharacter character = new SerializedCharacter() { 
+                id        = Normalize(fields[0]),
+                name      = Normalize(fields[1]),
+                x         = Int32.Parse(Normalize(fields[2])),
+                y         = Int32.Parse(Normalize(fields[3]))
             };
+
+            return (T) (object) character;
         }
         else
         {

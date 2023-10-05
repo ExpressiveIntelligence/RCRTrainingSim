@@ -13,9 +13,9 @@ predicate ChoiceCondition ?frag ?choice_id.
 predicate GoToChoice ?frag ?target_frag.
 fluent    Reusable ?fragment ?scene.
 
-# Optional predicates for visualization
-predicate Pose ?frag ?pose.
-predicate Expression ?frag ?expression.
+# Optional predicate that allows you to tag certain fragments with properties
+[function]
+predicate Tag ?frag ?key ?value.
 
 predicate Request ?fragment ?request_type ?arguments.
 

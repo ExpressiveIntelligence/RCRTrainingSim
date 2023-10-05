@@ -13,6 +13,7 @@ public class SerializedFragment
     public SerializedCharacter[] characters;
     public string speakerID;
     public string backgroundPath;
+    public Dictionary<string, string> tags;
     public string systemMessage; // Error messages, etc.
 
     public override string ToString()
@@ -29,8 +30,12 @@ public class SerializedFragment
         {
             temp += "character id " + i + ": " + this.characters[i].id + "\n";
             temp += "character name " + i + ": " + this.characters[i].name + "\n";
-            temp += "character asset path " + i + ": " + this.characters[i].assetPath + "\n";
             temp += "character location " + i + ": " + this.characters[i].x + ", " + this.characters[i].y + "\n";
+        }
+        temp += "tags:\n";
+        foreach (var tag in this.tags)
+        {
+            temp += "  " + tag.Key + ": " + tag.Value + "\n";
         }
         temp += "speakerID: " + this.speakerID + "\n";
         temp += "backgroundPath: " + this.backgroundPath + "\n";
