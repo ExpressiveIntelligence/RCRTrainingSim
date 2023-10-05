@@ -87,16 +87,16 @@ GoToChoice  entry outside.
 Tag 		entry pose dancing.
 Tag			entry expression sad.
 
-Content outside: Brad reached the door and grasped the handle, motioning to push it inwards. Then he halted, wiping sweat from underneath his glasses. He took a deep breath, trying to calm his racing heart before knocking on the door. This was the moment he had been anxious for all week. Would he come clean? But he was already late, too late to come up with a game plan. Hoping he had the wherewithall for the conversation, he put his hand on the door.
-Speaker outside brad.
+Content 	outside: Brad reached the door and grasped the handle, motioning to push it inwards. Then he halted, wiping sweat from underneath his glasses. He took a deep breath, trying to calm his racing heart before knocking on the door. This was the moment he had been anxious for all week. Would he come clean? But he was already late, too late to come up with a game plan. Hoping he had the wherewithall for the conversation, he put his hand on the door.
+Speaker 	outside brad.
 ChoiceLabel outside: Brad stands outside Ned's ofice
-GoToChoice outside bus.
-GoToChoice outside grill.
-GoToChoice outside play_off.
-Effects outside.
-Conditions outside.
-Expression outside angry.
-Pose outside dancing.
+GoToChoice 	outside bus.
+GoToChoice 	outside grill.
+GoToChoice 	outside play_off.
+Effects 	outside.
+Conditions 	outside.
+Tag 		outside pose hunched.
+Tag			outside expression nervous.
 
 Content bus: Brad took a moment to gather his thoughts. The unreliable public transportation in this town! Inexcusable really. But the frustration wasn't useful.
 Speaker bus brad.
