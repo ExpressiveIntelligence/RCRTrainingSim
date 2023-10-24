@@ -1,4 +1,6 @@
-# RCR Training Simulator (Name Pending)
+# Academical 2
+
+A work in progress...
 
 ## Directory Structure
 
