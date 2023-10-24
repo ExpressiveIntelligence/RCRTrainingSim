@@ -21,7 +21,12 @@ import re, sys
 sys.path.append("../frag_utils/")
 from frag_utils import step_template
 
-scene = ""
+
+sheet_id = "10d4UvR6uY8BSDfV4k_nIjLiSm5O7sRez8NCbchAtk4s"
+# sheet_id = '1cXQ4lJ-FtmhkHW1YTQkm4uiF4pbJKudSk3jL835k8cQ'
+threads = ["T0001", "T0002", "T0003"]
+
+scene = "e0001" # The scene ID to use in the .step file (casing matters)
 
 def read_google_sheet(tab_name):
     # Define the scope for the Google Sheets API
@@ -34,7 +39,6 @@ def read_google_sheet(tab_name):
     client = gspread.authorize(creds)
 
     # Open the Google Sheets file
-    sheet_id = '1cXQ4lJ-FtmhkHW1YTQkm4uiF4pbJKudSk3jL835k8cQ'
     sheet = client.open_by_key(sheet_id)
 
     # Access the worksheet by its title
@@ -45,11 +49,6 @@ def read_google_sheet(tab_name):
     df = pd.DataFrame(data[1:], columns=data[0])
     
     return df
-
-
-['ID', 'Cloud ID', 'Notes', 'Content', 'Speaker', 'Choice Label',
-       'GoToChoices', 'conditionalchoice', 'Effects', 'Conditions', 'Reusable',
-       'Request', 'Expression', 'Pose', 'Step Code', 'AI Generated Ideas']
 
 def clean_cell(cell):
     # if the type is a string
@@ -125,7 +124,7 @@ def create_frag(row):
     if row.speaker:
         code += f"Speaker {row.id} {row.speaker}.\n"
     if row.choice_label:
-        code += f"ChoiceLabel {row.id}: {row.choice_label}\n"
+        code += f"ChoiceLabel {row.id}: {multi(row.choice_label)}\n"
     if row.gotochoices:
         for token in split_data(row.gotochoices):
             code += f"GoToChoice {row.id} {token}.\n"
@@ -150,12 +149,7 @@ def create_frag(row):
 
     return frag_name, code
 
-
-# scene = input("Scene name: ")
-scene = "e0001"
-
 # Read the Google Sheets data and print it
-threads = ["T0001", "T0002", "T0003"]
 df = pd.DataFrame()
 for thread in threads:
     tab_name = f'{thread}_Fragments'
