@@ -160,7 +160,7 @@ for thread in threads:
 # snake case the labels in pandas
 # clean the rows
 df.columns = df.columns.str.replace(' ', '_').str.lower()
-print(df.keys())
+# print(df.keys())
 
 # clean the rows
 df = df.apply(clean_row, axis=1)
@@ -177,13 +177,17 @@ Effects     entry.
 GoToChoice  entry {first_frag_name}.\n
 """
 
+frag_ids = set()
 for index, row in df.iterrows():
-    frag_name, frag_code = create_frag(row)
-    if frag_name:
-        fragment_declarations += f"Fragment {frag_name} {scene}.\n"
-    if frag_code: 
-        print(frag_code)
+    frag_id, frag_code = create_frag(row)
+    if frag_id:
+        fragment_declarations += f"Fragment {frag_id} {scene}.\n"
+        if frag_id in frag_ids:
+            raise Exception(f"Duplicate fragment ID: {frag_id}")
+        frag_ids.add(frag_id)
+    if frag_code:
         fragments += frag_code
+    
 
 code = fragment_declarations + "\n\n" + fragments
 

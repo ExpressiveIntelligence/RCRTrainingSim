@@ -239,7 +239,7 @@ Conditions slides.
 
 Content phd: "I feel like I've made good progress on my degree - I can see the finish line! What should focus on next?" Brad asked, feigning confidence.
 Speaker phd Brad.
-ChoiceLabel phd: PhD Progress! Always a solid bet
+ChoiceLabel phd: Bring up PhD Progress
 GoToChoice phd phd_r.
 ChoiceCondition phd phd_c: [Different Thread agenda]
 Effects phd: [set Thread = agenda]
@@ -299,7 +299,7 @@ Content department_r:
 	Ned was right, but the quick shutdown was a surprise. Was that somewhat of a slight?
 [end]
 Speaker department_r Ned.
-ChoiceLabel department_r: Respond to department drama
+ChoiceLabel department_r: Ned Responds
 GoToChoice department_r what_else.
 ChoiceCondition department_r department_r_c: [Different Thread agenda]
 Effects department_r: 
@@ -328,7 +328,7 @@ Content admin_r:
 	"How do you feel about it? What do we need to do next?"
 [end]
 Speaker admin_r Ned.
-ChoiceLabel admin_r: Respond to deadlines question
+ChoiceLabel admin_r: Ned Responds
 GoToChoice admin_r stress.
 GoToChoice admin_r project.
 ChoiceCondition admin_r admin_r_c: [Different Thread agenda]
@@ -337,7 +337,7 @@ Conditions admin_r.
 
 Content what_else: "What else is on the agenda for today?"
 Speaker what_else Ned.
-ChoiceLabel what_else: Ned asks, what else?
+ChoiceLabel what_else: Continue
 GoToChoice what_else stress.
 GoToChoice what_else project.
 ChoiceCondition what_else what_else_c: [Different Thread agenda]
@@ -350,7 +350,7 @@ Reusable what_else e0001.
 
 Content what_else_transition: "Thanks for bringing that up, Brad. We're a bit limited on time for today - let's stay on track and put that idea on next week’s agenda."
 Speaker what_else_transition Ned.
-ChoiceLabel what_else_transition: Ned asks, what else? (Transition)
+ChoiceLabel what_else_transition: Continue (Transition)
 ChoiceCondition what_else_transition what_else_transition_c: [Different Thread agenda]
 Effects what_else_transition: [set Thread = agenda]
 Conditions what_else_transition.
@@ -362,7 +362,7 @@ Content stress:
 	"It's great but the pressure is honestly a little high. It can be hard to cope."
 [end]
 Speaker stress Brad.
-ChoiceLabel stress: The project is exciting but...stressful!
+ChoiceLabel stress: This project is exciting but...stressful!
 GoToChoice stress need_success.
 ChoiceCondition stress stress_c: [Different Thread agenda]
 Effects stress: [set Thread = agenda]
@@ -386,7 +386,7 @@ Content project:
 	That being said, the research cycle was still a bit fuzzy. Brad was vaguely aware of some forms and deadlines coming up soon. There was also some committee he was supposed to talk to (what did Ned call it - "HERB"??).
 [end]
 Speaker project Brad.
-ChoiceLabel project: This project has been an odyssey
+ChoiceLabel project: This project is an odyssey
 GoToChoice project survey_design.
 GoToChoice project approval.
 GoToChoice project paper.
@@ -397,7 +397,7 @@ Reusable project e0001.
 
 Content survey_design: DEMO END - TODO: THREAD ON SURVEYING
 Speaker survey_design Brad.
-ChoiceLabel survey_design: Report on the finished survey.
+ChoiceLabel survey_design: Report on the finished survey
 ChoiceCondition survey_design survey_design_c: [Different Thread agenda]
 Effects survey_design: [set Thread = agenda]
 Conditions survey_design.
@@ -405,14 +405,14 @@ Reusable survey_design e0001.
 
 Content approval: DEMO END - TODO: THREAD ON IRB DEFINITION
 Speaker approval Brad.
-ChoiceLabel approval: Ask about administrative tasks.
+ChoiceLabel approval: Ask about administrative tasks
 ChoiceCondition approval approval_c: [Different Thread agenda]
 Effects approval: [set Thread = agenda]
 Conditions approval.
 
 Content paper: DEMO END - TODO: THREAD ON WRITING
 Speaker paper Brad.
-ChoiceLabel paper: See what Ned wants to write about.
+ChoiceLabel paper: See what Ned wants to write about
 ChoiceCondition paper paper_c: [Different Thread agenda]
 Effects paper: [set Thread = agenda]
 Conditions paper.
