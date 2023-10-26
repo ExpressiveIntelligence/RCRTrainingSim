@@ -31,6 +31,10 @@ public class SerializedFragment
             temp += "character id " + i + ": " + this.characters[i].id + "\n";
             temp += "character name " + i + ": " + this.characters[i].name + "\n";
             temp += "character location " + i + ": " + this.characters[i].x + ", " + this.characters[i].y + "\n";
+            foreach (var tag in this.characters[i].tags)
+            {
+                temp += "character tag " + i + ": " + tag.Key + ": " + tag.Value + "\n";
+            }
         }
         temp += "tags:\n";
         foreach (var tag in this.tags)
@@ -44,5 +48,3 @@ public class SerializedFragment
         return temp;
     }
 }
-
-

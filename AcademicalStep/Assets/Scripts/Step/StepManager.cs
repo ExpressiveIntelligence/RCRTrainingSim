@@ -178,9 +178,9 @@ public class StepManager : MonoBehaviour
         };
 
         // there is a more elegant way of doing this
-        KeyValuePair<string, string>[] tagsArray = ExecuteStep<KeyValuePair<string, string>>("[RenderTags]");
-        renderedScene.tags = tagsArray.ToDictionary(tuple => tuple.Key, tuple => tuple.Value);
-        Debug.Log(renderedScene);
+        KeyValuePair<string, string>[] tagsArray = ExecuteStep<KeyValuePair<string, string>>("[RenderFragmentTags]");
+        renderedScene.tags = tagsArray.ToDictionary(tuple => tuple.Key.ToLower(), tuple => tuple.Value.ToLower());
+        Debug.Log(renderedScene); // Sam: feel free to get rid of this debug after you understand what is going on
 
         return renderedScene;
     }
@@ -301,8 +301,11 @@ public class StepManager : MonoBehaviour
                 id        = Normalize(fields[0]),
                 name      = Normalize(fields[1]),
                 x         = Int32.Parse(Normalize(fields[2])),
-                y         = Int32.Parse(Normalize(fields[3]))
+                y         = Int32.Parse(Normalize(fields[3])),
             };
+
+            KeyValuePair<string, string>[] tagsArray = ExecuteStep<KeyValuePair<string, string>>("[RenderCharacterTags ?" + character.id + "]");
+            character.tags = tagsArray.ToDictionary(tuple => tuple.Key.ToLower(), tuple => tuple.Value.ToLower());
 
             return (T) (object) character;
         }

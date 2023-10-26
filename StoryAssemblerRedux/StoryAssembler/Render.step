@@ -70,17 +70,28 @@ RenderLocation ?char_id ?scene: [add |No location found| ErrorList] -1 [Delim] -
 RenderBackground: [BackgroundAsset CurrentScene] 
 RenderBackground.
 
-RenderTags:
+RenderFragmentTags:
     [DoAll 
-        [Tag CurrentFragment ?key ?value] 
-        [RenderTag ?frag ?key ?value]
+        [FragmentTag CurrentFragment ?key ?value] 
+        [RenderFragmentTag ?frag ?key ?value]
         [ItemDelim]
     ]
 [end]
-RenderTags.
+RenderFragmentTags.
 
 # TODO we need to know what to do for default expressions and poses
-RenderTag ?frag ?key ?value: ?key/WriteVerbatim [Delim] ?value/WriteVerbatim
+RenderFragmentTag ?frag ?key ?value: ?key/WriteVerbatim [Delim] ?value/WriteVerbatim
+
+RenderCharacterTags ?character:
+    [DoAll 
+        [CharacterTag CurrentFragment ?character ?key ?value] 
+        [RenderCharacterTag CurrentFragment ?character ?key ?value]
+        [ItemDelim]
+    ]
+[end]
+RenderCharacterTags ?character.
+
+RenderCharacterTag ?frag ?character ?key ?value: ?key/WriteVerbatim [Delim] ?value/WriteVerbatim
 
 RenderFragmentContent:
     [Different CurrentFragment root]

@@ -6,6 +6,8 @@ predicate StartState ?scene.
 predicate Character ?id ?scene ?name.
 fluent function CharacterAsset ?id ?scene ?asset_path.
 fluent function CharacterLocation ?id ?scene [?x ?y].
+[function]
+predicate CharacterTag ?frag_id ?char_id ?key ?value.
 task BackgroundAsset ?scene.
 
 PrintName ?char_id ?scene: [Character ?char_id ?scene ?name] ?name

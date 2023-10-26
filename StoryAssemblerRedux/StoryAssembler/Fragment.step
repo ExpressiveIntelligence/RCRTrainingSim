@@ -13,9 +13,10 @@ predicate ChoiceCondition ?frag ?choice_id.
 predicate GoToChoice ?frag ?target_frag.
 fluent    Reusable ?fragment ?scene.
 
-# Optional predicate that allows you to tag certain fragments with properties
+# Optional predicate that allows you to fragmenttag certain fragments with properties
+# Characters also have tags, see Scene.step
 [function]
-predicate Tag ?frag ?key ?value.
+predicate FragmentTag ?frag ?key ?value.
 
 predicate Request ?fragment ?request_type ?arguments.
 
@@ -68,7 +69,7 @@ predicate TopLevelFragment ?fragment.
 # goto example:
 #       example: Request dynamicgoto completion.
 # conditional example:
-#       example: Request dynamic_frag condition [Dating ally protagonist].
+#       example: Request dynamic_frag condition [Dating ally profragmenttagonist].
 predicate Request ?fragment ?request_type ?go_to_or_condition.
 
 TopLevelFragment ?frag: [Fragment ?frag CurrentScene] [Not [HasChoiceLabel ?frag]] # If it has a choice label it is not a top level fragment
