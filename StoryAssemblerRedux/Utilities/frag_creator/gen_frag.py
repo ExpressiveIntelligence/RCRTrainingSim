@@ -141,10 +141,7 @@ def create_frag(row):
         code += f"Conditions {row.id}.\n"
     if row.reusable:
         code += f"Reusable {row.id} {scene}.\n"
-    if row.expression:
-        code += f"Expression {row.id} {row.expression}.\n"
-    if row.pose:
-        code += f"Pose {row.id} {row.pose}.\n"
+    # TODO tags
     code += "\n"
 
     return frag_name, code

@@ -9,7 +9,7 @@ fluent PleasantriesOver ?scene.
 [function]
 fluent Check ?thread ?frag.
 
-InitialSceneState e0001:
+InitialSceneState e0001: 
 	[Not [PleasantriesOver e0001]]
 	[set BradInsecurityToNed = 0]
 	[set Thread = none]
@@ -42,7 +42,7 @@ Fragment lament e0001.
 Fragment overworked e0001.
 Fragment silence e0001.
 Fragment subjects e0001.
-Fragment phd e0001.
+Fragment phd_thing e0001.
 Fragment t0002_start e0001.
 Fragment slides e0001.
 Fragment phd e0001.
@@ -82,7 +82,6 @@ Content entry: Welcome to Academical!
 Conditions  entry.
 Effects     entry.
 GoToChoice  entry outside.
-FragmentTag entry this_is_a_key this_is_a_value.
 
 Content outside: Brad reaches the door of his advisor's office and pauses. He wipes the sweat from underneath his glasses and takes a deep breath, trying to calm his racing heart. Could he even come clean? Hoping he had the willpower for the impending conversation, he raises his hand to the door.
 Speaker outside brad.
@@ -92,8 +91,6 @@ GoToChoice outside grill.
 GoToChoice outside play_off.
 Effects outside.
 Conditions outside.
-FragmentTag outside test_fragment_key test_fragment_value.
-CharacterTag outside brad test_character_tag_key test_character_tag_value.
 
 Content bus: Brad hesitates outside of the door. He is already late. The bus had taken an extra thirty minutes to get to campus this morning, and now he doesn’t have enough time to prepare as much as he would have liked.
 Speaker bus brad.
@@ -209,11 +206,11 @@ GoToChoice subjects youre_late.
 Effects subjects.
 Conditions subjects.
 
-Content phd: TODO?
-Speaker phd brad.
-ChoiceLabel phd: Brad recognizes that he put in a lot of work
-Effects phd.
-Conditions phd.
+Content phd_thing: TODO?
+Speaker phd_thing brad.
+ChoiceLabel phd_thing: Brad recognizes that he put in a lot of work
+Effects phd_thing.
+Conditions phd_thing.
 
 Content t0002_start: Brad met with Ned weekly. They used a shared document to track - oh shoot - he forgot to update the document yesterday.
 Speaker t0002_start Brad.
