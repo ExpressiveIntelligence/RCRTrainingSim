@@ -42,7 +42,6 @@ Fragment lament e0001.
 Fragment overworked e0001.
 Fragment silence e0001.
 Fragment subjects e0001.
-Fragment phd_thing e0001.
 Fragment t0002_start e0001.
 Fragment slides e0001.
 Fragment phd e0001.
@@ -124,14 +123,14 @@ Conditions enter.
 
 Content youre_late: "Ah, there you are!" Ned says cheerfully. "I was beginning to wonder if we'd canceled this week."
 Speaker youre_late ned.
-ChoiceLabel youre_late: "You're late..."
+ChoiceLabel youre_late: Greet Ned
 GoToChoice youre_late no_worries.
 Effects youre_late.
 Conditions youre_late.
 
 Content no_worries: "It's just us today," Ned smiles, "But I do have a time limit.I have a lecture right after this, so we’ll have to make this quick."
 Speaker no_worries ned.
-ChoiceLabel no_worries: Ned continues
+ChoiceLabel no_worries: Continue
 GoToChoice no_worries doubt.
 GoToChoice no_worries relief.
 GoToChoice no_worries reflect.
@@ -144,20 +143,22 @@ Content doubt:
 	"There was a problem with the buses..." Brad starts lamely, but then cuts himself off.
 [end]
 Speaker doubt brad.
-ChoiceLabel doubt: Ned is annoyed, right?
+ChoiceLabel doubt: Blame the buses
 GoToChoice doubt remind.
 Effects doubt: [set BradInsecurityToNed = BradInsecurityToNed + 1]
 Conditions doubt.
 
 Content relief: 
-	Ned seems to be in a good mood. Maybe this will be easier than expected.
+	Ned seems like he's in a good mood. Maybe this will be easier than expected.
 	
-	Brad smiles and says, "Yeah, those buses can be really unreliable sometimes. Sorry for being late, Ned."
+	Brad smiles and says, "Sorry for being late, Ned, you know those buses never run on time."
 	
-	Ned nods understandingly. The tension in the room eases slightly, and Brad feels a sense of relief.
+	Ned nods understandingly. 
+	
+	"You're right, they run on wheels," Ned answers with a grin. The tension in the room eases, and Brad feels relieved.
 [end]
 Speaker relief brad.
-ChoiceLabel relief: Ned doesn’t mind that he’s late
+ChoiceLabel relief: Comment on the buses
 GoToChoice relief remind.
 Effects relief.
 Conditions relief.
@@ -177,7 +178,7 @@ Conditions remind.
 
 Content lament: Brad dreaded the impending assumption that he hadn't gotten anything done this week. Sure, there had been weeks where he'd been more focused on his semi-pro hacky sack career, and Ned had noticed. But he'd been in the lab the past seven days! Surely this time he deserved some recognition.
 Speaker lament brad.
-ChoiceLabel lament: Ned sometimes assumes Brad's laziness
+ChoiceLabel lament: Ponder Ned's assumptions
 GoToChoice lament youre_late.
 GoToChoice lament overworked.
 GoToChoice lament silence.
@@ -185,16 +186,16 @@ GoToChoice lament subjects.
 Effects lament: [set BradInsecurityToNed = BradInsecurityToNed + 1]
 Conditions lament.
 
-Content overworked: Some of Brad's friends were in a lab that encouraged a four day work week. How can someone who was pretty okay being overworked still have a reputation of laziness?
+Content overworked: Some of Brad's friends were in a lab that encouraged a four day work week, versus the six days Brad works. How can someone who works even on the weekends still have a reputation of laziness?
 Speaker overworked brad.
-ChoiceLabel overworked: Brad feels overworked
+ChoiceLabel overworked: Think about reputation
 GoToChoice overworked youre_late.
 Effects overworked.
 Conditions overworked.
 
 Content silence: There is a moment of silence as Brad struggles to find something to say. The moment stretches to a few seconds. Ned looks on expectantly.
 Speaker silence brad.
-ChoiceLabel silence: Wonder what to say
+ChoiceLabel silence: Consider what to say
 GoToChoice silence youre_late.
 Effects silence.
 Conditions silence.
@@ -205,12 +206,6 @@ ChoiceLabel subjects: Recognize the work he's done
 GoToChoice subjects youre_late.
 Effects subjects.
 Conditions subjects.
-
-Content phd_thing: TODO?
-Speaker phd_thing brad.
-ChoiceLabel phd_thing: Brad recognizes that he put in a lot of work
-Effects phd_thing.
-Conditions phd_thing.
 
 Content t0002_start: Brad met with Ned weekly. They used a shared document to track - oh shoot - he forgot to update the document yesterday.
 Speaker t0002_start Brad.
@@ -292,7 +287,7 @@ Effects department: [set Thread = agenda]
 Conditions department.
 
 Content department_r: 
-	"That’s not important - department politics aren’t a place you want to spend too much time as a student."
+	"That’s not important -- department politics aren’t a place you want to spend too much time as a student."
 	
 	Ned was right, but the quick shutdown was a surprise. Was that somewhat of a slight?
 [end]
@@ -473,7 +468,7 @@ Effects exit_bad: [set Thread = insecurity]
 Conditions exit_bad: [Expanded t0003_start CurrentScene]
 
 Content grants_funding: 
-	Brad sits across from Professor Ned in the office, his nerves beginning to settle in. He wants to tell Ned how stressed is is about the amount of pressure he has, but instead, he takes out his papers and begins to display his work. 
+	Brad's nerves beginning to settle in. He wants to tell Ned about how stressed he is with the pressure of this research but recognizes the amount of time and money that has been put into this. Between the grants and the funding, Brad thinks about the thousands of dollars spent so that he can conduct this research. He needs to show that the resources given to him are being put to good use. Brad takes out papers and begins to display his work. 
 	
 	Ned leans back in his chair, giving Brad a look of concern. Brad realizes the slight tremble in his voice as well as the even less subtle shake in his hand. As he begins to change topics, Ned interrupts and asks “Brad, are you alright? You seem a bit frazzled.”
 [end]
@@ -485,9 +480,9 @@ Effects grants_funding: [set Thread = insecurity]
 Conditions grants_funding: [Expanded t0003_start CurrentScene]
 
 Content dissapointed_feeling: 
-	Brad sits across from Professor Ned in the office, his nerves beginning to settle in.  "I just don't think I'm handling all of this well," Brad confesses. "The way I've been struggling to deal with these responsibilities, it's not productive. On top of that I feel like you’re disappointed in me."
+	Brad's nerves beginning to settle in.  "I just don't think I'm handling all of this well," Brad confesses. "I feel like you’re disappointed in me with the way I'm working on these responsibilities."
 	
-	Ned leans back in his chair, giving Brad a scolding look with a hint of sympathy. He holds up a warning index finger, "Before you start doubting yourself, we need to focus on the task at hand. You've managed to progress this far, which you should be proud of," His voice was calm so as to not add to Brad’s underlying panic. "People handle pressure differently, Brad. These insecurities you're feeling, they're not an indication of your research abilities, they're merely a part of the process. Plus, you've made considerable progress, so why not see it through? Who knows? You might even impress yourself," Ned said with a smile, releasing some of the tension in the room.
+	Ned interrupts, holding up a warning index finger, "Before you start doubting yourself, we need to focus on the task at hand. You've managed to progress this far, which you should be proud of. People handle pressure differently, Brad. These insecurities you're feeling, they're not an indication of your research abilities, they're merely a part of the process. Plus, you've made considerable progress, so why not see it through? Who knows? You might even impress yourself."
 [end]
 Speaker dissapointed_feeling ned.
 ChoiceLabel dissapointed_feeling: Vocalize about feeling disappointment
@@ -497,8 +492,8 @@ Effects dissapointed_feeling: [set Thread = insecurity]
 Conditions dissapointed_feeling: [Expanded t0003_start CurrentScene]
 
 Content frazzled: 
-	“Of course!” says Brad, “I’m just a bit stressed, that’s all!” Ned gives one last look of concern before Brad continues to explain his findings. When he finishes, Ned continues to study him before speaking. "You've clearly put a lot of work into this Brad," he says, pausing for a long moment. Brad feels as though his insecurties are confirmed by the unspoken criticism, but is determined not to show his fear. “Everything look great Brad,” says Ned, “Keep up the good work.” 
-	As he walks out of Ned's office, the unheard criticism lingers in the back of his mind. Was Ned disappointed in his work but didn’t want to hurt his feelings? Is this actually good work? Or is he just barely making the cut? Brad leaves the office with a sense of determination to prove the professor - and himself - wrong.
+	“Yeah,” says Brad, “I’m just a bit stressed, that’s all!” Ned gives one last look of concern before Brad continues to explain his findings. When he finishes, Ned continues to study him before speaking. "You've clearly put a lot of work into this Brad," he says, pausing for a long moment. Brad feels as though his insecurties are confirmed by the unspoken criticism, but is determined not to show his fear. “Everything look great Brad,” says Ned, “Keep up the good work.” 
+	As he walks out of Ned's office, the unheard criticism lingers in the back of his mind. Was Ned disappointed in his work but didn’t want to hurt his feelings? Is this actually good work? Or is he just barely making the cut?
 [end]
 Speaker frazzled ned.
 ChoiceLabel frazzled: Feel determined
@@ -507,7 +502,7 @@ ChoiceCondition frazzled frazzled_c: [Check agenda CurrentFragment]
 Effects frazzled: [set Thread = insecurity]
 Conditions frazzled: [Expanded t0003_start CurrentScene]
 
-Content really_hard: Getting lost in his thoughts Brad almost didn't notice Professor Ned looking at him with an expression of concern. "You seem rather worried, Brad," Ned says, "Is everything okay?" His gaze wasn't unkind, but it didn't help Brad's self-perpetuating doubts. He wanted to respond, to explain the stresses of the survey designs, the IRB proposal, and his fear of disappointment. Instead, Brad simply said, "I get the sense you're disappointed in my output recently." He hoped that his progress so far would defend his worth as a researcher, even if he felt overwhelmed by the challenges ahead.
+Content really_hard: Getting lost in his thoughts Brad almost doesn't notice Ned looking at him with an expression of concern. "You seem rather worried, Brad," Ned says, "Is everything okay?" His gaze wasn't unkind, but it didn't help Brad's self-perpetuating doubts. He wanted to respond, to explain the stresses of the survey designs, the IRB proposal, and his fear of disappointment. Instead, Brad simply says, "I get the sense you're disappointed in my output recently." He hoped that his progress so far would defend his worth as a researcher, even if he felt overwhelmed by the challenges ahead.
 Speaker really_hard brad.
 ChoiceLabel really_hard: Express feeling disappointed
 GoToChoice really_hard apologizes.
@@ -538,7 +533,7 @@ ChoiceCondition doubt_apology doubt_apology_c: [Check agenda CurrentFragment]
 Effects doubt_apology: [set Thread = insecurity]
 Conditions doubt_apology: [Expanded t0003_start CurrentScene]
 
-Content thanks: TODO: Thanks, back to business
+Content thanks: "Thanks," Brad says. There is a moment of silence as they look for what to say next. Ned continues to look through the paperwork before saying "I'm glad you spoke to me about this, but now let's get back to the task at hand. Tell me, how are the surveys going? "
 ChoiceLabel thanks: Back to business
 ChoiceCondition thanks thanks_c: [Check agenda CurrentFragment]
 Effects thanks: [set Thread = insecurity]
