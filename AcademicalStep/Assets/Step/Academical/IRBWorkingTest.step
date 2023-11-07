@@ -1,25 +1,20 @@
-# IRB Scene mock
-
-# Discouse acts: greeting, 
-# (DAReferTo ?char ?obj)
-# https://eis.ucsc.edu/papers/MateasSternTIDSE04.pdf
-
 # Must declare the scene for various checks to succeed
+
 Scene irb.
-BackgroundAsset irb: |./irb_background.png|.
+BackgroundAsset irb: |./Assets/irb_background.png|.
 
 Character student irb |Brad|.
-CharacterAsset student irb |./brad.png|.
+CharacterAsset student irb |./Assets/brad.png|.
 CharacterLocation student irb [0, 0].
 
 Character teacher irb |Ned|.
-CharacterAsset teacher irb |./ned.png|.
+CharacterAsset teacher irb |./Assets/ned.png|.
 CharacterLocation teacher irb [0, 0].
 
 # Scene specific predicates
-fluent CharacterSelected ?character. 
+fluent CharacterSelected ?character. # TODO should this be a function? fluent function?
 
-# Declare all fragments
+# Declare all fragments 
 # (NOTE: DO NOT PUT A SPACE LINE VBETWEEN FRAGMENTS)
 [randomly]
 Fragment select irb.
@@ -69,7 +64,7 @@ InitialSceneState irb:
     [set CurrentBeat = none]
     [set DiscourseTag = none]
     [set Snark = 0]
-    [set Knowledge = empty]
+    [set Knowledge = empty] 
     [now [CharacterSelected none]]
 [end]
 
@@ -130,7 +125,7 @@ SnarkMixIn low ?threshold:
 SnarkMixIn ? ?.
 
 ## CHARACTER SELECT ##
-Content select: Who are you?
+Content select: Who are you? 
 Effects select: [set DiscourseTag = none] [set CurrentBeat = none]
 Conditions select: [= CurrentBeat none]
 Reusable select irb.

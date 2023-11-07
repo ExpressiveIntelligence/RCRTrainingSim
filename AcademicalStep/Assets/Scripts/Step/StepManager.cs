@@ -16,10 +16,10 @@ public class StepManager : MonoBehaviour
     public string sceneName;
     public GameSession gameSession;
 
-    public bool extraDebugLogging = true;
+    public bool extraDebugLogging = false;
 
     private Module module;
-    private State state;
+    public State state;
     private bool storyAssemblerLoaded = false;
     private bool optionalScenePathLoaded = false;
     private string itemDelim = "";
@@ -78,6 +78,16 @@ public class StepManager : MonoBehaviour
         var save = SaveState();
         Debug.Log("Save: " + save);
     }
+
+    /*
+     * Reload story assembler and create a new Step module. 
+     * Returns the new current fragment.
+     * Does not reload the Step DLL itself.
+    **/
+    public SerializedFragment Reload()
+    {
+        return this.InitializeStepStoryAssembler();
+    }
     
     /** 
      *  Initialize StoryAssembler and the Step library interface
@@ -89,13 +99,8 @@ public class StepManager : MonoBehaviour
 
         // Load the StoryAssembler library, implemented in Step
         LoadStoryAssembler();
-        string debugMessage = storyAssemblerLoaded ? "StoryAssembler Loaded." : "StoryAssembler FAILED to Load.";
-        debugMessage += optionalScenePathLoaded ? " Optional scene loaded." : " Optional scene FAILED to load.";
-        Debug.Log(debugMessage);
         
-        this.subItem = ExecuteStep("[Delim]");
-        this.itemDelim = ExecuteStep("[ItemDelim]");
-
+        // Call the step Initialize function and set the delimiter variables
         Initialize(this.sceneName);
 
         bool doReRender = false;
@@ -126,14 +131,22 @@ public class StepManager : MonoBehaviour
     }
 
     /** 
-     * Reload story assembler and create a new Step module - returns the new current fragment. Does not reload the Step DLL itself.
+     * This is an overloaded version of the same function, but takes a state object as an argument.
     **/
-    public SerializedFragment Reload()
+    public SerializedFragment InitializeStepStoryAssembler(State state)
     {
-        // Currently we can get away with calling the initialization function again,
-        // but we may need to do more in the future, so the separation may be useful. 
-        return this.InitializeStepStoryAssembler();
+        this.module = CreateModule();
+        this.state = state;
+
+        LoadStoryAssembler();
+
+        this.subItem = ExecuteStep("[Delim]"); // Normally this is accomplished in Initialize() which we don't call here
+        this.itemDelim = ExecuteStep("[ItemDelim]");
+
+        SerializedFragment fragment = Render();
+        return fragment;
     }
+
 
     // Should be called before anything else with a scene name as defined in the Step file: 
     // Step syntax:
@@ -141,6 +154,9 @@ public class StepManager : MonoBehaviour
     // the scene name would be "maze"
     string Initialize(string sceneName)
     {
+        this.subItem = ExecuteStep("[Delim]");
+        this.itemDelim = ExecuteStep("[ItemDelim]");
+
         return ExecuteStep($"[Initialize {sceneName}]");
     }
 
@@ -156,6 +172,9 @@ public class StepManager : MonoBehaviour
     // <param> choiceID </param> the id of the choice as defined in the Step file, returned by Render or PrintChoices
     private string MakeChoice(string choiceID)
     { 
+        // The next two lines are for testing purposes
+        // var save = this.SaveState();
+        // this.LoadState(save);
         return ExecuteStep($"[MakeChoice {choiceID}]");
     }
 
@@ -185,26 +204,21 @@ public class StepManager : MonoBehaviour
         return renderedScene;
     }
 
-    string SaveState()
+    SerializedSaveState SaveState()
     {
-        // TODO this is a temporary example of the data format we want to save
-        // This has not yet been implemented
-        var state = new SerializedFragmentSaveState() {
-            currentFragment = "fragment_id_1",
-            stateVariables = new Dictionary<string, object>() {
-                { "Married", false },
-                {"LearningGoalProgress", 4},
-            },
+        var save = new SerializedSaveState() {
+            currentFragment = Normalize(ExecuteStep("[CurrentFragment]")),
+            stepState = this.state,
             characters = new SerializedCharacter[] { 
-                new SerializedCharacter() { id = "samantha", name = "Samantha", x=1, y=10 },
+                new SerializedCharacter() { id = "brad", name = "Brad", x=1, y=10 }, // Mock
             }
         };
-        return JsonUtility.ToJson(state);
+        return save;
     }
 
-    void LoadState(string state)
+    void LoadState(SerializedSaveState save)
     {
-        // TODO load a scene from a save state
+        InitializeStepStoryAssembler(save.stepState);
     }
     
     /* 
@@ -214,8 +228,7 @@ public class StepManager : MonoBehaviour
     public SerializedFragment Select(string choiceID)
     {
         MakeChoice(choiceID);
-        if (this.extraDebugLogging)
-            Debug.Log("Rendering " + choiceID);
+        if (this.extraDebugLogging) Debug.Log("Rendering " + choiceID);
         return Render();
     }
 
@@ -319,6 +332,9 @@ public class StepManager : MonoBehaviour
         return ((string) o).Trim();
     }
 
+    /* 
+    * Load the StoryAssembler library, implemented in Step
+    */
     private void LoadStoryAssembler() 
     {
         this.module.LoadDirectory(this.storyAssemblerPath);
@@ -328,24 +344,15 @@ public class StepManager : MonoBehaviour
             this.optionalScenePathLoaded = true;
         }
         this.storyAssemblerLoaded = true;
+
+        string debugMessage = storyAssemblerLoaded ? "StoryAssembler Loaded." : "StoryAssembler FAILED to Load.";
+        debugMessage += optionalScenePathLoaded ? " Optional scene loaded." : " Optional scene FAILED to load.";
+        Debug.Log(debugMessage);
     }
 
     // Create a Step Module object as defined in the Step C# library
     private static Module CreateModule()
     {
-        Module module = null;
-        while (module == null)
-        {
-            try
-            {
-                module = new Module("StepManager");
-                return module;
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError(ex.Message);
-            }
-        }
-        return module;
+        return new Module("StepManager");
     }
 }

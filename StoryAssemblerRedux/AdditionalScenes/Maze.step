@@ -124,7 +124,7 @@ Reusable keyboards maze.
 
 Content mice: You are surrounded by cute mice of all varieties. Trackpads and magic mice and mice with wheels. You hear scurrying, a muffled squeak in the distance.
 Conditions mice: [Inside maze] [CardinalChoice maze]
-Effects mice: [now [Not [CardinalChoice maze]]]
+Effects mice:    [now [Not [CardinalChoice maze]]]
 Reusable mice maze.
 
 Content confused: Though you haven't been in this game - maze - long, you already forget which way you came from. Turning around, there are three paths, each of which you may have just emerged from. 
