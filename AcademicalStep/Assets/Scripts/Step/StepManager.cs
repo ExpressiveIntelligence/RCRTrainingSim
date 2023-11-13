@@ -3,7 +3,8 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Step;
+using Step; // Using this line gives us the debug error "The identifier ParseAndExecute is not in scope." To fix it:
+// using static Step.Module; 
 using System.Text.RegularExpressions;
 using System.Linq;
 
@@ -11,13 +12,14 @@ public class StepManager : MonoBehaviour
 {
     // Singleton instance variable
     public static StepManager instance = null;
+    // Unity Variables
     public string storyAssemblerPath; // The path to the StoryAssembler step implmentation
     public string optionalScenePath; // If desired, you can specify an additional path to a file containing your current scene (e.g. "Assets/Scripts/Scenes/Maze.step")
     public string sceneName;
     public GameSession gameSession;
-
+    // Debug Variables
     public bool extraDebugLogging = true;
-
+    // Step Variables
     private Module module;
     public State state;
     private bool storyAssemblerLoaded = false;
@@ -199,7 +201,6 @@ public class StepManager : MonoBehaviour
         // there is a more elegant way of doing this
         KeyValuePair<string, string>[] tagsArray = ExecuteStep<KeyValuePair<string, string>>("[RenderFragmentTags]");
         renderedScene.tags = tagsArray.ToDictionary(tuple => tuple.Key.ToLower(), tuple => tuple.Value.ToLower());
-        Debug.Log(renderedScene); // Alex: Sam, feel free to get rid of this debug after you understand what is going on
 
         return renderedScene;
     }
