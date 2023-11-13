@@ -15,11 +15,11 @@ task BestChoices ?source_frag ?choices.
 AllPathsFrom ?source_frag ?paths: [FindPaths [?source_frag direct] empty ?paths]
 
 BestChoices ?frag ?choices:
-    [AllPathsFrom ?frag ?paths] # TODO there is as bug that this seems to have 3 duplicates for each path
-    [set AllPaths = ?paths] # can use this to print
+    [AllPathsFrom ?frag ?paths]
+    [set AllPaths = ?paths]
 
     [AllGoToChoices ?frag ?goto_frags]
-    [Backtrack [BestConditionalChoices ?frag ?paths] ?conditional_choice_frags] # TODO test this backtrack
+    [Backtrack [BestConditionalChoices ?frag ?paths] ?conditional_choice_frags]
 
     [Cat ?goto_frags ?conditional_choice_frags ?running_choices]
     [case ?running_choices] [Length 0]: 

@@ -16,7 +16,7 @@ public class StepManager : MonoBehaviour
     public string sceneName;
     public GameSession gameSession;
 
-    public bool extraDebugLogging = false;
+    public bool extraDebugLogging = true;
 
     private Module module;
     public State state;
@@ -199,7 +199,7 @@ public class StepManager : MonoBehaviour
         // there is a more elegant way of doing this
         KeyValuePair<string, string>[] tagsArray = ExecuteStep<KeyValuePair<string, string>>("[RenderFragmentTags]");
         renderedScene.tags = tagsArray.ToDictionary(tuple => tuple.Key.ToLower(), tuple => tuple.Value.ToLower());
-        Debug.Log(renderedScene); // Sam: feel free to get rid of this debug after you understand what is going on
+        Debug.Log(renderedScene); // Alex: Sam, feel free to get rid of this debug after you understand what is going on
 
         return renderedScene;
     }

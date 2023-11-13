@@ -109,6 +109,7 @@ Visit ?frag:
     [now [Expanded ?frag CurrentScene]] # TODO: this is a side effect, but it is necessary for the planner to work
     [ApplyEffects ?frag]
 [end]
+#TODO if we were storing effects as a tuple maybe we could undo...
 
 # Used for reseting a scene to its initial conditions
 Unvisit ?frag ?scene: [now [Not [Expanded ?frag ?scene]]]
@@ -249,6 +250,8 @@ AvailableTopLevelChoice [?frag direct]:
 AllAvailableTopLevelChoices ?choices:
     [FindUnique ?choice [AvailableTopLevelChoice ?choice] ?choices]
 [end]
+
+
 
 # Notes
 
