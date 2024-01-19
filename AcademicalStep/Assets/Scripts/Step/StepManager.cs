@@ -14,7 +14,14 @@ public class StepManager : MonoBehaviour
     public static StepManager instance = null;
     // Unity Variables
     public string storyAssemblerPath; // The path to the StoryAssembler step implmentation
+
+    [SerializeField]
+    private List<TextAsset> m_stepFiles;
+
+    // This will be deprecated once we are using m_stepFiles
     public string optionalScenePath; // If desired, you can specify an additional path to a file containing your current scene (e.g. "Assets/Scripts/Scenes/Maze.step")
+
+
     public string sceneName;
     public GameSession gameSession;
     // Debug Variables
@@ -174,9 +181,6 @@ public class StepManager : MonoBehaviour
     // <param> choiceID </param> the id of the choice as defined in the Step file, returned by Render or PrintChoices
     private string MakeChoice(string choiceID)
     { 
-        // The next two lines are for testing purposes
-        // var save = this.SaveState();
-        // this.LoadState(save);
         return ExecuteStep($"[MakeChoice {choiceID}]");
     }
 
@@ -230,6 +234,7 @@ public class StepManager : MonoBehaviour
     {
         MakeChoice(choiceID);
         if (this.extraDebugLogging) Debug.Log("Rendering " + choiceID);
+        Debug.Log("Thread " + ExecuteStep("[Thread]"));
         return Render();
     }
 
@@ -345,6 +350,11 @@ public class StepManager : MonoBehaviour
             this.optionalScenePathLoaded = true;
         }
         this.storyAssemblerLoaded = true;
+
+        foreach (var stepFile in m_stepFiles)
+        {
+            this.module.AddDefinitions(stepFile.text);
+        }
 
         string debugMessage = storyAssemblerLoaded ? "StoryAssembler Loaded." : "StoryAssembler FAILED to Load.";
         debugMessage += optionalScenePathLoaded ? " Optional scene loaded." : " Optional scene FAILED to load.";
