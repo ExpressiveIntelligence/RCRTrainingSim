@@ -110,13 +110,14 @@ GoToChoice outside grill.
 GoToChoice outside play_off.
 Effects outside: [set Thread = entry]
 Conditions outside.
+CharacterTag outside ned expression angry.
 
 Content bus: Brad hesitates outside of the door. He is already late. The bus had taken an extra thirty minutes to get to campus this morning, and now he doesn’t have enough time to prepare as much as he would have liked.
 Speaker bus brad.
 ChoiceLabel bus: Take a moment to reflect
 GoToChoice bus enter.
 Effects bus: [set Thread = entry]
-Conditions bus: [= Thread entry]
+Conditions bus.
 
 Content grill: Ned had a reputation for being passionate, but not unfair. He'd always been a bit tough on Brad, despite his outward kindness. He was sharp and was probably going to detect that Brad was hiding something. He should probably come clean about it: Ned will find out eventually. But… maybe he doesn’t need to. It's Ned's fault that the approval took so long to submit, and Brad is running out of time. Even if Ned did find out, he would understand, right…?
 Speaker grill brad.
@@ -124,7 +125,7 @@ ChoiceLabel grill: Think about the meeting with Ned
 GoToChoice grill enter.
 GoToChoice grill lament.
 Effects grill: [set Thread = entry]
-Conditions grill: [= Thread entry]
+Conditions grill.
 
 Content play_off: Brad knows it’s better to come clean about his mistake, but the delay had jeopardized his progress. He could lay this down carefully to Ned, and tell him that he was on track, without elaborating on what that meant. Brad grips the doorknob a little tighter and makes a decision: he’ll tell the truth, just not the whole truth.
 Speaker play_off brad.
@@ -132,21 +133,21 @@ ChoiceLabel play_off: Think about playing off his mistake
 GoToChoice play_off enter.
 GoToChoice play_off lament.
 Effects play_off: [set Thread = entry]
-Conditions play_off: [= Thread entry]
+Conditions play_off.
 
 Content enter: Ned clearly hadn’t missed Brad’s late arrival. No more stalling. Brad squares his shoulders and shuts the door behind himself.
 Speaker enter ned.
 ChoiceLabel enter: Enter the office
 GoToChoice enter youre_late.
 Effects enter: [set Thread = entry]
-Conditions enter: [= Thread entry]
+Conditions enter.
 
 Content youre_late: "Ah, there you are!" Ned says cheerfully. "I was beginning to wonder if we'd canceled this week."
 Speaker youre_late ned.
 ChoiceLabel youre_late: Greet Ned
 GoToChoice youre_late no_worries.
 Effects youre_late: [set Thread = entry]
-Conditions youre_late: [= Thread entry]
+Conditions youre_late.
 
 Content no_worries: "It's just us today," Ned smiles, "But I do have a time limit.I have a lecture right after this, so we’ll have to make this quick."
 Speaker no_worries ned.
@@ -155,7 +156,7 @@ GoToChoice no_worries doubt.
 GoToChoice no_worries relief.
 GoToChoice no_worries reflect.
 Effects no_worries: [set Thread = entry]
-Conditions no_worries: [= Thread entry]
+Conditions no_worries.
 
 Content doubt: 
 	Brad can't tell if Ned doesn’t care or is just trying to relieve the tension. 
@@ -166,7 +167,7 @@ Speaker doubt brad.
 ChoiceLabel doubt: Blame the buses
 GoToChoice doubt remind.
 Effects doubt: [set Thread = entry][set BradInsecurityToNed = BradInsecurityToNed + 1]
-Conditions doubt: [= Thread entry]
+Conditions doubt.
 
 Content relief: 
 	Ned seems like he's in a good mood. Maybe this will be easier than expected.
@@ -181,20 +182,20 @@ Speaker relief brad.
 ChoiceLabel relief: Comment on the buses
 GoToChoice relief remind.
 Effects relief: [set Thread = entry]
-Conditions relief: [= Thread entry]
+Conditions relief.
 
 Content reflect: Brad found out pretty soon after arriving at the lab that he had not been Ned's first choice. Ned's pick ended up at another university, and Brad had received the acceptance notice. Brad sometimes wonders if he’d been accepted because Ned just needed to reach a quota. Ned was hard on Brad, had him double and triple check his data, show up early to their lab meetings (to curb his tendency to arrive late), and was quick to correct his spoken mistakes. He was a brilliant researcher and Brad valued his attention, when he received it.
 Speaker reflect brad.
 ChoiceLabel reflect: Reflect on Brad’s relationship with Ned
 GoToChoice reflect remind.
 Effects reflect: [set Thread = entry]
-Conditions reflect: [= Thread entry]
+Conditions reflect.
 
 Content remind: Ned interrupts Brad's train of thought. "Remind me where you're at again? Were you able to start on those surveys yet?" He pauses, and with some emphasis adds "Or are we still sitting on them?" He glances at his stack of notes, possibly annoyed. "I think we had decided we wanted to interview the children as well as their parents, is that right?"
 Speaker remind ned.
 ChoiceLabel remind: Ned interrupts his train of thought
 Effects remind: [now [PleasantriesOver e0001]][set Thread = entry]
-Conditions remind: [= Thread entry]
+Conditions remind.
 
 Content lament: Brad dreaded the impending assumption that he hadn't gotten anything done this week. Sure, there had been weeks where he'd been more focused on his semi-pro hacky sack career, and Ned had noticed. But he'd been in the lab the past seven days! Surely this time he deserved some recognition.
 Speaker lament brad.
@@ -204,28 +205,28 @@ GoToChoice lament overworked.
 GoToChoice lament silence.
 GoToChoice lament subjects.
 Effects lament: [set BradInsecurityToNed = BradInsecurityToNed + 1][set Thread = entry]
-Conditions lament: [= Thread entry]
+Conditions lament.
 
 Content overworked: Some of Brad's friends were in a lab that encouraged a four day work week, versus the six days Brad works. How can someone who works even on the weekends still have a reputation of laziness?
 Speaker overworked brad.
 ChoiceLabel overworked: Think about reputation
 GoToChoice overworked youre_late.
 Effects overworked: [set Thread = entry]
-Conditions overworked: [= Thread entry]
+Conditions overworked.
 
 Content silence: There is a moment of silence as Brad struggles to find something to say. The moment stretches to a few seconds. Ned looks on expectantly.
 Speaker silence brad.
 ChoiceLabel silence: Consider what to say
 GoToChoice silence youre_late.
 Effects silence: [set Thread = entry]
-Conditions silence: [= Thread entry]
+Conditions silence.
 
 Content subjects: Brad thinks about the participant surveys he had conducted over the past week. He had been so proud of his progress, even though he wasn't technically supposed to start yet. He managed to find a way around the IRB requirements and he is quite pleased with all that he accomplished despite the challenges. Perhaps he will get the grant he's gunning for after all.
 Speaker subjects brad.
 ChoiceLabel subjects: Recognize the work he's done
 GoToChoice subjects youre_late.
 Effects subjects: [set Thread = entry]
-Conditions subjects: [= Thread entry]
+Conditions subjects.
 
 Content t0002_start: Brad met with Ned weekly. They used a shared document to track - oh shoot - he forgot to update the document yesterday.
 Speaker t0002_start brad.
@@ -773,7 +774,7 @@ Conditions brad_goes_along.
 # Declare the StorySpec
 [randomly]
 Want e0001 entry.
-Want e0001 insecurity.
+Want e0001 three.
 Want e0001 justice.
 Want e0001 beneficence.
 Want e0001 justice.
@@ -785,4 +786,4 @@ Fulfilled justice: [Expanded brad_confused CurrentScene]
 Fulfilled beneficence: [Expanded t0006_intro CurrentScene]
 Fulfilled irb: [Expanded t0004_intro CurrentScene]
 Fulfilled entry: [Expanded entry CurrentScene]
-Fulfilled insecurity: [Expanded t_start_fix CurrentScene]
+Fulfilled three: [= Thread insecurity]

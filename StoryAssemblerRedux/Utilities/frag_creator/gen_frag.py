@@ -21,10 +21,8 @@ import re, sys
 sys.path.append("../frag_utils/")
 from frag_utils import step_template
 
-
 sheet_id = "10d4UvR6uY8BSDfV4k_nIjLiSm5O7sRez8NCbchAtk4s"
-# sheet_id = '1cXQ4lJ-FtmhkHW1YTQkm4uiF4pbJKudSk3jL835k8cQ'
-threads = ["T0001", "T0002", "T0003"]
+threads = ["T0001", "T0002", "T0003", "T0004"]
 
 scene = "e0001" # The scene ID to use in the .step file (casing matters)
 
@@ -122,7 +120,7 @@ def create_frag(row):
         content = multi(row.content)
         code += f"Content {row.id}: {content}\n"
     if row.speaker:
-        code += f"Speaker {row.id} {row.speaker}.\n"
+        code += f"Speaker {row.id} {row.speaker.lower()}.\n"
     if row.choice_label:
         code += f"ChoiceLabel {row.id}: {multi(row.choice_label)}\n"
     if row.gotochoices:
@@ -141,7 +139,13 @@ def create_frag(row):
         code += f"Conditions {row.id}.\n"
     if row.reusable:
         code += f"Reusable {row.id} {scene}.\n"
-    # TODO tags
+
+    tags = row.filter(regex="charactertag").dropna()
+    if tags.any():
+        for tag_name, expression in tags.items():
+            char = tag_name.split("charactertag")[1]
+            code += f"CharacterTag {row.id} {char} expression {expression}.\n"
+
     code += "\n"
 
     return frag_name, code
@@ -207,9 +211,17 @@ CharacterAsset ned {scene} |./ned.png|.
 CharacterLocation ned {scene} [0, 0]."""
 assets = f"BackgroundAsset {scene}: |./scene_name_background.png|."
 wants = f"""Want {scene} entry.
-Want {scene} three."""
+Want {scene} insecurity.
+Want {scene} justice.
+Want {scene} beneficence.
+Want {scene} justice.
+Want {scene} irb."""
 fulfillments = """Fulfilled entry: [Expanded entry CurrentScene]
-Fulfilled three: [= Thread insecurity]"""
+Fulfilled justice: [Expanded brad_confused CurrentScene]
+Fulfilled beneficence: [Expanded t0006_intro CurrentScene]
+Fulfilled irb: [Expanded t0004_intro CurrentScene]
+Fulfilled entry: [Expanded entry CurrentScene]
+Fulfilled insecurity: [Expanded t_start_fix CurrentScene]"""
 code = step_template.format(**locals())
 
 # Write to a file which is specified in the command line, if none is specified, write to a default file

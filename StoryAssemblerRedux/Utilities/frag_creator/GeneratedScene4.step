@@ -74,10 +74,30 @@ Fragment apologizes e0001.
 Fragment accept_apology e0001.
 Fragment doubt_apology e0001.
 Fragment thanks e0001.
+Fragment t0004_intro e0001.
+Fragment proud_of_me e0001.
+Fragment survey_was_fun e0001.
+Fragment get_ahead e0001.
+Fragment sounds_great e0001.
+Fragment sounds_great_2 e0001.
+Fragment confession_1 e0001.
+Fragment ned_shocked e0001.
+Fragment brad_panicking e0001.
+Fragment confession_2 e0001.
+Fragment with_concern e0001.
+Fragment talked_to_parents e0001.
+Fragment when_approval e0001.
+Fragment herb e0001.
+Fragment oregano e0001.
+Fragment irb e0001.
+Fragment confession_3 e0001.
+Fragment ned_dont_press e0001.
+Fragment bad_feeling e0001.
+Fragment brad_goes_along e0001.
 
 
 # Fragments
-Content entry: Welcome to <i>Academical!</i>
+Content entry: Welcome to Academical!
 Conditions  entry.
 Effects     entry.
 GoToChoice  entry outside.
@@ -88,14 +108,15 @@ ChoiceLabel outside: Stand outside of Ned's office
 GoToChoice outside bus.
 GoToChoice outside grill.
 GoToChoice outside play_off.
-Effects outside.
+Effects outside: [set Thread = entry]
 Conditions outside.
+CharacterTag outside ned expression angry.
 
 Content bus: Brad hesitates outside of the door. He is already late. The bus had taken an extra thirty minutes to get to campus this morning, and now he doesn’t have enough time to prepare as much as he would have liked.
 Speaker bus brad.
 ChoiceLabel bus: Take a moment to reflect
 GoToChoice bus enter.
-Effects bus.
+Effects bus: [set Thread = entry]
 Conditions bus.
 
 Content grill: Ned had a reputation for being passionate, but not unfair. He'd always been a bit tough on Brad, despite his outward kindness. He was sharp and was probably going to detect that Brad was hiding something. He should probably come clean about it: Ned will find out eventually. But… maybe he doesn’t need to. It's Ned's fault that the approval took so long to submit, and Brad is running out of time. Even if Ned did find out, he would understand, right…?
@@ -103,7 +124,7 @@ Speaker grill brad.
 ChoiceLabel grill: Think about the meeting with Ned
 GoToChoice grill enter.
 GoToChoice grill lament.
-Effects grill.
+Effects grill: [set Thread = entry]
 Conditions grill.
 
 Content play_off: Brad knows it’s better to come clean about his mistake, but the delay had jeopardized his progress. He could lay this down carefully to Ned, and tell him that he was on track, without elaborating on what that meant. Brad grips the doorknob a little tighter and makes a decision: he’ll tell the truth, just not the whole truth.
@@ -111,21 +132,21 @@ Speaker play_off brad.
 ChoiceLabel play_off: Think about playing off his mistake
 GoToChoice play_off enter.
 GoToChoice play_off lament.
-Effects play_off.
+Effects play_off: [set Thread = entry]
 Conditions play_off.
 
 Content enter: Ned clearly hadn’t missed Brad’s late arrival. No more stalling. Brad squares his shoulders and shuts the door behind himself.
 Speaker enter ned.
 ChoiceLabel enter: Enter the office
 GoToChoice enter youre_late.
-Effects enter.
+Effects enter: [set Thread = entry]
 Conditions enter.
 
 Content youre_late: "Ah, there you are!" Ned says cheerfully. "I was beginning to wonder if we'd canceled this week."
 Speaker youre_late ned.
 ChoiceLabel youre_late: Greet Ned
 GoToChoice youre_late no_worries.
-Effects youre_late.
+Effects youre_late: [set Thread = entry]
 Conditions youre_late.
 
 Content no_worries: "It's just us today," Ned smiles, "But I do have a time limit.I have a lecture right after this, so we’ll have to make this quick."
@@ -134,7 +155,7 @@ ChoiceLabel no_worries: Continue
 GoToChoice no_worries doubt.
 GoToChoice no_worries relief.
 GoToChoice no_worries reflect.
-Effects no_worries.
+Effects no_worries: [set Thread = entry]
 Conditions no_worries.
 
 Content doubt: 
@@ -145,7 +166,7 @@ Content doubt:
 Speaker doubt brad.
 ChoiceLabel doubt: Blame the buses
 GoToChoice doubt remind.
-Effects doubt: [set BradInsecurityToNed = BradInsecurityToNed + 1]
+Effects doubt: [set Thread = entry][set BradInsecurityToNed = BradInsecurityToNed + 1]
 Conditions doubt.
 
 Content relief: 
@@ -160,20 +181,20 @@ Content relief:
 Speaker relief brad.
 ChoiceLabel relief: Comment on the buses
 GoToChoice relief remind.
-Effects relief.
+Effects relief: [set Thread = entry]
 Conditions relief.
 
 Content reflect: Brad found out pretty soon after arriving at the lab that he had not been Ned's first choice. Ned's pick ended up at another university, and Brad had received the acceptance notice. Brad sometimes wonders if he’d been accepted because Ned just needed to reach a quota. Ned was hard on Brad, had him double and triple check his data, show up early to their lab meetings (to curb his tendency to arrive late), and was quick to correct his spoken mistakes. He was a brilliant researcher and Brad valued his attention, when he received it.
 Speaker reflect brad.
 ChoiceLabel reflect: Reflect on Brad’s relationship with Ned
 GoToChoice reflect remind.
-Effects reflect.
+Effects reflect: [set Thread = entry]
 Conditions reflect.
 
 Content remind: Ned interrupts Brad's train of thought. "Remind me where you're at again? Were you able to start on those surveys yet?" He pauses, and with some emphasis adds "Or are we still sitting on them?" He glances at his stack of notes, possibly annoyed. "I think we had decided we wanted to interview the children as well as their parents, is that right?"
 Speaker remind ned.
 ChoiceLabel remind: Ned interrupts his train of thought
-Effects remind: [now [PleasantriesOver e0001]]
+Effects remind: [now [PleasantriesOver e0001]][set Thread = entry]
 Conditions remind.
 
 Content lament: Brad dreaded the impending assumption that he hadn't gotten anything done this week. Sure, there had been weeks where he'd been more focused on his semi-pro hacky sack career, and Ned had noticed. But he'd been in the lab the past seven days! Surely this time he deserved some recognition.
@@ -183,32 +204,32 @@ GoToChoice lament youre_late.
 GoToChoice lament overworked.
 GoToChoice lament silence.
 GoToChoice lament subjects.
-Effects lament: [set BradInsecurityToNed = BradInsecurityToNed + 1]
+Effects lament: [set BradInsecurityToNed = BradInsecurityToNed + 1][set Thread = entry]
 Conditions lament.
 
 Content overworked: Some of Brad's friends were in a lab that encouraged a four day work week, versus the six days Brad works. How can someone who works even on the weekends still have a reputation of laziness?
 Speaker overworked brad.
 ChoiceLabel overworked: Think about reputation
 GoToChoice overworked youre_late.
-Effects overworked.
+Effects overworked: [set Thread = entry]
 Conditions overworked.
 
 Content silence: There is a moment of silence as Brad struggles to find something to say. The moment stretches to a few seconds. Ned looks on expectantly.
 Speaker silence brad.
 ChoiceLabel silence: Consider what to say
 GoToChoice silence youre_late.
-Effects silence.
+Effects silence: [set Thread = entry]
 Conditions silence.
 
 Content subjects: Brad thinks about the participant surveys he had conducted over the past week. He had been so proud of his progress, even though he wasn't technically supposed to start yet. He managed to find a way around the IRB requirements and he is quite pleased with all that he accomplished despite the challenges. Perhaps he will get the grant he's gunning for after all.
 Speaker subjects brad.
 ChoiceLabel subjects: Recognize the work he's done
 GoToChoice subjects youre_late.
-Effects subjects.
+Effects subjects: [set Thread = entry]
 Conditions subjects.
 
 Content t0002_start: Brad met with Ned weekly. They used a shared document to track - oh shoot - he forgot to update the document yesterday.
-Speaker t0002_start Brad.
+Speaker t0002_start brad.
 GoToChoice t0002_start slides.
 ChoiceCondition t0002_start t0002_start_c: [Different Thread agenda]
 Effects t0002_start: 
@@ -220,8 +241,8 @@ Conditions t0002_start: [PleasantriesOver e0001]
 Reusable t0002_start e0001.
 
 Content slides: Could he wing it? These meetings always followed the same format... they’d check in on his classes, on graduation, and talk about new happenings in the field.
-Speaker slides Brad.
-ChoiceLabel slides: Time to improvise
+Speaker slides brad.
+ChoiceLabel slides: Consider improvising
 GoToChoice slides phd.
 GoToChoice slides classes.
 GoToChoice slides department.
@@ -231,7 +252,7 @@ Effects slides: [set Thread = agenda]
 Conditions slides.
 
 Content phd: "I feel like I've made good progress on my degree - I can see the finish line! What should focus on next?" Brad asked, feigning confidence.
-Speaker phd Brad.
+Speaker phd brad.
 ChoiceLabel phd: Bring up PhD Progress
 GoToChoice phd phd_r.
 ChoiceCondition phd phd_c: [Different Thread agenda]
@@ -243,8 +264,8 @@ Content phd_r:
 	
 	Of course! Publishing was the key to career success. Brad wanted immediate funding too. But there wasn't an easy answer they could put down in a meeting.
 [end]
-Speaker phd_r Ned.
-ChoiceLabel phd_r: Recommend next steps
+Speaker phd_r ned.
+ChoiceLabel phd_r: Listen to Ned's recommendation
 GoToChoice phd_r what_else.
 ChoiceCondition phd_r phd_r_c: [Different Thread agenda]
 Effects phd_r: [set Thread = agenda]
@@ -255,7 +276,7 @@ Content classes:
 	
 	Brad’s friend in the stats department was teaching a class that would be an obvious pick.
 [end]
-Speaker classes Brad.
+Speaker classes brad.
 ChoiceLabel classes: Ask about auditing classes
 GoToChoice classes classes_r.
 ChoiceCondition classes classes_c: [Different Thread agenda]
@@ -267,7 +288,7 @@ Content classes_r:
 	
 	Ned was right - Brad already felt overworked and overwhelmed. A new project wasn’t going to help. Time to think of something else.
 [end]
-Speaker classes_r Ned.
+Speaker classes_r ned.
 ChoiceLabel classes_r: Listen to Ned’s opinion
 GoToChoice classes_r what_else.
 ChoiceCondition classes_r classes_r_c: [Different Thread agenda]
@@ -279,7 +300,7 @@ Content department:
 	
 	These meetings usually included gossip at some point, anyway. It couldn't hurt to broach it early.
 [end]
-Speaker department Brad.
+Speaker department brad.
 ChoiceLabel department: Bring up department drama
 GoToChoice department department_r.
 ChoiceCondition department department_c: [Different Thread agenda]
@@ -291,7 +312,7 @@ Content department_r:
 	
 	Ned was right, but the quick shutdown was a surprise. Was that somewhat of a slight?
 [end]
-Speaker department_r Ned.
+Speaker department_r ned.
 ChoiceLabel department_r: Ned Responds
 GoToChoice department_r what_else.
 ChoiceCondition department_r department_r_c: [Different Thread agenda]
@@ -306,7 +327,7 @@ Content admin:
 	
 	Brad could always count on some administrative business to be brought up during these check-ins.
 [end]
-Speaker admin Brad.
+Speaker admin brad.
 ChoiceLabel admin: Ask about admin work
 GoToChoice admin admin_r.
 ChoiceCondition admin admin_c: [Different Thread agenda]
@@ -320,7 +341,7 @@ Content admin_r:
 	
 	"How do you feel about it? What do we need to do next?"
 [end]
-Speaker admin_r Ned.
+Speaker admin_r ned.
 ChoiceLabel admin_r: Ned Responds
 GoToChoice admin_r stress.
 GoToChoice admin_r project.
@@ -329,7 +350,7 @@ Effects admin_r: [set Thread = agenda]
 Conditions admin_r.
 
 Content what_else: "What else is on the agenda for today?"
-Speaker what_else Ned.
+Speaker what_else ned.
 ChoiceLabel what_else: Continue
 GoToChoice what_else stress.
 GoToChoice what_else project.
@@ -342,7 +363,7 @@ Conditions what_else.
 Reusable what_else e0001.
 
 Content what_else_transition: "Thanks for bringing that up, Brad. We're a bit limited on time for today - let's stay on track and put that idea on next week’s agenda."
-Speaker what_else_transition Ned.
+Speaker what_else_transition ned.
 ChoiceLabel what_else_transition: Continue (Transition)
 ChoiceCondition what_else_transition what_else_transition_c: [Different Thread agenda]
 Effects what_else_transition: [set Thread = agenda]
@@ -354,8 +375,8 @@ Content stress:
 	
 	"It's great but the pressure is honestly a little high. It can be hard to cope."
 [end]
-Speaker stress Brad.
-ChoiceLabel stress: This project is exciting but...stressful!
+Speaker stress brad.
+ChoiceLabel stress: Though the project is exciting, it's stressful!
 GoToChoice stress need_success.
 ChoiceCondition stress stress_c: [Different Thread agenda]
 Effects stress: [set Thread = agenda]
@@ -363,7 +384,7 @@ Conditions stress.
 Reusable stress e0001.
 
 Content need_success: "I get it. It's easy to get overwhelmed, but try to take it one step at a time. For example, we can take one large task and break it down into many smaller tasks.That’ll make things easier! Let's try it. What are you working on right now?"
-Speaker need_success Ned.
+Speaker need_success ned.
 ChoiceLabel need_success: Offer advice
 GoToChoice need_success project_status.
 ChoiceCondition need_success need_success_c: [Different Thread agenda]
@@ -378,7 +399,7 @@ Content project:
 	
 	That being said, the research cycle was still a bit fuzzy. Brad was vaguely aware of some forms and deadlines coming up soon. There was also some committee he was supposed to talk to (what did Ned call it - "HERB"??).
 [end]
-Speaker project Brad.
+Speaker project brad.
 ChoiceLabel project: This project is an odyssey
 GoToChoice project survey_design.
 GoToChoice project approval.
@@ -389,7 +410,7 @@ Conditions project.
 Reusable project e0001.
 
 Content survey_design: DEMO END - TODO: THREAD ON SURVEYING
-Speaker survey_design Brad.
+Speaker survey_design brad.
 ChoiceLabel survey_design: Report on the finished survey
 ChoiceCondition survey_design survey_design_c: [Different Thread agenda]
 Effects survey_design: [set Thread = agenda]
@@ -397,21 +418,21 @@ Conditions survey_design.
 Reusable survey_design e0001.
 
 Content approval: DEMO END - TODO: THREAD ON IRB DEFINITION
-Speaker approval Brad.
+Speaker approval brad.
 ChoiceLabel approval: Ask about administrative tasks
 ChoiceCondition approval approval_c: [Different Thread agenda]
 Effects approval: [set Thread = agenda]
 Conditions approval.
 
 Content paper: DEMO END - TODO: THREAD ON WRITING
-Speaker paper Brad.
+Speaker paper brad.
 ChoiceLabel paper: See what Ned wants to write about
 ChoiceCondition paper paper_c: [Different Thread agenda]
 Effects paper: [set Thread = agenda]
 Conditions paper.
 Reusable paper e0001.
 
-Content t_start_fix: Brad begins to wonder how he could have possibly got this far behind. Could it be because he’s been putting off his work, hoping he could crunch at the last minute? Or could it be because his overwhelming stress deters him from even wanting to begin working again?
+Content t_start_fix: Brad wonders how he could have possibly gotten this far behind. Could it be his tendency to procrastinate? Or was it that he simply wasn't cut out to be a PhD candidate?
 Speaker t_start_fix brad.
 ChoiceLabel t_start_fix: Think about the reasons for his disorganization
 GoToChoice t_start_fix t0003_start.
@@ -420,7 +441,7 @@ Effects t_start_fix: [set Thread = insecurity]
 Conditions t_start_fix: [>= BradInsecurityToNed 3]
 Reusable t_start_fix e0001.
 
-Content t0003_start: “He really thinks that I don't have what it takes to be a researcher,” thinks Brad,  “Maybe he's right, and I shouldn’t have this position.”
+Content t0003_start: Brad thinks about the criticism received by Ned and wonders if he is the best fit for this position. Maybe Ned doesn't believe Brad has what it takes to be a researcher.
 Speaker t0003_start brad.
 ChoiceLabel t0003_start: Feel doubtful about skill level
 GoToChoice t0003_start stressed.
@@ -431,7 +452,7 @@ Effects t0003_start: [set Thread = insecurity]
 Conditions t0003_start: [>= BradInsecurityToNed 3]
 Reusable t0003_start e0001.
 
-Content stressed: “The problem,” Brad thought, “Is that I'm too overwhelmed by everything there is to do. On top of pounding out the survey design, I need also to conduct the surveys! Getting the IRB proposal took me weeks of working late nights. There's just too much riding on this…”
+Content stressed: The problem is there's too much to do. Not only does Brad need to create the survey, but he needs to conduct it as well. Getting the IRB proposal took weeks of him working late nights. There's just too much riding on this.
 Speaker stressed brad.
 ChoiceLabel stressed: Think about stressors
 GoToChoice stressed grants_funding.
@@ -439,7 +460,7 @@ ChoiceCondition stressed stressed_c: [Check agenda CurrentFragment]
 Effects stressed: [set Thread = insecurity]
 Conditions stressed: [Expanded t0003_start CurrentScene]
 
-Content different_today: “Compared to back then, it’s so different these days,” thought Brad. “The amount of money you need to do university-level research is mind-boggling.”
+Content different_today: Applying for grants and fellowships was really overwhelming. The amount of money you need to do university-level research is mind-boggling.
 Speaker different_today brad.
 ChoiceLabel different_today: Think about financial expectations
 GoToChoice different_today grants_funding.
@@ -447,9 +468,9 @@ ChoiceCondition different_today different_today_c: [Check agenda CurrentFragment
 Effects different_today: [set Thread = insecurity]
 Conditions different_today: [Expanded t0003_start CurrentScene]
 
-Content say_something: Brad decides that he should process these insecurities. Getting it out might help him feel better, but on the other hand, this may be a waste of time. Why not push through the stress and get on Ned's good side? Surely, all this progress will get him some points with his advisor.
+Content say_something: Brad thinks about his feelings of inadequacy, and whether he should bring it up with Ned. Confiding in Ned might make him feel better, but on the other hand, it might make Ned more critical of Brad. Maybe Brad should ignore these feelings and try to stay on Ned's good side. Surely, focusing this meeting on all the progress he's made so far will get him some points with his advisor.
 Speaker say_something brad.
-ChoiceLabel say_something: Contemplate feelings
+ChoiceLabel say_something: Reflect on insecurities
 GoToChoice say_something exit_bad.
 GoToChoice say_something dissapointed_feeling.
 ChoiceCondition say_something say_something_c: [Check agenda CurrentFragment]
@@ -468,9 +489,9 @@ Effects exit_bad: [set Thread = insecurity]
 Conditions exit_bad: [Expanded t0003_start CurrentScene]
 
 Content grants_funding: 
-	Brad's nerves beginning to settle in. He wants to tell Ned about how stressed he is with the pressure of this research but recognizes the amount of time and money that has been put into this. Between the grants and the funding, Brad thinks about the thousands of dollars spent so that he can conduct this research. He needs to show that the resources given to him are being put to good use. Brad takes out papers and begins to display his work. 
+	Brad wants to tell Ned about how stressed he is, but then he thinks about he thousands of dollars he's received to conduct this research. He needs to show that the money is being put to good use. Brad's hands shake as he takes his papers and begins to display his work. 
 	
-	Ned leans back in his chair, giving Brad a look of concern. Brad realizes the slight tremble in his voice as well as the even less subtle shake in his hand. As he begins to change topics, Ned interrupts and asks “Brad, are you alright? You seem a bit frazzled.”
+	Ned leans back in his chair, giving Brad a look of concern. Ned asks “Brad, are you alright? You seem a bit frazzled.”
 [end]
 Speaker grants_funding brad.
 ChoiceLabel grants_funding: Focus on funding
@@ -480,20 +501,20 @@ Effects grants_funding: [set Thread = insecurity]
 Conditions grants_funding: [Expanded t0003_start CurrentScene]
 
 Content dissapointed_feeling: 
-	Brad's nerves beginning to settle in.  "I just don't think I'm handling all of this well," Brad confesses. "I feel like you’re disappointed in me with the way I'm working on these responsibilities."
+	Brad takes a deep breath.  "I just don't think I'm handling any of this well," he confesses. "I feel like you’re disappointed in me with the way I'm not —"
 	
-	Ned interrupts, holding up a warning index finger, "Before you start doubting yourself, we need to focus on the task at hand. You've managed to progress this far, which you should be proud of. People handle pressure differently, Brad. These insecurities you're feeling, they're not an indication of your research abilities, they're merely a part of the process. Plus, you've made considerable progress, so why not see it through? Who knows? You might even impress yourself."
+	Ned quickly interrupts, "You've managed to get this far, and you should be proud of yourself. These insecurities you're feeling, they're not an indication of your abilities, they're merely a part of the process."
 [end]
 Speaker dissapointed_feeling ned.
-ChoiceLabel dissapointed_feeling: Vocalize about feeling disappointment
+ChoiceLabel dissapointed_feeling: Vocalize fear of disappointing Ned
 GoToChoice dissapointed_feeling frazzled.
 ChoiceCondition dissapointed_feeling dissapointed_feeling_c: [Check agenda CurrentFragment]
 Effects dissapointed_feeling: [set Thread = insecurity]
 Conditions dissapointed_feeling: [Expanded t0003_start CurrentScene]
 
 Content frazzled: 
-	“Yeah,” says Brad, “I’m just a bit stressed, that’s all!” Ned gives one last look of concern before Brad continues to explain his findings. When he finishes, Ned continues to study him before speaking. "You've clearly put a lot of work into this Brad," he says, pausing for a long moment. Brad feels as though his insecurties are confirmed by the unspoken criticism, but is determined not to show his fear. “Everything look great Brad,” says Ned, “Keep up the good work.” 
-	As he walks out of Ned's office, the unheard criticism lingers in the back of his mind. Was Ned disappointed in his work but didn’t want to hurt his feelings? Is this actually good work? Or is he just barely making the cut?
+	“Yeah, you're right,” says Brad, feigning confidence. “I’m just a bit stressed, that’s all!” Ned gives Brad a look of concern, then says, "You've clearly put a lot of work into this and everything look great so far. Keep up the good work.”
+	As Brad walks out of Ned's office, the lack of any sort of feedback or criticism lingers in the back of his mind. Was Ned secretly disappointed and trying not to hurt Brad's feelings? Is this actually good work? Or is he just barely making the cut?
 [end]
 Speaker frazzled ned.
 ChoiceLabel frazzled: Feel determined
@@ -512,7 +533,7 @@ Conditions really_hard: [Expanded t0003_start CurrentScene]
 
 Content apologizes: Brad anxiously sits across the desk from Professor Ned, shuffling through his latest research notes. His insecurities are overwhelming as he prepares his thoughts. Ned glances up from his paperwork with a look of confusion as he set down his pen. "Brad, you have been doing an excellent job," he says calmly, "I’m sorry if my judgement was too harsh, but trust me when I say that I can see the amount of time and work you have put into this."
 Speaker apologizes ned.
-ChoiceLabel apologizes: Apologize
+ChoiceLabel apologizes: Await Ned's response
 GoToChoice apologizes accept_apology.
 GoToChoice apologizes doubt_apology.
 ChoiceCondition apologizes apologizes_c: [Check agenda CurrentFragment]
@@ -520,13 +541,15 @@ Effects apologizes: [set Thread = insecurity]
 Conditions apologizes: [Expanded t0003_start CurrentScene]
 
 Content accept_apology: Hearing these words of affirmation relieves some stress of off Brad’s shoulders. Knowing that his work is being, not only recognized, but praised allows him to feel less pressure from judgement. Brad now knows that he is on the right track with his research, and can reference back to his own work to continue forward.
+Speaker accept_apology brad.
 ChoiceLabel accept_apology: Accept the apology
 GoToChoice accept_apology thanks.
 ChoiceCondition accept_apology accept_apology_c: [Check agenda CurrentFragment]
 Effects accept_apology: [set Thread = insecurity]
 Conditions accept_apology: [Expanded t0003_start CurrentScene]
 
-Content doubt_apology: Brad wants to accept these words of affirmation, but something in the back of his head makes him think that Ned is lying. If Ned told him his work wasn’t good enough, he would have to go back and fix it, wasting even more time when there is much more to do. Brad believes that Ned is just telling him he’s doing a good job so that he doesn’t waste more time. Now, not only does Brad believe his work is not good enough, but he is unsure of how he can improve moving forward.
+Content doubt_apology: Brad wants to accept Ned's kind remarks, but the voice in the back of his head tells him that Ned is lying. If Ned was honest and said his work was inadequate, Brad would have to spend time fixing it, precious time they did not have. Maybe Ned is just telling him he’s doing a good job so that he doesn’t waste even more time than he already has.
+Speaker doubt_apology brad.
 ChoiceLabel doubt_apology: Doubt the apology
 GoToChoice doubt_apology thanks.
 ChoiceCondition doubt_apology doubt_apology_c: [Check agenda CurrentFragment]
@@ -534,10 +557,184 @@ Effects doubt_apology: [set Thread = insecurity]
 Conditions doubt_apology: [Expanded t0003_start CurrentScene]
 
 Content thanks: "Thanks," Brad says. There is a moment of silence as they look for what to say next. Ned continues to look through the paperwork before saying "I'm glad you spoke to me about this, but now let's get back to the task at hand. Tell me, how are the surveys going? "
+Speaker thanks brad.
 ChoiceLabel thanks: Back to business
 ChoiceCondition thanks thanks_c: [Check agenda CurrentFragment]
 Effects thanks: [set Thread = insecurity]
 Conditions thanks: [Expanded t0003_start CurrentScene]
+
+Content t0004_intro: Brad feels like he’s been letting Ned down with the project as of late. If he talks about how well things are going with the project, maybe Ned will finally be proud of Brad and won’t regret his decision of being the advisor for this study.
+GoToChoice t0004_intro proud_of_me.
+GoToChoice t0004_intro survey_was_fun.
+GoToChoice t0004_intro get_ahead.
+Effects t0004_intro: [set Thread = irb]
+Conditions t0004_intro.
+
+Content proud_of_me: “I’ve gotten a lot of good feedback from some of the participants,” Brad informs Ned.
+Speaker proud_of_me brad.
+ChoiceLabel proud_of_me: Talk about how well the project is going
+GoToChoice proud_of_me ned_shocked.
+Effects proud_of_me: [set Thread = irb]
+Conditions proud_of_me.
+
+Content survey_was_fun: Since he’s been getting ahead in the project, Brad decides that he’ll mention the work he’s done. He pipes up, “Well, I’ve had a lot of fun discussing the survey questions with the parents.”
+Speaker survey_was_fun brad.
+ChoiceLabel survey_was_fun: Talk about the survey
+GoToChoice survey_was_fun ned_shocked.
+Effects survey_was_fun: [set Thread = irb]
+Conditions survey_was_fun.
+
+Content get_ahead: 
+	Knowing that he’s had a reputation for getting stuff done at the last minute, Brad decides to mention his most recent research endeavor to Ned. This’ll definitely help him be in Ned’s favor.
+	
+	“Well, I’ve actually been trying to get ahead in the research project,” Brad tries to say nonchalantly.
+[end]
+Speaker get_ahead brad.
+ChoiceLabel get_ahead: Talk about progress on the project
+GoToChoice get_ahead sounds_great.
+Effects get_ahead: [set Thread = irb]
+Conditions get_ahead.
+
+Content sounds_great: Brad notices Ned sitting up a little straighter in his chair. He seems a lot more interested in the conversation now.
+Speaker sounds_great ned.
+ChoiceLabel sounds_great: Continue
+GoToChoice sounds_great sounds_great_2.
+Effects sounds_great: [set Thread = irb]
+Conditions sounds_great.
+
+Content sounds_great_2: “Wow Brad, that’s amazing! I’d like to know more about what you did.”
+Speaker sounds_great_2 ned.
+ChoiceLabel sounds_great_2: Continue
+GoToChoice sounds_great_2 confession_1.
+Effects sounds_great_2.
+Conditions sounds_great_2.
+
+Content confession_1: Brad clears his throat, “Well, I kinda conducted one of the surveys.”
+Speaker confession_1 brad.
+ChoiceLabel confession_1: Tell Ned about the survey
+GoToChoice confession_1 ned_shocked.
+Effects confession_1: [set Thread = irb]
+Conditions confession_1.
+
+Content ned_shocked: “I’m sorry? Could you clarify what you mean by that? What, exactly, did you do?”
+Speaker ned_shocked ned.
+ChoiceLabel ned_shocked: Continue
+GoToChoice ned_shocked brad_panicking.
+Effects ned_shocked: [set Thread = irb]
+Conditions ned_shocked.
+
+Content brad_panicking: Ned seems pissed. Ned had mentioned in the past that Brad needed to run the surveys by him before sending them to participants. But Brad had just wanted to get ahead.
+Speaker brad_panicking brad.
+ChoiceLabel brad_panicking: Uh oh.
+GoToChoice brad_panicking concession_2.
+GoToChoice brad_panicking talked_to_parents.
+Effects brad_panicking: [set Thread = irb]
+Conditions brad_panicking.
+
+Content confession_2: 
+	It’s better to own up to his mistake and come clean.
+	
+	“I actually sent out a pilot survey to see if there was any interest in participating in our research. The parents were so excited and kept asking me about when it was gonna happen that I just interviewed the parents and sent the survey out to them and their kids.”
+	
+	Brad pauses and waits to see what Ned has to say.
+[end]
+Speaker confession_2 brad.
+ChoiceLabel confession_2: Tell Ned the truth
+GoToChoice confession_2 with_concern.
+Effects confession_2: [set Thread = irb]
+Conditions confession_2.
+
+Content with_concern: "Brad, you know you’re technically not supposed to start interviews without herb approval."
+Speaker with_concern ned.
+ChoiceLabel with_concern: Ned’s poker face is hard to read
+GoToChoice with_concern herb.
+Effects with_concern: [set Thread = irb]
+Conditions with_concern.
+
+Content talked_to_parents: “Don’t worry Ned, I didn’t do anything major. I was just casually talking to some parents and our study coincidentally came up. They seemed interested so I sent out a survey to see who would want to participate in our study.”
+Speaker talked_to_parents brad.
+ChoiceLabel talked_to_parents: Brush it off
+GoToChoice talked_to_parents when_approval.
+Effects talked_to_parents: [set Thread = irb]
+Conditions talked_to_parents.
+
+Content when_approval: 
+	Ned furrows his eyebrows.
+	
+	“I don’t seem to recall you getting herb approval,” he says.
+[end]
+Speaker when_approval ned.
+ChoiceLabel when_approval: Continue
+GoToChoice when_approval herb.
+Effects when_approval: [set Thread = irb]
+Conditions when_approval.
+
+Content herb: 
+	Brad is confused. Who is Herb and why does Ned keep bringing them up?
+	
+	“Who is this Herb you keep mentioning, and why do we need his approval?”
+[end]
+Speaker herb brad.
+ChoiceLabel herb: Ask who Herb is
+GoToChoice herb irb.
+GoToChoice herb oregano.
+Effects herb: [set Thread = irb]
+Conditions herb.
+
+Content oregano: 
+	Come to think of it, Brad did see Ned going ham with the oregano shaker at the local pizzeria in their college town. Maybe that’s what Ned is talking about. 
+	
+	 “Could it be that you might be talking about…seasonings? Like oregano?” Brad asks with confusion.
+[end]
+Speaker oregano brad.
+ChoiceLabel oregano: Does Ned have a thing for herbs?
+GoToChoice oregano irb.
+Effects oregano: [set Thread = irb]
+Conditions oregano.
+
+Content irb: 
+	“Oh, sorry,” Ned half chortles. “I pronounce it as “herb” but I’m actually referring to the IRB. It’s an acronym, I-R-B – it stands for Institutional Review Board.” 
+	
+	Ned fumbles for some papers.
+	
+	“The IRB reviews research studies to ensure that they comply with applicable regulations, meet commonly accepted ethical standards, follow institutional policies, and adequately protect research participants.”
+[end]
+Speaker irb ned.
+ChoiceLabel irb: Continue
+GoToChoice irb confession_3.
+Effects irb: [set Thread = irb]
+Conditions irb.
+
+Content confession_3: “Oh…the thing is, I didn’t get approval yet.” Brad sheepishly looks down at his scuffed-up shoes.
+Speaker confession_3 brad.
+ChoiceLabel confession_3: Continue
+GoToChoice confession_3 ned_dont_press.
+Effects confession_3: [set Thread = irb]
+Conditions confession_3.
+
+Content ned_dont_press: "No doubt the IRB is a slow process." Ned takes a sip of coffee and looks thoughfully out the window.
+Speaker ned_dont_press ned.
+ChoiceLabel ned_dont_press: Continue
+GoToChoice ned_dont_press bad_feeling.
+GoToChoice ned_dont_press brad_goes_along.
+Effects ned_dont_press: [set Thread = irb]
+Conditions ned_dont_press.
+
+Content bad_feeling: 
+	Ned didn’t really make it clear on whether it is okay to keep working on the project or if he should wait. But now that Brad knows what the IRB is, he feels guilty about conducting his survey. 
+	
+	“Hey Ned, thanks for explaining the IRB to me. Based on what you said, I think I’ll pause the study for now and wait until it gets approved before moving forward with the project.”
+[end]
+Speaker bad_feeling brad.
+ChoiceLabel bad_feeling: Maybe continuing the surveys is a bad idea
+Effects bad_feeling: [set Thread = irb]
+Conditions bad_feeling.
+
+Content brad_goes_along: Ned didn’t press it, so it must not be a big deal. If Ned isn’t concerned about the IRB approval, then Brad doesn’t need to be either.
+Speaker brad_goes_along brad.
+ChoiceLabel brad_goes_along: It probably doesn’t matter that much
+Effects brad_goes_along: [set Thread = irb]
+Conditions brad_goes_along.
 
 
 
