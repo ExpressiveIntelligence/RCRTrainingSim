@@ -21,6 +21,8 @@ import re, sys
 sys.path.append("../frag_utils/")
 from frag_utils import step_template
 
+write_step_to_sheet = True # if true, write the step code to the google sheet
+
 sheet_id = "10d4UvR6uY8BSDfV4k_nIjLiSm5O7sRez8NCbchAtk4s"
 threads = ["T0001", "T0002", "T0003", "T0004"]
 
@@ -46,7 +48,7 @@ def read_google_sheet(tab_name):
     data = worksheet.get_all_values()
     df = pd.DataFrame(data[1:], columns=data[0])
     
-    return df
+    return df, worksheet
 
 def clean_cell(cell):
     # if the type is a string
@@ -111,9 +113,6 @@ def create_frag(row):
     if not row.id:
         return None, None
     frag_name = row.id
-    
-    if(row.step_code):
-        return frag_name, row.step_code
 
     code = ""
     if row.content:
@@ -152,16 +151,31 @@ def create_frag(row):
 
 # Read the Google Sheets data and print it
 df = pd.DataFrame()
+worksheets = {}
 for thread in threads:
     tab_name = f'{thread}_Fragments'
-    thread_df = read_google_sheet(tab_name)
+    thread_df, thread_worksheet = read_google_sheet(tab_name)
+
+    # add a column with the current thread name
+    thread_df['thread'] = thread
+
+    worksheets[thread] = thread_worksheet
+
+    thread_df['step_row_index'] = thread_df.index + 2
+
+    # find the column with the step code
+    for i, col in enumerate(thread_df.columns):
+        if 'Step Code' in col:
+            col_index =  thread_worksheet.cell(1, i + 1).value
+            thread_df['step_col_index'] = i + 1
+            break
+    
     # add the thread to the running df
     df = pd.concat([df, thread_df], ignore_index=True)
 
 # snake case the labels in pandas
 # clean the rows
 df.columns = df.columns.str.replace(' ', '_').str.lower()
-# print(df.keys())
 
 # clean the rows
 df = df.apply(clean_row, axis=1)
@@ -181,6 +195,7 @@ GoToChoice  entry {first_frag_name}.\n
 frag_ids = set()
 for index, row in df.iterrows():
     frag_id, frag_code = create_frag(row)
+
     if frag_id:
         fragment_declarations += f"Fragment {frag_id} {scene}.\n"
         if frag_id in frag_ids:
@@ -188,6 +203,13 @@ for index, row in df.iterrows():
         frag_ids.add(frag_id)
     if frag_code:
         fragments += frag_code
+        thread = row.thread
+        print('writing', thread, index, frag_code)
+        worksheet = worksheets[thread]
+        
+        if write_step_to_sheet:
+            worksheet.update_cell(row.step_row_index, row.step_col_index, frag_code)
+
     
 
 code = fragment_declarations + "\n\n" + fragments

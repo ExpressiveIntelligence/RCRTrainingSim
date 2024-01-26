@@ -94,13 +94,14 @@ Fragment confession_3 e0001.
 Fragment ned_dont_press e0001.
 Fragment bad_feeling e0001.
 Fragment brad_goes_along e0001.
-
+Fragment new e0001.
 
 # Fragments
 Content entry: Welcome to Academical!
 Conditions  entry.
-Effects     entry.
+Effects     entry: [OpenCheckpoint new_thread new] 
 GoToChoice  entry outside.
+# GoToChoice entry new.
 
 Content outside: Brad reaches the door of his advisor's office and pauses. He wipes the sweat from underneath his glasses and takes a deep breath, trying to calm his racing heart. Could he even come clean? Hoping he had the willpower for the impending conversation, he raises his hand to the door.
 Speaker outside brad.
@@ -108,14 +109,25 @@ ChoiceLabel outside: Stand outside of Ned's office
 GoToChoice outside bus.
 GoToChoice outside grill.
 GoToChoice outside play_off.
-Effects outside: [set Thread = entry]
+Effects outside: [set Thread = entry] [OpenCheckpoint entry outside]
 Conditions outside.
+ChoiceCondition outside outside_dfdfa: [AvailableCheckpoint entry] 
+Reusable outside e0001.
+
+Content new: This is an asisde
+Speaker new brad.
+ChoiceLabel new: Aside
+ChoiceCondition new new_asdf: [AvailableCheckpoint new_thread] 
+Effects new: [set Thread = new_thread]
+Conditions new.
+Reusable new e0001.
 
 Content bus: Brad hesitates outside of the door. He is already late. The bus had taken an extra thirty minutes to get to campus this morning, and now he doesn’t have enough time to prepare as much as he would have liked.
 Speaker bus brad.
 ChoiceLabel bus: Take a moment to reflect
 GoToChoice bus enter.
 Effects bus: [set Thread = entry]
+ChoiceCondition outside outside_dfdfa: [AvailableCheckpoint entry]
 Conditions bus: [= Thread entry]
 
 Content grill: Ned had a reputation for being passionate, but not unfair. He'd always been a bit tough on Brad, despite his outward kindness. He was sharp and was probably going to detect that Brad was hiding something. He should probably come clean about it: Ned will find out eventually. But… maybe he doesn’t need to. It's Ned's fault that the approval took so long to submit, and Brad is running out of time. Even if Ned did find out, he would understand, right…?
@@ -123,6 +135,7 @@ Speaker grill brad.
 ChoiceLabel grill: Think about the meeting with Ned
 GoToChoice grill enter.
 GoToChoice grill lament.
+ChoiceCondition grill outside_dfdfa: [AvailableCheckpoint entry]
 Effects grill: [set Thread = entry]
 Conditions grill: [= Thread entry]
 
@@ -131,6 +144,7 @@ Speaker play_off brad.
 ChoiceLabel play_off: Think about playing off his mistake
 GoToChoice play_off enter.
 GoToChoice play_off lament.
+ChoiceCondition play_off playdfdfa: [AvailableCheckpoint entry]
 Effects play_off: [set Thread = entry]
 Conditions play_off: [= Thread entry]
 
@@ -138,6 +152,7 @@ Content enter: Ned clearly hadn’t missed Brad’s late arrival. No more stalli
 Speaker enter ned.
 ChoiceLabel enter: Enter the office
 GoToChoice enter youre_late.
+ChoiceCondition enter enter_dfdfa: [AvailableCheckpoint entry]
 Effects enter: [set Thread = entry]
 Conditions enter: [= Thread entry]
 
@@ -145,6 +160,7 @@ Content youre_late: "Ah, there you are!" Ned says cheerfully. "I was beginning t
 Speaker youre_late ned.
 ChoiceLabel youre_late: Greet Ned
 GoToChoice youre_late no_worries.
+ChoiceCondition youre_late outside_dfdfa: [AvailableCheckpoint entry]
 Effects youre_late: [set Thread = entry]
 Conditions youre_late: [= Thread entry]
 
@@ -234,7 +250,6 @@ ChoiceCondition t0002_start t0002_start_c: [Different Thread agenda]
 Effects t0002_start: 
 	[set BradInsecurityToNed = BradInsecurityToNed + 1]
 	[set Thread = agenda] 
-	[now [Check agenda t0002_start]]
 [end]
 Conditions t0002_start: [PleasantriesOver e0001]
 Reusable t0002_start e0001.
@@ -366,7 +381,6 @@ GoToChoice what_else project.
 ChoiceCondition what_else what_else_c: [Different Thread agenda]
 Effects what_else: 
 	[set Thread = agenda]
-	[now [Check agenda what_else]]
 [end]
 Conditions what_else.
 Reusable what_else e0001.

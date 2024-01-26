@@ -93,6 +93,7 @@ ApplyEffects ?frag:
 TestConditions ?frag:
     [Fragment ?frag CurrentScene]
     [Conditions ?frag]
+    [set LastConditionsChecked = ?frag]
 [end]
 
 # TODO unused 
@@ -139,7 +140,7 @@ AvailableNextFragment ?source_frag [?target_frag ?choice_id]:
 [end]
 AvailableNextFragment ?source_frag [?target_frag direct]:
     # Get a top level fragment (a fragment with no choice label)
-    # DODO do we need the notany checks?
+    # TODO do we need the notany checks?
     [AvailableTopLevelFragment ?target_frag]
 [end]
 

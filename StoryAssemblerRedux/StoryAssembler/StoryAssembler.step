@@ -12,7 +12,8 @@ Initialize ?scene:
 [end]
 
 InitializeSceneGlobals ?scene:
-    [set CurrentFragment = root]
+    [set CurrentFragment = root]        # The current fragment the player is on
+    [set LastConditionsChecked = root]  # The most recent fragment that has had its conditions checked. Used for indicating the current fragment during a search
     [Scene ?scene]
     [set CurrentScene = ?scene]
     [InitScene CurrentScene] # Calls the scene's init task
