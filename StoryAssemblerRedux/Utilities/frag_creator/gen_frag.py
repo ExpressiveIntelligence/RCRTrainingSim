@@ -15,7 +15,7 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
-import re, sys
+import re, sys, time
 
 # import the file "../frag_utils/frag_utils.py"
 sys.path.append("../frag_utils/")
@@ -114,6 +114,8 @@ def create_frag(row):
         return None, None
     frag_name = row.id
 
+    print(frag_name)
+
     code = ""
     if row.content:
         content = multi(row.content)
@@ -192,6 +194,18 @@ Effects     entry.
 GoToChoice  entry {first_frag_name}.\n
 """
 
+def update_cell(row, col, value):
+    backoff = 2
+    while True:
+        try:
+            worksheet.update_cell(row, col, value)
+            return
+        except gspread.exceptions.APIError:
+            print('API error, trying again in', backoff, 'seconds')
+            time.sleep(backoff)
+            backoff *= 2
+
+
 frag_ids = set()
 for index, row in df.iterrows():
     frag_id, frag_code = create_frag(row)
@@ -208,7 +222,7 @@ for index, row in df.iterrows():
         worksheet = worksheets[thread]
         
         if write_step_to_sheet:
-            worksheet.update_cell(row.step_row_index, row.step_col_index, frag_code)
+            update_cell(row.step_row_index, row.step_col_index, frag_code)
 
     
 

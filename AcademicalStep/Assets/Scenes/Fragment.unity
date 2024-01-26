@@ -712,6 +712,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   storyAssemblerPath: ../StoryAssemblerRedux/StoryAssembler
+  m_stepFiles: []
   optionalScenePath: Assets/Resources/Academical/E0001.step
   sceneName: e0001
   gameSession: {fileID: 1354342498}
