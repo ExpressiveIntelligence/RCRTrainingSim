@@ -1,16 +1,19 @@
-# This utility script is 
+# This utility script is will generate a .step file from a google sheet.
 
+# Setup (This is probably already done)
 # 1. Go to the Google Developers Console: https://console.developers.google.com/
 # 2. Create a new project or select an existing one.
 # 3. Enable the Google Sheets API for your project.
 # 4. Create credentials for your project. You'll get a JSON file which you should save securely, as it contains sensitive information.
 
-
-# To run th3e script:
+# To run the script
 # 1. Install the python requirements found in the requirements.txt file
 #   pip install -r requirements.txt
 # 2. run the script:
-#   python gen_frag.py
+#        python gen_frag.py; 
+# 3. Copy the generated step code into the unity project
+#    cp GeneratedScene.step ../../../AcademicalStep/Assets/Resources/Academical/E0001.step
+# 4. In Unity, open StepManager and ensure that 'Optional Scene Path' matches the above path
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -24,7 +27,7 @@ from frag_utils import step_template
 write_step_to_sheet = True # if true, write the step code to the google sheet
 
 sheet_id = "10d4UvR6uY8BSDfV4k_nIjLiSm5O7sRez8NCbchAtk4s"
-threads = ["T0001", "T0002", "T0003", "T0004"]
+threads = ["T0001", "T0002", "T0003", "T0004", "T0006", "T0007"]
 
 scene = "e0001" # The scene ID to use in the .step file (casing matters)
 
@@ -76,7 +79,7 @@ def clean_row(row):
     return row
 
 def split_data(string_to_split):
-    return re.split(r'[ ,]+', string_to_split)
+    return re.split(r'[ ,\n]+', string_to_split)
 
 def split_task_call(string_to_split):
     # [this is a task] [another] -> ['[this is a task]', '[another]']
@@ -114,7 +117,10 @@ def create_frag(row):
         return None, None
     frag_name = row.id
 
-    print(frag_name)
+    row.fillna('', inplace=True)
+
+    if row.code_override:
+        return frag_name, row.code_override + "\n\n"
 
     code = ""
     if row.content:
@@ -144,8 +150,9 @@ def create_frag(row):
     tags = row.filter(regex="charactertag").dropna()
     if tags.any():
         for tag_name, expression in tags.items():
-            char = tag_name.split("charactertag")[1]
-            code += f"CharacterTag {row.id} {char} expression {expression}.\n"
+            if expression:
+                char = tag_name.split("charactertag")[1]
+                code += f"CharacterTag {row.id} {char} expression {expression}.\n"
 
     code += "\n"
 
@@ -155,6 +162,7 @@ def create_frag(row):
 df = pd.DataFrame()
 worksheets = {}
 for thread in threads:
+    print('reading', thread)
     tab_name = f'{thread}_Fragments'
     thread_df, thread_worksheet = read_google_sheet(tab_name)
 
@@ -174,6 +182,11 @@ for thread in threads:
     
     # add the thread to the running df
     df = pd.concat([df, thread_df], ignore_index=True)
+
+for thread in threads:
+    # delete the written text
+    sys.stdout.write("\033[F")
+    sys.stdout.write("\033[K")
 
 # snake case the labels in pandas
 # clean the rows
@@ -195,37 +208,38 @@ GoToChoice  entry {first_frag_name}.\n
 """
 
 def update_cell(row, col, value):
-    backoff = 2
+    backoff = 4
     while True:
         try:
             worksheet.update_cell(row, col, value)
             return
         except gspread.exceptions.APIError:
-            print('API error, trying again in', backoff, 'seconds')
+            print('API error while writing, trying again in', backoff, 'seconds')
             time.sleep(backoff)
             backoff *= 2
+            backoff = min(backoff, 32)
 
 
 frag_ids = set()
 for index, row in df.iterrows():
     frag_id, frag_code = create_frag(row)
-
     if frag_id:
+        print("generating code for", frag_id)
+
         fragment_declarations += f"Fragment {frag_id} {scene}.\n"
         if frag_id in frag_ids:
             raise Exception(f"Duplicate fragment ID: {frag_id}")
         frag_ids.add(frag_id)
+
     if frag_code:
         fragments += frag_code
-        thread = row.thread
-        print('writing', thread, index, frag_code)
-        worksheet = worksheets[thread]
         
         if write_step_to_sheet:
+            print('writing to sheet', end="\r")
+            thread = row.thread
+            worksheet = worksheets[thread]
             update_cell(row.step_row_index, row.step_col_index, frag_code)
-
     
-
 code = fragment_declarations + "\n\n" + fragments
 
 # predicates = "# No Predicates"
@@ -267,3 +281,8 @@ with open(file_name, "w") as f:
     f.close()
 
 print(f"Successfully wrote to {file_name}")
+
+print("Visualizing the graph...")
+import thread_vis
+thread_vis.assemble(file_name)
+print("Done.")

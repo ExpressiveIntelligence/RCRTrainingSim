@@ -99,7 +99,7 @@ Fragment new e0001.
 # Fragments
 Content entry: Welcome to Academical!
 Conditions  entry.
-Effects     entry: [OpenCheckpoint new_thread new] 
+Effects     entry: [OpenCheckpoint new_thread new]
 GoToChoice  entry outside.
 # GoToChoice entry new.
 
