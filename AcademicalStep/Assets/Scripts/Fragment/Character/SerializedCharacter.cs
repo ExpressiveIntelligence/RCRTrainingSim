@@ -11,5 +11,5 @@ public class SerializedCharacter
     public string name;
     public int x;
     public int y;
-    public Dictionary<string, string> tags;
+    public Dictionary<string, string> tags; 
 }

@@ -10,7 +10,9 @@
 # 1. Install the python requirements found in the requirements.txt file
 #   pip install -r requirements.txt
 # 2. run the script:
-#        python gen_frag.py; 
+#       python gen_frag.py
+# or
+#       python generate_scene.py --no_write # to not write the generated step code to the google sheet
 # 3. Copy the generated step code into the unity project
 #    cp GeneratedScene.step ../../../AcademicalStep/Assets/Resources/Academical/E0001.step
 # 4. In Unity, open StepManager and ensure that 'Optional Scene Path' matches the above path
@@ -18,16 +20,27 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
+import argparse
 import re, sys, time
 
 # import the file "../frag_utils/frag_utils.py"
 sys.path.append("../frag_utils/")
 from frag_utils import step_template
 
-write_step_to_sheet = True # if true, write the step code to the google sheet
-
 sheet_id = "10d4UvR6uY8BSDfV4k_nIjLiSm5O7sRez8NCbchAtk4s"
 threads = ["T0001", "T0002", "T0003", "T0004", "T0006", "T0007"]
+
+parser = argparse.ArgumentParser(description="Write code to a specified file and visualize the graph.")
+
+parser.add_argument("file_name", nargs='?', default="GeneratedScene.step",
+                    help="Name of the file to write the code. Default is GeneratedScene.step.")
+
+parser.add_argument("--no_write", action="store_true",
+                    help="Include this flag to not write step to sheet. Default is False.")
+
+args = parser.parse_args()
+file_name = args.file_name
+write_step_to_sheet = not args.no_write # if true, write the step code to the google sheet
 
 scene = "e0001" # The scene ID to use in the .step file (casing matters)
 
@@ -233,12 +246,10 @@ for index, row in df.iterrows():
 
     if frag_code:
         fragments += frag_code
-        
-        if write_step_to_sheet:
-            print('writing to sheet', end="\r")
-            thread = row.thread
-            worksheet = worksheets[thread]
-            update_cell(row.step_row_index, row.step_col_index, frag_code)
+
+        # add a column to the dataframe with the generated fragment code
+        df.at[index, 'step_code'] = frag_code
+
     
 code = fragment_declarations + "\n\n" + fragments
 
@@ -250,7 +261,8 @@ fluent Check ?thread ?frag."""
 # initial_state = "# No Initial State"
 initial_state = multi("""[Not [PleasantriesOver e0001]]
 [set BradInsecurityToNed = 0]
-[set Thread = none]""")
+[set Thread = none]
+[set Learnings = empty]""")
 
 characters = f"""Character brad {scene} |Brad|.
 CharacterAsset brad {scene} |./brad.png|.
@@ -265,20 +277,65 @@ Want {scene} insecurity.
 Want {scene} justice.
 Want {scene} beneficence.
 Want {scene} justice.
-Want {scene} irb."""
+Want {scene} irb.
+Want {scene} pedagogy_1.
+Want {scene} pedagogy_2.
+Want {scene} pedagogy_3.
+Want {scene} pedagogy_4.
+Want {scene} pedagogy_5.
+Want {scene} pedagogy_6.
+Want {scene} pedagogy_7.
+Want {scene} pedagogy_8.
+Want {scene} pedagogy_9.
+Want {scene} pedagogy_10.
+Want {scene} pedagogy_11.
+Want {scene} pedagogy_12.
+Want {scene} pedagogy_13.
+Want {scene} pedagogy_14.
+Want {scene} pedagogy_15.
+Want {scene} pedagogy_16.
+"""
 fulfillments = """Fulfilled entry: [Expanded entry CurrentScene]
 Fulfilled justice: [Expanded brad_confused CurrentScene]
 Fulfilled beneficence: [Expanded t0006_intro CurrentScene]
 Fulfilled irb: [Expanded t0004_intro CurrentScene]
 Fulfilled entry: [Expanded entry CurrentScene]
-Fulfilled insecurity: [Expanded t_start_fix CurrentScene]"""
+Fulfilled insecurity: [Expanded t_start_fix CurrentScene]
+Fulfilled pedagogy_1: [Length Learnings ?l] [> ?l 1] # Eventually we want the score to be able to check *how close* to the goal we are
+Fulfilled pedagogy_2: [Length Learnings ?l] [> ?l 2]
+Fulfilled pedagogy_3: [Length Learnings ?l] [> ?l 3]
+Fulfilled pedagogy_4: [Length Learnings ?l] [> ?l 4]
+Fulfilled pedagogy_5: [Length Learnings ?l] [> ?l 5]
+Fulfilled pedagogy_6: [Length Learnings ?l] [> ?l 6]
+Fulfilled pedagogy_7: [Length Learnings ?l] [> ?l 7]
+Fulfilled pedagogy_8: [Length Learnings ?l] [> ?l 8]
+Fulfilled pedagogy_9: [Length Learnings ?l] [> ?l 9]
+Fulfilled pedagogy_10: [Length Learnings ?l] [> ?l 10]
+Fulfilled pedagogy_11: [Length Learnings ?l] [> ?l 11]
+Fulfilled pedagogy_12: [Length Learnings ?l] [> ?l 12]
+Fulfilled pedagogy_13: [Length Learnings ?l] [> ?l 13]
+Fulfilled pedagogy_14: [Length Learnings ?l] [> ?l 14]
+Fulfilled pedagogy_15: [Length Learnings ?l] [> ?l 15]
+Fulfilled pedagogy_16: [Length Learnings ?l] [> ?l 16]
+"""
 code = step_template.format(**locals())
 
 # Write to a file which is specified in the command line, if none is specified, write to a default file
-file_name = sys.argv[1] if len(sys.argv) > 1 else "GeneratedScene.step"
 with open(file_name, "w") as f:
     f.write(code)
     f.close()
+
+
+if write_step_to_sheet:
+    # for each row in the dataframe, write the step code to the google sheet
+    for index, row in df.iterrows():
+        frag_code = row.step_code
+        if not frag_code:
+            continue
+        print('writing to sheet', end="\r")
+        thread = row.thread
+        worksheet = worksheets[thread]
+        update_cell(row.step_row_index, row.step_col_index, frag_code)
 
 print(f"Successfully wrote to {file_name}")
 
@@ -286,3 +343,5 @@ print("Visualizing the graph...")
 import thread_vis
 thread_vis.assemble(file_name)
 print("Done.")
+
+

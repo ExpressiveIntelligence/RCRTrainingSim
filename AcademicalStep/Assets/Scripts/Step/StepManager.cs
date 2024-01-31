@@ -234,7 +234,7 @@ public class StepManager : MonoBehaviour
     {
         MakeChoice(choiceID);
         if (this.extraDebugLogging) Debug.Log("Rendering " + choiceID);
-        Debug.Log("Thread " + ExecuteStep("[Thread]"));
+        Debug.Log("Thread " + ExecuteStep("[Thread]" + " Frag " + ExecuteStep("[CurrentFragment]")));
         return Render();
     }
 
