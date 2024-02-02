@@ -7,7 +7,6 @@ def assemble_graph_from_step_file(file_path):
     graph = nx.DiGraph()
 
     with open(file_path, 'r') as file:
-
         for line in file:
             line = line.strip()
 

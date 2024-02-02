@@ -9,6 +9,15 @@ fluent PleasantriesOver ?scene.
 [function]
 fluent Check ?thread ?frag.
 
+# Scene specific tasks
+OpenThreads:
+    [OpenCheckpoint beneficence_intro beneficence]
+    [OpenCheckpoint justice justice_intro]
+    [OpenCheckpoint respect respect_intro]
+    [OpenCheckpoint milgram you_remember]
+[end]
+
+# Define the initial state as required by StoryAssembler
 InitialSceneState e0001: 
 	[Not [PleasantriesOver e0001]]
 	[set BradInsecurityToNed = 0]
@@ -29,6 +38,7 @@ CharacterLocation ned e0001 [0, 0].
 [randomly]
 Fragment entry e0001.
 Fragment outside e0001.
+Fragment sneaky e0001.
 Fragment bus e0001.
 Fragment grill e0001.
 Fragment play_off e0001.
@@ -58,8 +68,8 @@ Fragment what_else_top_level e0001.
 Fragment what_else_transition e0001.
 Fragment stress e0001.
 Fragment need_success e0001.
-Fragment project e0001.
 Fragment project_status e0001.
+Fragment project e0001.
 Fragment insecurity_start e0001.
 Fragment insecurity_doubt e0001.
 Fragment stressed e0001.
@@ -131,6 +141,18 @@ Fragment violation_of_ben e0001.
 Fragment yes_beneficence e0001.
 Fragment violation_of_something e0001.
 Fragment violation_of_justice e0001.
+Fragment respect_intro e0001.
+Fragment placeholder e0001.
+Fragment top_level_fallback e0001.
+Fragment you_remember e0001.
+Fragment milgram_confusion e0001.
+Fragment milgram_blank_stare e0001.
+Fragment omg_yes e0001.
+Fragment describe_milgram1 e0001.
+Fragment describe_milgram2 e0001.
+Fragment milgram_cringe e0001.
+Fragment brad_why e0001.
+Fragment milgram_explain e0001.
 
 
 # Fragments
@@ -145,8 +167,22 @@ ChoiceLabel outside: Stand outside of Ned's office
 GoToChoice outside bus.
 GoToChoice outside grill.
 GoToChoice outside play_off.
+GoToChoice outside sneaky.
 Effects outside: [set Thread = entry]
 Conditions outside.
+
+Content sneaky: This is a development cheat fragment
+Speaker sneaky ned.
+ChoiceLabel sneaky: Cheat
+GoToChoice sneaky enter.
+ChoiceCondition sneaky sneaky_c: [AvailableCheckpoint insecurity]
+ChoiceCondition sneaky sneaky_cc: [AvailableCheckpoint insecurity]
+ChoiceCondition sneaky sneaky_ccc: [AvailableCheckpoint insecurity]
+Effects sneaky: 
+	[OpenThreads]
+	[set Thread = entry]
+[end]
+Conditions sneaky.
 
 Content bus: Brad hesitates outside of the door. He is already late. The bus had taken an extra thirty minutes to get to campus this morning, and now he doesn’t have enough time to prepare as much as he would have liked.
 Speaker bus brad.
@@ -229,7 +265,6 @@ ChoiceCondition reflect reflect_cc: [AvailableCheckpoint entry]
 ChoiceCondition reflect reflect_ccc: [AvailableCheckpoint entry]
 Effects reflect: 
 	[set Thread = entry]
-	[OpenCheckpoint entry reflect]
 	[OpenCheckpoint agenda t0002_start]
 	[OpenCheckpoint insecurity insecurity_start]
 [end]
@@ -441,7 +476,7 @@ Effects what_else_top_level:
 Conditions what_else_top_level.
 Reusable what_else_top_level e0001.
 
-Content what_else_transition: We're a bit limited on time for today - let's stay on track and put that idea on next week’s agenda."
+Content what_else_transition: "We're a bit limited on time for today - let's stay on track and put that idea on next week’s agenda."
 Speaker what_else_transition ned.
 ChoiceLabel what_else_transition: Ned looks at the clock
 GoToChoice what_else_transition stress.
@@ -449,10 +484,7 @@ GoToChoice what_else_transition project.
 ChoiceCondition what_else_transition what_else_transition_c: [AvailableCheckpoint agenda]
 ChoiceCondition what_else_transition what_else_transition_cc: [AvailableCheckpoint agenda]
 ChoiceCondition what_else_transition what_else_transition_ccc: [AvailableCheckpoint agenda]
-Effects what_else_transition: 
-	[set Thread = agenda]
-	[OpenCheckpoint agenda what_else_transition]
-[end]
+Effects what_else_transition: [set Thread = agenda]
 Conditions what_else_transition.
 Reusable what_else_transition e0001.
 
@@ -484,6 +516,20 @@ Effects need_success:
 [end]
 Conditions need_success.
 
+Content project_status: "I wanted to talk about that, you mentioned some more paperwork I need to do for the surveys."
+Speaker project_status brad.
+ChoiceLabel project_status: Bring up adminstration
+ChoiceCondition project_status project_status_c: [AvailableCheckpoint agenda]
+ChoiceCondition project_status project_status_cc: [AvailableCheckpoint agenda]
+ChoiceCondition project_status project_status_ccc: [AvailableCheckpoint agenda]
+Effects project_status: 
+	[set Thread = agenda]
+	[OpenCheckpoint agenda what_else_transition]
+	[OpenCheckpoint irb t0004_intro]
+[end]
+Conditions project_status.
+Reusable project_status e0001.
+
 Content project: 
 	Brad had been recruiting participants for the study and had even gotten a wave of early responses from parents. This was a perfect example to prove how smoothly things were going.
 	
@@ -502,20 +548,6 @@ Effects project:
 Conditions project.
 Reusable project e0001.
 
-Content project_status: "I wanted to talk about that, you mentioned some more paperwork I need to do for the surveys."
-Speaker project_status brad.
-ChoiceLabel project_status: Bring up adminstration
-ChoiceCondition project_status project_status_c: [AvailableCheckpoint agenda]
-ChoiceCondition project_status project_status_cc: [AvailableCheckpoint agenda]
-ChoiceCondition project_status project_status_ccc: [AvailableCheckpoint agenda]
-Effects project_status: 
-	[set Thread = agenda]
-	[OpenCheckpoint agenda what_else_transition]
-	[OpenCheckpoint irb t0004_intro]
-[end]
-Conditions project_status.
-Reusable project_status e0001.
-
 Content insecurity_start: Brad wonders how he could have possibly gotten this far behind. Could it be his tendency to procrastinate? Or was it that he simply wasn't cut out to be a PhD candidate?
 Speaker insecurity_start brad.
 ChoiceLabel insecurity_start: Think about the reasons for his disorganization
@@ -529,7 +561,6 @@ Effects insecurity_start:
 [end]
 Conditions insecurity_start: [>= BradInsecurityToNed 3]
 Reusable insecurity_start e0001.
-CharacterTag insecurity_start ned expression angry.
 
 Content insecurity_doubt: Brad thinks about the criticism received by Ned and wonders if he is the best fit for this position. Maybe Ned doesn't believe Brad has what it takes to be a researcher.
 Speaker insecurity_doubt brad.
@@ -691,7 +722,6 @@ Effects t0004_intro:
 	[add brad_wants_ned_to_be_proud Learnings]
 [end]
 Conditions t0004_intro.
-CharacterTag t0004_intro ned expression angry.
 
 Content proud_of_me: “I’ve gotten a lot of good feedback from some of the participants,” Brad informs Ned.
 Speaker proud_of_me brad.
@@ -884,10 +914,7 @@ ChoiceCondition ned_dont_press ned_dont_press_cc: [AvailableCheckpoint irb]
 ChoiceCondition ned_dont_press ned_dont_press_ccc: [AvailableCheckpoint irb]
 Effects ned_dont_press: 
 	[set Thread = irb]
-	[OpenCheckpoint beneficence_intro beneficence]
-	[OpenCheckpoint justice justice_intro]
-	[OpenCheckpoint respect respect_intro]
-	[OpenCheckpoint milgram you_remember]
+	[OpenThreads]
 [end]
 Conditions ned_dont_press.
 
@@ -922,8 +949,6 @@ Effects beneficence_intro:
 	[add beneficence_intro Learnings]
 [end]
 Conditions beneficence_intro.
-CharacterTag beneficence_intro ned expression angry.
-CharacterTag beneficence_intro brad expression sad.
 
 Speaker beneficence_define ned.
 ChoiceLabel beneficence_define: Ned defines beneficence
@@ -1107,7 +1132,7 @@ Conditions makes_sense.
 
 Content justice_intro: "I am confused by something. Even if a person gets harmed by the research doesn't society still benefit at the end?"
 Speaker justice_intro brad.
-ChoiceLabel justice_intro: Brad asks about harm to participants
+ChoiceLabel justice_intro: Ask about harm to participants
 GoToChoice justice_intro brad_jokes.
 GoToChoice justice_intro why_board.
 ChoiceCondition justice_intro justice_intro_c: [AvailableCheckpoint justice]
@@ -1116,7 +1141,6 @@ Effects justice_intro:
 	[add justice_intro Learnings]
 [end]
 Conditions justice_intro.
-CharacterTag justice_intro ned expression angry.
 
 Content brad_jokes: "I mean, sure it sucks that they were part of a bad experiment, but hey! It's not like our data isn't being harvested all the time anyway! At least they're getting paid."
 Speaker brad_jokes brad.
@@ -1265,6 +1289,117 @@ Effects violation_of_justice:
 [end]
 Conditions violation_of_justice.
 
+Content respect_intro: Should I be respectful?
+Speaker respect_intro brad.
+ChoiceLabel respect_intro: Ask about respect for persons
+GoToChoice respect_intro placeholder.
+Effects respect_intro: [set Thread = respect]
+Conditions respect_intro.
+Reusable respect_intro e0001.
+
+Content placeholder: placeholder
+Speaker placeholder ned.
+ChoiceLabel placeholder: Placeholder
+Effects placeholder: [set Thread = respect]
+Conditions placeholder.
+Reusable placeholder e0001.
+
+Content top_level_fallback: You got nothin going on
+Effects top_level_fallback: [set Thread = respect]
+Conditions top_level_fallback.
+Reusable top_level_fallback e0001.
+
+Content you_remember: Ned nonchalantly glances at Brad. "Are you aware of the Milgram study?"
+Speaker you_remember ned.
+ChoiceLabel you_remember: Ned brings up Milgram study
+GoToChoice you_remember milgram_confusion.
+GoToChoice you_remember milgram_blank_stare.
+ChoiceCondition you_remember you_remember_c: [AvailableCheckpoint milgram]
+ChoiceCondition you_remember you_remember_cc: [AvailableCheckpoint milgram]
+ChoiceCondition you_remember you_remember_ccc: [AvailableCheckpoint milgram]
+Effects you_remember: 
+	[set Thread = milgram]
+	[add milgram_intro Learnings]
+[end]
+Conditions you_remember.
+
+Content milgram_confusion: Brad pipes up. "That's the one where they were in prison right?"
+Speaker milgram_confusion brad.
+ChoiceLabel milgram_confusion: Yes, it was the prison one
+GoToChoice milgram_confusion describe_milgram1.
+ChoiceCondition milgram_confusion milgram_confusion_c: [AvailableCheckpoint milgram]
+ChoiceCondition milgram_confusion milgram_confusion_cc: [AvailableCheckpoint milgram]
+ChoiceCondition milgram_confusion milgram_confusion_ccc: [AvailableCheckpoint milgram]
+Effects milgram_confusion: [set Thread = milgram]
+Conditions milgram_confusion.
+
+Content milgram_blank_stare: Ned blankly stares at Brad. As he feels the intense stare of his advisor, he can feel his own soul leave his body.
+Speaker milgram_blank_stare brad.
+ChoiceLabel milgram_blank_stare: Continue
+ChoiceCondition milgram_blank_stare milgram_blank_stare_c: [AvailableCheckpoint milgram]
+ChoiceCondition milgram_blank_stare milgram_blank_stare_cc: [AvailableCheckpoint milgram]
+ChoiceCondition milgram_blank_stare milgram_blank_stare_ccc: [AvailableCheckpoint milgram]
+Effects milgram_blank_stare: [set Thread = milgram]
+Conditions milgram_blank_stare.
+
+Content omg_yes: 
+	The Milgram experiement, how could Brad forget! It was one of his favorite experiements covered in his Psychology classes.
+	
+	Brad responds to Ned, "Yeah, I remember the Milgram experiment, with the electric shocks."
+[end]
+Speaker omg_yes brad.
+ChoiceLabel omg_yes: Yes, it was electric
+ChoiceCondition omg_yes omg_yes_c: [AvailableCheckpoint milgram]
+ChoiceCondition omg_yes omg_yes_cc: [AvailableCheckpoint milgram]
+ChoiceCondition omg_yes omg_yes_ccc: [AvailableCheckpoint milgram]
+Effects omg_yes: [set Thread = milgram]
+Conditions omg_yes.
+
+Content describe_milgram1: todo
+Speaker describe_milgram1 ned.
+ChoiceLabel describe_milgram1: todo
+ChoiceCondition describe_milgram1 describe_milgram1_c: [AvailableCheckpoint milgram]
+ChoiceCondition describe_milgram1 describe_milgram1_cc: [AvailableCheckpoint milgram]
+ChoiceCondition describe_milgram1 describe_milgram1_ccc: [AvailableCheckpoint milgram]
+Effects describe_milgram1: [set Thread = milgram]
+Conditions describe_milgram1.
+
+Content describe_milgram2: Ned smiles. It felt goo
+Speaker describe_milgram2 ned.
+ChoiceLabel describe_milgram2: Cringe at mistake
+ChoiceCondition describe_milgram2 describe_milgram2_c: [AvailableCheckpoint milgram]
+ChoiceCondition describe_milgram2 describe_milgram2_cc: [AvailableCheckpoint milgram]
+ChoiceCondition describe_milgram2 describe_milgram2_ccc: [AvailableCheckpoint milgram]
+Effects describe_milgram2: [set Thread = milgram]
+Conditions describe_milgram2.
+
+Content milgram_cringe: Brad cringes. I should have known that. I just watched a documentary about this!
+Speaker milgram_cringe brad.
+ChoiceCondition milgram_cringe milgram_cringe_c: [AvailableCheckpoint milgram]
+ChoiceCondition milgram_cringe milgram_cringe_cc: [AvailableCheckpoint milgram]
+ChoiceCondition milgram_cringe milgram_cringe_ccc: [AvailableCheckpoint milgram]
+Effects milgram_cringe: [set Thread = milgram]
+Conditions milgram_cringe.
+
+Speaker brad_why brad.
+ChoiceLabel brad_why: Ask why Ned brings it up
+ChoiceCondition brad_why brad_why_c: [AvailableCheckpoint milgram]
+ChoiceCondition brad_why brad_why_cc: [AvailableCheckpoint milgram]
+ChoiceCondition brad_why brad_why_ccc: [AvailableCheckpoint milgram]
+Effects brad_why: [set Thread = milgram]
+Conditions brad_why.
+
+Speaker milgram_explain ned.
+ChoiceLabel milgram_explain: Explanation
+ChoiceCondition milgram_explain milgram_explain_c: [AvailableCheckpoint milgram]
+ChoiceCondition milgram_explain milgram_explain_cc: [AvailableCheckpoint milgram]
+ChoiceCondition milgram_explain milgram_explain_ccc: [AvailableCheckpoint milgram]
+Effects milgram_explain: 
+	[set Thread = milgram]
+	[add milgram Learnings]
+[end]
+Conditions milgram_explain.
+
 
 
 # Declare the StorySpec
@@ -1283,6 +1418,14 @@ Want e0001 pedagogy_5.
 Want e0001 pedagogy_6.
 Want e0001 pedagogy_7.
 Want e0001 pedagogy_8.
+Want e0001 pedagogy_9.
+Want e0001 pedagogy_10.
+Want e0001 pedagogy_11.
+Want e0001 pedagogy_12.
+Want e0001 pedagogy_13.
+Want e0001 pedagogy_14.
+Want e0001 pedagogy_15.
+Want e0001 pedagogy_16.
 
 
 [randomly]
@@ -1300,3 +1443,11 @@ Fulfilled pedagogy_5: [Length Learnings ?l] [> ?l 5]
 Fulfilled pedagogy_6: [Length Learnings ?l] [> ?l 6]
 Fulfilled pedagogy_7: [Length Learnings ?l] [> ?l 7]
 Fulfilled pedagogy_8: [Length Learnings ?l] [> ?l 8]
+Fulfilled pedagogy_9: [Length Learnings ?l] [> ?l 9]
+Fulfilled pedagogy_10: [Length Learnings ?l] [> ?l 10]
+Fulfilled pedagogy_11: [Length Learnings ?l] [> ?l 11]
+Fulfilled pedagogy_12: [Length Learnings ?l] [> ?l 12]
+Fulfilled pedagogy_13: [Length Learnings ?l] [> ?l 13]
+Fulfilled pedagogy_14: [Length Learnings ?l] [> ?l 14]
+Fulfilled pedagogy_15: [Length Learnings ?l] [> ?l 15]
+Fulfilled pedagogy_16: [Length Learnings ?l] [> ?l 16]

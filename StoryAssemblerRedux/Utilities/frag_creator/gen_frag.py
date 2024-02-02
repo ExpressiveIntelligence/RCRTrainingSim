@@ -23,19 +23,19 @@ import pandas as pd
 import argparse
 import re, sys, time
 
-# import the file "../frag_utils/frag_utils.py"
-sys.path.append("../frag_utils/")
-from frag_utils import step_template
+# import the file "../frag_utils/step_template.py"
+sys.path.append('../frag_utils')
+from step_template import step_template
 
 sheet_id = "10d4UvR6uY8BSDfV4k_nIjLiSm5O7sRez8NCbchAtk4s"
-threads = ["T0001", "T0002", "T0003", "T0004", "T0006", "T0007"]
+threads = ["T0001", "T0002", "T0003", "T0004", "T0006", "T0007", "T0008", "T0011"]
 
 parser = argparse.ArgumentParser(description="Write code to a specified file and visualize the graph.")
 
 parser.add_argument("file_name", nargs='?', default="GeneratedScene.step",
                     help="Name of the file to write the code. Default is GeneratedScene.step.")
 
-parser.add_argument("--no_write", action="store_true",
+parser.add_argument("-nw", "--no_write", action="store_true",
                     help="Include this flag to not write step to sheet. Default is False.")
 
 args = parser.parse_args()
@@ -82,11 +82,7 @@ def clean_row(row):
         return None
     # if row.request:
     #     row.request = True
-    if row.reusable and (row.reusable.lower() == "true"):
-        row.reusable = True
-    else:
-        row.reusable = False
-    # for each cell
+    row.reusable = row.get('reusable') and (row.reusable.lower() == "true")
     for key in row.keys():
         row[key] = clean_cell(row[key])
     return row
@@ -126,38 +122,39 @@ def multi(content):
     return content
 
 def create_frag(row):
+    row.fillna('', inplace=True)
+
     if not row.id:
         return None, None
     frag_name = row.id
 
-    row.fillna('', inplace=True)
-
-    if row.code_override:
+    if row.get('code_override'):
         return frag_name, row.code_override + "\n\n"
 
     code = ""
-    if row.content:
+    # if row.content:
+    if row.get('content'):
         content = multi(row.content)
         code += f"Content {row.id}: {content}\n"
-    if row.speaker:
+    if row.get('speaker'):
         code += f"Speaker {row.id} {row.speaker.lower()}.\n"
-    if row.choice_label:
+    if row.get('choice_label'):
         code += f"ChoiceLabel {row.id}: {multi(row.choice_label)}\n"
-    if row.gotochoices:
+    if row.get('gotochoices'):
         for token in split_data(row.gotochoices):
             code += f"GoToChoice {row.id} {token}.\n"
-    if row.conditionalchoice:
+    if row.get('conditionalchoice'):
         for i, token in enumerate(split_task_call(row.conditionalchoice)):
             code += f"ChoiceCondition {row.id} {row.id + '_' + 'c' * (i + 1)}: {multi(token)}\n"
-    if row.effects:
+    if row.get('effects'):
         code += f"Effects {row.id}: {multi(row.effects)}\n"
     else:
         code += f"Effects {row.id}.\n"
-    if row.conditions:
+    if row.get('conditions'):
         code += f"Conditions {row.id}: {row.conditions}\n"
     else: 
         code += f"Conditions {row.id}.\n"
-    if row.reusable:
+    if row.get('reusable'):
         code += f"Reusable {row.id} {scene}.\n"
 
     tags = row.filter(regex="charactertag").dropna()
@@ -174,16 +171,14 @@ def create_frag(row):
 # Read the Google Sheets data and print it
 df = pd.DataFrame()
 worksheets = {}
+print('reading google sheet...')
 for thread in threads:
-    print('reading', thread)
+    print(thread)
     tab_name = f'{thread}_Fragments'
     thread_df, thread_worksheet = read_google_sheet(tab_name)
 
-    # add a column with the current thread name
-    thread_df['thread'] = thread
-
-    worksheets[thread] = thread_worksheet
-
+    thread_df['thread'] = thread            # add a column with the current thread name
+    worksheets[thread] = thread_worksheet   
     thread_df['step_row_index'] = thread_df.index + 2
 
     # find the column with the step code
@@ -200,6 +195,8 @@ for thread in threads:
     # delete the written text
     sys.stdout.write("\033[F")
     sys.stdout.write("\033[K")
+
+print('done reading google sheet')
 
 # snake case the labels in pandas
 # clean the rows
@@ -253,10 +250,8 @@ for index, row in df.iterrows():
     
 code = fragment_declarations + "\n\n" + fragments
 
-# predicates = "# No Predicates"
-predicates ="""fluent PleasantriesOver ?scene.
-[function]
-fluent Check ?thread ?frag."""
+# read E0001_predicates.step
+predicates = open("E0001_predicates.step", "r").read()
 
 # initial_state = "# No Initial State"
 initial_state = multi("""[Not [PleasantriesOver e0001]]
@@ -327,15 +322,16 @@ with open(file_name, "w") as f:
 
 
 if write_step_to_sheet:
+    print()
     # for each row in the dataframe, write the step code to the google sheet
     for index, row in df.iterrows():
         frag_code = row.step_code
         if not frag_code:
             continue
-        print('writing to sheet', end="\r")
-        thread = row.thread
-        worksheet = worksheets[thread]
+        print(f'writing {row.id} to google sheet', end="\r")
+        worksheet = worksheets[row.thread]
         update_cell(row.step_row_index, row.step_col_index, frag_code)
+    print()
 
 print(f"Successfully wrote to {file_name}")
 

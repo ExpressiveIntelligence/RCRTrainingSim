@@ -8,6 +8,7 @@ Scene {scene}.
 # Scene specific predicates
 {predicates}
 
+# Define the initial state as required by StoryAssembler
 InitialSceneState {scene}: {initial_state}
 
 # Declare the characters and locations
