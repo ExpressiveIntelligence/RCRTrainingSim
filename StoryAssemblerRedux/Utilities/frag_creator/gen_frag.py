@@ -28,7 +28,8 @@ sys.path.append('../frag_utils')
 from step_template import step_template
 
 sheet_id = "10d4UvR6uY8BSDfV4k_nIjLiSm5O7sRez8NCbchAtk4s"
-threads = ["T0001", "T0002", "T0003", "T0004", "T0006", "T0007", "T0008", "T0011"]
+threads = ["entry", "agenda", "insecurity", "irb", "principles", "beneficence", "respect", "justice", "milgram"]
+threads = ["T_" + thread for thread in threads]
 
 parser = argparse.ArgumentParser(description="Write code to a specified file and visualize the graph.")
 
@@ -174,8 +175,7 @@ worksheets = {}
 print('reading google sheet...')
 for thread in threads:
     print(thread)
-    tab_name = f'{thread}_Fragments'
-    thread_df, thread_worksheet = read_google_sheet(tab_name)
+    thread_df, thread_worksheet = read_google_sheet(thread)
 
     thread_df['thread'] = thread            # add a column with the current thread name
     worksheets[thread] = thread_worksheet   

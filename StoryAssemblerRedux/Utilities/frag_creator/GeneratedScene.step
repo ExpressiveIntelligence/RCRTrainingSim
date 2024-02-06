@@ -11,7 +11,7 @@ fluent Check ?thread ?frag.
 
 # Scene specific tasks
 OpenThreads:
-    [OpenCheckpoint beneficence_intro beneficence]
+    [OpenCheckpoint beneficence beneficence_intro]
     [OpenCheckpoint justice justice_intro]
     [OpenCheckpoint respect respect_intro]
     [OpenCheckpoint milgram you_remember]
@@ -104,6 +104,10 @@ Fragment confession_3 e0001.
 Fragment ned_dont_press e0001.
 Fragment bad_feeling e0001.
 Fragment brad_goes_along e0001.
+Fragment principles_intro e0001.
+Fragment yes_info e0001.
+Fragment no_info e0001.
+Fragment tenants e0001.
 Fragment beneficence_intro e0001.
 Fragment beneficence_define e0001.
 Fragment research_good_thing e0001.
@@ -126,6 +130,9 @@ Fragment apply_principle e0001.
 Fragment figuring_out e0001.
 Fragment minimize_maximize e0001.
 Fragment makes_sense e0001.
+Fragment respect_intro e0001.
+Fragment placeholder e0001.
+Fragment top_level_fallback e0001.
 Fragment justice_intro e0001.
 Fragment brad_jokes e0001.
 Fragment why_board e0001.
@@ -141,9 +148,6 @@ Fragment violation_of_ben e0001.
 Fragment yes_beneficence e0001.
 Fragment violation_of_something e0001.
 Fragment violation_of_justice e0001.
-Fragment respect_intro e0001.
-Fragment placeholder e0001.
-Fragment top_level_fallback e0001.
 Fragment you_remember e0001.
 Fragment milgram_confusion e0001.
 Fragment milgram_blank_stare e0001.
@@ -265,8 +269,7 @@ ChoiceCondition reflect reflect_cc: [AvailableCheckpoint entry]
 ChoiceCondition reflect reflect_ccc: [AvailableCheckpoint entry]
 Effects reflect: 
 	[set Thread = entry]
-	[OpenCheckpoint agenda t0002_start]
-	[OpenCheckpoint insecurity insecurity_start]
+	[OpenCheckpoint agenda t0002_start][OpenCheckpoint insecurity insecurity_start][OpenCheckpoint principles principles_intro]
 [end]
 Conditions reflect: [= Thread entry]
 
@@ -276,7 +279,10 @@ ChoiceLabel remind: Ned interrupts his train of thought
 ChoiceCondition remind remind_c: [AvailableCheckpoint entry]
 ChoiceCondition remind remind_cc: [AvailableCheckpoint entry]
 ChoiceCondition remind remind_ccc: [AvailableCheckpoint entry]
-Effects remind: [set Thread = entry]
+Effects remind: 
+	[set Thread = entry]
+	[OpenCheckpoint agenda t0002_start]
+[end]
 Conditions remind: [= Thread entry]
 
 Content lament: Brad dreaded the impending assumption that he hadn't gotten anything done this week. Sure, there had been weeks where he'd been more focused on his semi-pro hacky sack career, and Ned had noticed. But he'd been in the lab the past seven days! Surely this time he deserved some recognition.
@@ -310,21 +316,17 @@ GoToChoice subjects youre_late.
 Effects subjects: [set Thread = entry]
 Conditions subjects: [= Thread entry]
 
-
 Content t0002_start: Brad met with Ned weekly. They used a shared document to track - oh shoot - he forgot to update the document yesterday.
 Speaker t0002_start brad.
-ChoiceLabel t0002_start: [Agenda]
-Agenda: [Not [Expanded t0002_start CurrentScene]] Move on to the Agenda
-Agenda: Let's go back to the Agenda
+ChoiceLabel t0002_start: Move on to the Agenda
 GoToChoice t0002_start slides.
 Effects t0002_start: 
-        [set BradInsecurityToNed = BradInsecurityToNed + 1]
-        [set Thread = agenda]
-        [OpenCheckpoint agenda slides]
+	[set BradInsecurityToNed = BradInsecurityToNed + 1]
+	[set Thread = agenda] 
+	[OpenCheckpoint agenda slides]
 [end]
 Conditions t0002_start.
 Reusable t0002_start e0001.
-CharacterTag t0002_start ned expression angry.
 
 Content slides: He hadn't prepared, but he could wing it. These meetings always followed the same format... they’d check in on his classes, on graduation, and talk about new happenings in the field.
 Speaker slides brad.
@@ -900,11 +902,7 @@ GoToChoice confession_3 ned_dont_press.
 Effects confession_3: [set Thread = irb]
 Conditions confession_3.
 
-Content ned_dont_press: 
-	"No doubt the IRB is a slow process." Ned takes a sip of coffee and looks thoughfully out the window.
-	
-	The IRB has a lot on their plate - they have to ensure <b>beneficence</b>, <b>justice</b>, and <b> respect for persons</b>.
-[end]
+Content ned_dont_press: "No doubt the IRB is a slow process." Ned takes a sip of coffee and looks thoughfully out the window.
 Speaker ned_dont_press ned.
 ChoiceLabel ned_dont_press: Continue
 GoToChoice ned_dont_press bad_feeling.
@@ -914,7 +912,7 @@ ChoiceCondition ned_dont_press ned_dont_press_cc: [AvailableCheckpoint irb]
 ChoiceCondition ned_dont_press ned_dont_press_ccc: [AvailableCheckpoint irb]
 Effects ned_dont_press: 
 	[set Thread = irb]
-	[OpenThreads]
+	[OpenCheckpoint principles principles_intro]
 [end]
 Conditions ned_dont_press.
 
@@ -939,6 +937,48 @@ ChoiceCondition brad_goes_along brad_goes_along_cc: [AvailableCheckpoint irb]
 ChoiceCondition brad_goes_along brad_goes_along_ccc: [AvailableCheckpoint irb]
 Effects brad_goes_along: [set Thread = irb]
 Conditions brad_goes_along.
+
+Content principles_intro: "This white paper," Ned holds it up for emphasis, "is about the core principles of the IRB. Have you read this?"
+Speaker principles_intro ned.
+ChoiceLabel principles_intro: Listen to Ned's IRB explanation
+GoToChoice principles_intro yes_info.
+GoToChoice principles_intro no_info.
+Effects principles_intro: [set Thread = principles]
+Conditions principles_intro.
+
+Content yes_info: 
+	Brad thinks back to the training. <i>I'm pretty sure I've seen this before</i>.
+	
+	"I think I've seen it before Ned," says Brad.
+[end]
+Speaker yes_info brad.
+ChoiceLabel yes_info: I think so
+GoToChoice yes_info tenants.
+Effects yes_info: [set Thread = principles]
+Conditions yes_info.
+
+Content no_info: 
+	Brad wasn't sure if he was meant to have gone through this during his ethics training. 
+	
+	"I don't think so, Ned. Sorry."
+[end]
+Speaker no_info brad.
+ChoiceLabel no_info: No
+GoToChoice no_info tenants.
+Effects no_info: [set Thread = principles]
+Conditions no_info.
+
+Content tenants: Ned sighs. "The IRB has a lot on their plate - they have to ensure <b>beneficence</b>, <b>justice</b>, and <b> respect for persons</b>. We should probably talk about each of these."
+Speaker tenants ned.
+ChoiceLabel tenants: Ned outlines the IRB
+ChoiceCondition tenants tenants_c: [AvailableCheckpoint principles]
+ChoiceCondition tenants tenants_cc: [AvailableCheckpoint principles]
+ChoiceCondition tenants tenants_ccc: [AvailableCheckpoint principles]
+Effects tenants: 
+	[set Thread = principles] 
+	[OpenThreads]
+[end]
+Conditions tenants.
 
 Speaker beneficence_intro brad.
 ChoiceLabel beneficence_intro: Ask Ned about beneficence
@@ -1130,6 +1170,35 @@ Effects makes_sense:
 [end]
 Conditions makes_sense.
 
+Content respect_intro: Should I be respectful?
+Speaker respect_intro brad.
+ChoiceLabel respect_intro: Ask about respect for persons
+GoToChoice respect_intro placeholder.
+ChoiceCondition respect_intro respect_intro_c: [AvailableCheckpoint respect]
+ChoiceCondition respect_intro respect_intro_cc: [AvailableCheckpoint respect]
+ChoiceCondition respect_intro respect_intro_ccc: [AvailableCheckpoint respect]
+Effects respect_intro: [set Thread = respect]
+Conditions respect_intro.
+Reusable respect_intro e0001.
+
+Content placeholder: placeholder
+Speaker placeholder ned.
+ChoiceLabel placeholder: Placeholder
+ChoiceCondition placeholder placeholder_c: [AvailableCheckpoint respect]
+ChoiceCondition placeholder placeholder_cc: [AvailableCheckpoint respect]
+ChoiceCondition placeholder placeholder_ccc: [AvailableCheckpoint respect]
+Effects placeholder: [set Thread = respect]
+Conditions placeholder.
+Reusable placeholder e0001.
+
+Content top_level_fallback: You got nothin going on
+ChoiceCondition top_level_fallback top_level_fallback_c: [AvailableCheckpoint respect]
+ChoiceCondition top_level_fallback top_level_fallback_cc: [AvailableCheckpoint respect]
+ChoiceCondition top_level_fallback top_level_fallback_ccc: [AvailableCheckpoint respect]
+Effects top_level_fallback: [set Thread = respect]
+Conditions top_level_fallback.
+Reusable top_level_fallback e0001.
+
 Content justice_intro: "I am confused by something. Even if a person gets harmed by the research doesn't society still benefit at the end?"
 Speaker justice_intro brad.
 ChoiceLabel justice_intro: Ask about harm to participants
@@ -1268,7 +1337,7 @@ Conditions yes_beneficence.
 
 Content violation_of_something: "So, what principle did they violate then?"
 Speaker violation_of_something brad.
-ChoiceLabel violation_of_something: Ask about over principles
+ChoiceLabel violation_of_something: Ask about other principles
 GoToChoice violation_of_something violation_of_justice.
 ChoiceCondition violation_of_something violation_of_something_c: [AvailableCheckpoint justice]
 ChoiceCondition violation_of_something violation_of_something_cc: [AvailableCheckpoint justice]
@@ -1288,26 +1357,6 @@ Effects violation_of_justice:
 	[add justice Learnings]
 [end]
 Conditions violation_of_justice.
-
-Content respect_intro: Should I be respectful?
-Speaker respect_intro brad.
-ChoiceLabel respect_intro: Ask about respect for persons
-GoToChoice respect_intro placeholder.
-Effects respect_intro: [set Thread = respect]
-Conditions respect_intro.
-Reusable respect_intro e0001.
-
-Content placeholder: placeholder
-Speaker placeholder ned.
-ChoiceLabel placeholder: Placeholder
-Effects placeholder: [set Thread = respect]
-Conditions placeholder.
-Reusable placeholder e0001.
-
-Content top_level_fallback: You got nothin going on
-Effects top_level_fallback: [set Thread = respect]
-Conditions top_level_fallback.
-Reusable top_level_fallback e0001.
 
 Content you_remember: Ned nonchalantly glances at Brad. "Are you aware of the Milgram study?"
 Speaker you_remember ned.

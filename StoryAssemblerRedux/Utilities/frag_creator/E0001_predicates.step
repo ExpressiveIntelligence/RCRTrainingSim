@@ -4,7 +4,7 @@ fluent Check ?thread ?frag.
 
 # Scene specific tasks
 OpenThreads:
-    [OpenCheckpoint beneficence_intro beneficence]
+    [OpenCheckpoint beneficence beneficence_intro]
     [OpenCheckpoint justice justice_intro]
     [OpenCheckpoint respect respect_intro]
     [OpenCheckpoint milgram you_remember]
