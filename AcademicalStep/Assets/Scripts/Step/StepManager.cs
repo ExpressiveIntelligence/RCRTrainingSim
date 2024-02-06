@@ -169,7 +169,7 @@ public class StepManager : MonoBehaviour
         return ExecuteStep($"[Initialize {sceneName}]");
     }
 
-    // Print the choices available in the current scene
+    // Print the choices available in the current scene=
     // Unnecessary if you are using the Select or Render functions
     string PrintChoices()
     {
@@ -233,8 +233,14 @@ public class StepManager : MonoBehaviour
     public SerializedFragment Select(string choiceID)
     {
         MakeChoice(choiceID);
-        if (this.extraDebugLogging) Debug.Log("Rendering " + choiceID);
-        Debug.Log("Thread " + ExecuteStep("[Thread]" + " Frag " + ExecuteStep("[CurrentFragment]")));
+        if (this.extraDebugLogging) {
+            Debug.Log("Thread: " + ExecuteStep("[Thread]" + " Frag: " + ExecuteStep("[CurrentFragment]")));
+            var conditionalChoices = ExecuteStep(" [DoAll [Member ?path AllPaths] [SecondGoToChoices ?second ?path] [Write ?second]]", stateful: false);
+            if (conditionalChoices != null && conditionalChoices.Trim() != "") {
+                Debug.Log("Conditional Choices: " + conditionalChoices);
+            }
+        }
+
         return Render();
     }
 
@@ -249,12 +255,12 @@ public class StepManager : MonoBehaviour
     * @return The result of the execution. 
     * Returns null and throws a debug message if the execution or parse fails.
     */
-    public string ExecuteStep(string code)
+    public string ExecuteStep(string code, bool stateful=true)
     {   
         try {
             if (this.extraDebugLogging)
                 Debug.Log("Executing Step: " + code);
-            return ParseAndExecute(code);
+            return ParseAndExecute(code, stateful);
         } catch (Exception e) {
             Debug.Log(e);
             return null;
@@ -271,28 +277,32 @@ public class StepManager : MonoBehaviour
         try {
             result = ParseAndExecute(code);
         } catch (Exception e) {
-            Debug.Log(e);
+            Debug.Log("Execution Error" + e);
             return null;
         }
+        
         try {
-            return ParseStep<T>(result);
+            return ParseStepOutputFormat<T>(result);
         } catch (Exception e) {
-            Debug.Log(e);
+            Debug.Log("Parse Error " +  e);
             return null;
         }
     }
 
-    private string ParseAndExecute(string code)
+    private string ParseAndExecute(string code, bool stateful=true)
     {
         (string result, State newState) = this.module.ParseAndExecute(code, this.state);
-        this.state = newState;
+        if (stateful) {
+            this.state = newState;
+        }
+            
         return result;
     }
 
     /* 
     * Helper function that parses a step output into a list of serializable objects
     */
-    private T[] ParseStep<T>(string stepOutput) {
+    private T[] ParseStepOutputFormat<T>(string stepOutput) {
         string[] items = stepOutput.Trim().Split(this.itemDelim);
         // for each, parse into a choice
         var parsedItems = new List<T>();

@@ -78,6 +78,7 @@ MakeChoice ?choice_label:
 [end]
 
 UpdateCurrentFragment ?fragment_id:
+    # Dynamic Fragment
     [Request ?fragment_id ?rtype ?args]
     [TestConditions ?fragment_id]
     [Visit ?fragment_id]
@@ -93,6 +94,7 @@ UpdateCurrentFragment ?fragment_id:
     [set NextBestChoices = ?new_best]
 [end]
 UpdateCurrentFragment ?fragment_id:
+    # Non Dynamic Fragment
     [TestConditions ?fragment_id]
     [Visit ?fragment_id]
     [set DynamicParent = none]

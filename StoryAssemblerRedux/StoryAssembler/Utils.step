@@ -115,9 +115,17 @@ Add ?element ?list ?new_list:
     [AddHelper ?element]
     [= ?new_list AddTemp]
 [end]
-AddHelper ?element:
+
+Reverse ?list ?reversed:
+    [set AddTemp = empty]
+    [ForEach [Member ?x ?list] [AddHelper ?x]]
+    [= ?reversed AddTemp]
+[end]
+
+AddHelper ?element: 
     [add ?element AddTemp]
 [end]
+
 
 # SetUnion ?l1 ?l2 ?union:
 #     [set AddTemp = empty]
@@ -147,12 +155,6 @@ Flatten2D ?list ?flattened:
 [predicate]
 InnerMember ?m ?list:
     [Member ?sublist ?list] [Member ?m ?sublist]
-[end]
-
-Reverse ?list ?reversed:
-    [set AddTemp = empty]
-    [ForEach [Member ?x ?list] [AddHelper ?x]]
-    [= ?reversed AddTemp]
 [end]
 
 [predicate]
@@ -192,3 +194,18 @@ Last ?last ?list:
     [removeNext ?last Reversed]
 [end]
 
+[predicate]
+Second ?second ?list:
+    [set List = ?list]
+    [removeNext ?first List]
+    [removeNext ?second List]
+[end]
+
+
+# Debugging utility
+[predicate]
+SecondGoToChoices ?second ?path:
+    [ScoredPath ?choices ?score ?path] 
+    [Second ?second ?choices]
+    [NotAny [= ?second [? direct]]]
+[end]
