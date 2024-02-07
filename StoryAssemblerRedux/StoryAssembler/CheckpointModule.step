@@ -22,10 +22,11 @@ AvailableCheckpoint ?thread:
 [end]
 
 [predicate]
-IsAvailableCheckpoint ?cur_thread ?frag:
+IsAvailableCheckpoint ?source_thread ?frag:
 	[Check ?checkpoint_thread ?frag]
-	[Different ?checkpoint_thread ?cur_thread]
+	[Different ?checkpoint_thread ?source_thread]
 [end]
+IsAvailableCheckpoint thread_opening ?frag. # This is a special case for the opening fragment of a thread
 
 AvailableOpenCheckpoints ?checkpoints: 
 	[FindUnique ?checkpoint [Check ?thread ?checkpoint] ?checkpoints]

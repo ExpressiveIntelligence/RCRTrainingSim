@@ -257,7 +257,9 @@ predicates = open("E0001_predicates.step", "r").read()
 initial_state = multi("""[Not [PleasantriesOver e0001]]
 [set BradInsecurityToNed = 0]
 [set Thread = none]
-[set Learnings = empty]""")
+[set Learnings = empty]
+[now [Not [BradAdmittedStudy e0001]]]
+""")
 
 characters = f"""Character brad {scene} |Brad|.
 CharacterAsset brad {scene} |./brad.png|.

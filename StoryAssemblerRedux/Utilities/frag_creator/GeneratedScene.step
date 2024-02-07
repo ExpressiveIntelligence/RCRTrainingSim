@@ -5,9 +5,11 @@ Scene e0001.
 BackgroundAsset e0001: |./scene_name_background.png|.
 
 # Scene specific predicates
+fluent BradAdmittedStudy ?scene.
 fluent PleasantriesOver ?scene.
 [function]
 fluent Check ?thread ?frag.
+
 
 # Scene specific tasks
 OpenThreads:
@@ -23,6 +25,7 @@ InitialSceneState e0001:
 	[set BradInsecurityToNed = 0]
 	[set Thread = none]
 	[set Learnings = empty]
+	[now [Not [BradAdmittedStudy e0001]]]
 [end]
 
 # Declare the characters and locations
@@ -131,8 +134,13 @@ Fragment figuring_out e0001.
 Fragment minimize_maximize e0001.
 Fragment makes_sense e0001.
 Fragment respect_intro e0001.
-Fragment placeholder e0001.
-Fragment top_level_fallback e0001.
+Fragment ned_respect_intro e0001.
+Fragment respect_specific e0001.
+Fragment full_consent e0001.
+Fragment what_is_consent e0001.
+Fragment consent_definition e0001.
+Fragment end_respect_bad e0001.
+Fragment end_respect_good e0001.
 Fragment justice_intro e0001.
 Fragment brad_jokes e0001.
 Fragment why_board e0001.
@@ -327,6 +335,7 @@ Effects t0002_start:
 [end]
 Conditions t0002_start.
 Reusable t0002_start e0001.
+CharacterTag t0002_start brad expression neutral.
 
 Content slides: He hadn't prepared, but he could wing it. These meetings always followed the same format... they’d check in on his classes, on graduation, and talk about new happenings in the field.
 Speaker slides brad.
@@ -338,6 +347,7 @@ GoToChoice slides admin.
 Effects slides: [set Thread = agenda]
 Conditions slides.
 Reusable slides e0001.
+CharacterTag slides brad expression nervous.
 
 Content phd: "I feel like I've made good progress on my degree - I can see the finish line! What should focus on next?" Brad asked, feigning confidence.
 Speaker phd brad.
@@ -346,6 +356,7 @@ GoToChoice phd phd_r.
 Effects phd: [set Thread = agenda]
 Conditions phd.
 Reusable phd e0001.
+CharacterTag phd brad expression happy.
 
 Content phd_r: 
 	"Yeah, you're doing a great job! However, in order to secure funding, you should also work on publishing some quality research within the next year."
@@ -358,6 +369,7 @@ GoToChoice phd_r what_else.
 Effects phd_r: [set Thread = agenda]
 Conditions phd_r.
 Reusable phd_r e0001.
+CharacterTag phd_r brad expression happy.
 
 Content classes: 
 	"What about auditing a class? It would maybe help me expand my network and develop a diverse skillset."
@@ -369,6 +381,7 @@ ChoiceLabel classes: Ask about auditing classes
 GoToChoice classes classes_r.
 Effects classes: [set Thread = agenda]
 Conditions classes.
+CharacterTag classes brad expression neutral.
 
 Content classes_r: 
 	"Although auditing is a great thing to do, I don’t think it should be your priority right now. Right now, you'll benefit more from diving deeper into your current projects."
@@ -561,7 +574,7 @@ Effects insecurity_start:
 	[set Thread = insecurity]
 	[add brad_insecure Learnings]
 [end]
-Conditions insecurity_start: [>= BradInsecurityToNed 3]
+Conditions insecurity_start: [>= BradInsecurityToNed 0]
 Reusable insecurity_start e0001.
 
 Content insecurity_doubt: Brad thinks about the criticism received by Ned and wonders if he is the best fit for this position. Maybe Ned doesn't believe Brad has what it takes to be a researcher.
@@ -570,11 +583,8 @@ ChoiceLabel insecurity_doubt: Feel doubtful about skill level
 GoToChoice insecurity_doubt stressed.
 GoToChoice insecurity_doubt different_today.
 GoToChoice insecurity_doubt say_something.
-ChoiceCondition insecurity_doubt insecurity_doubt_c: [AvailableCheckpoint insecurity]
-ChoiceCondition insecurity_doubt insecurity_doubt_cc: [AvailableCheckpoint insecurity]
-ChoiceCondition insecurity_doubt insecurity_doubt_ccc: [AvailableCheckpoint insecurity]
 Effects insecurity_doubt: [set Thread = insecurity]
-Conditions insecurity_doubt: [>= BradInsecurityToNed 3]
+Conditions insecurity_doubt: [>= BradInsecurityToNed 0]
 Reusable insecurity_doubt e0001.
 
 Content stressed: The problem is there's too much to do. Not only does Brad need to create the survey, but he needs to conduct it as well. Getting the IRB proposal took weeks of him working late nights. There's just too much riding on this.
@@ -650,8 +660,9 @@ Effects dissapointed_feeling: [set Thread = insecurity]
 Conditions dissapointed_feeling.
 
 Content frazzled: 
-	“Yeah, you're right,” says Brad, feigning confidence. “I’m just a bit stressed, that’s all!” Ned gives Brad a look of concern, then says, "You've clearly put a lot of work into this and everything look great so far. Keep up the good work.”
-	As Brad walks out of Ned's office, the lack of any sort of feedback or criticism lingers in the back of his mind. Was Ned secretly disappointed and trying not to hurt Brad's feelings? Is this actually good work? Or is he just barely making the cut?
+	“Yeah, you're right,” says Brad, feigning confidence. “I’m just a bit stressed, that’s all!”
+	
+	Ned gives Brad a look of concern, then says, "You've clearly put a lot of work into this and everything look great so far. Keep up the good work.”
 [end]
 Speaker frazzled ned.
 ChoiceLabel frazzled: Feel determined
@@ -662,7 +673,15 @@ ChoiceCondition frazzled frazzled_ccc: [AvailableCheckpoint insecurity]
 Effects frazzled: [set Thread = insecurity]
 Conditions frazzled.
 
-Content really_hard: Getting lost in his thoughts Brad almost doesn't notice Ned looking at him with an expression of concern. "You seem rather worried, Brad," Ned says, "Is everything okay?" His gaze wasn't unkind, but it didn't help Brad's self-perpetuating doubts. He wanted to respond, to explain the stresses of the survey designs, the IRB proposal, and his fear of disappointment. Instead, Brad simply says, "I get the sense you're disappointed in my output recently." He hoped that his progress so far would defend his worth as a researcher, even if he felt overwhelmed by the challenges ahead.
+Content really_hard: 
+	Getting lost in his thoughts Brad almost doesn't notice Ned looking at him with an expression of concern. 
+	
+	"You seem rather worried, Brad," Ned says, "Is everything okay?" 
+	
+	Brad wanted to respond, to explain the stresses of the survey designs, the IRB proposal, and his fear of disappointment. 
+	
+	Instead, he simply says, "I get the sense you're disappointed in my output recently."
+[end]
 Speaker really_hard brad.
 ChoiceLabel really_hard: Express feeling disappointed
 GoToChoice really_hard apologizes.
@@ -709,7 +728,10 @@ ChoiceLabel thanks: Back to business
 ChoiceCondition thanks thanks_c: [AvailableCheckpoint insecurity]
 ChoiceCondition thanks thanks_cc: [AvailableCheckpoint insecurity]
 ChoiceCondition thanks thanks_ccc: [AvailableCheckpoint insecurity]
-Effects thanks: [set Thread = insecurity]
+Effects thanks: 
+	[set Thread = insecurity]
+	[add dont_be_insecure Learnings]
+[end]
 Conditions thanks.
 
 Content t0004_intro: Brad feels like he’s been letting Ned down with the project as of late. If he talks about how well things are going with the project, maybe Ned will finally be proud of Brad and won’t regret his decision of being the advisor for this study.
@@ -749,7 +771,6 @@ Content get_ahead:
 Speaker get_ahead brad.
 ChoiceLabel get_ahead: Talk about progress on the project
 GoToChoice get_ahead sounds_great.
-ChoiceCondition get_ahead get_ahead_c: [AvailableCheckpoint irb]
 Effects get_ahead: [set Thread = irb]
 Conditions get_ahead.
 
@@ -758,29 +779,26 @@ Speaker sounds_great ned.
 ChoiceLabel sounds_great: Continue
 GoToChoice sounds_great sounds_great_2.
 ChoiceCondition sounds_great sounds_great_c: [AvailableCheckpoint irb]
-ChoiceCondition sounds_great sounds_great_cc: [AvailableCheckpoint irb]
-ChoiceCondition sounds_great sounds_great_ccc: [AvailableCheckpoint irb]
 Effects sounds_great: [set Thread = irb]
 Conditions sounds_great.
 
-Content sounds_great_2: “Wow Brad, that’s amazing! I’d like to know more about what you did.”
+Content sounds_great_2: “Wow Brad, that’s really good to hear!" says Ned. "I’d like to know more about what you did.”
 Speaker sounds_great_2 ned.
 ChoiceLabel sounds_great_2: Continue
 GoToChoice sounds_great_2 confession_1.
 ChoiceCondition sounds_great_2 sounds_great_2_c: [AvailableCheckpoint irb]
 ChoiceCondition sounds_great_2 sounds_great_2_cc: [AvailableCheckpoint irb]
-ChoiceCondition sounds_great_2 sounds_great_2_ccc: [AvailableCheckpoint irb]
 Effects sounds_great_2.
 Conditions sounds_great_2.
 
-Content confession_1: Brad clears his throat, “Well, I kinda conducted one of the surveys.”
+Content confession_1: Brad clears his throat, “Well, I kinda conducted a few of the surveys.”
 Speaker confession_1 brad.
 ChoiceLabel confession_1: Tell Ned about the survey
 GoToChoice confession_1 ned_shocked.
-ChoiceCondition confession_1 confession_1_c: [AvailableCheckpoint irb]
-ChoiceCondition confession_1 confession_1_cc: [AvailableCheckpoint irb]
-ChoiceCondition confession_1 confession_1_ccc: [AvailableCheckpoint irb]
-Effects confession_1: [set Thread = irb]
+Effects confession_1: 
+	[set Thread = irb]
+	[now [BradAdmittedStudy e0001]]
+[end]
 Conditions confession_1.
 
 Content ned_shocked: “I’m sorry? Could you clarify what you mean by that? What, exactly, did you do?”
@@ -789,18 +807,16 @@ ChoiceLabel ned_shocked: Continue
 GoToChoice ned_shocked brad_panicking.
 ChoiceCondition ned_shocked ned_shocked_c: [AvailableCheckpoint irb]
 ChoiceCondition ned_shocked ned_shocked_cc: [AvailableCheckpoint irb]
-ChoiceCondition ned_shocked ned_shocked_ccc: [AvailableCheckpoint irb]
 Effects ned_shocked: [set Thread = irb]
 Conditions ned_shocked.
 
 Content brad_panicking: Is Ned pissed? Ned had mentioned in the past that Brad needed to run the surveys by him before sending them to participants. But Brad had just wanted to get ahead.
 Speaker brad_panicking brad.
 ChoiceLabel brad_panicking: Uh oh.
-GoToChoice brad_panicking concession_2.
+GoToChoice brad_panicking confession_2.
 GoToChoice brad_panicking talked_to_parents.
 ChoiceCondition brad_panicking brad_panicking_c: [AvailableCheckpoint irb]
 ChoiceCondition brad_panicking brad_panicking_cc: [AvailableCheckpoint irb]
-ChoiceCondition brad_panicking brad_panicking_ccc: [AvailableCheckpoint irb]
 Effects brad_panicking: [set Thread = irb]
 Conditions brad_panicking.
 CharacterTag brad_panicking ned expression neutral.
@@ -818,7 +834,6 @@ ChoiceLabel confession_2: Tell Ned the truth
 GoToChoice confession_2 with_concern.
 ChoiceCondition confession_2 confession_2_c: [AvailableCheckpoint irb]
 ChoiceCondition confession_2 confession_2_cc: [AvailableCheckpoint irb]
-ChoiceCondition confession_2 confession_2_ccc: [AvailableCheckpoint irb]
 Effects confession_2: [set Thread = irb]
 Conditions confession_2.
 
@@ -828,7 +843,6 @@ ChoiceLabel with_concern: Ned’s poker face is hard to read
 GoToChoice with_concern herb.
 ChoiceCondition with_concern with_concern_c: [AvailableCheckpoint irb]
 ChoiceCondition with_concern with_concern_cc: [AvailableCheckpoint irb]
-ChoiceCondition with_concern with_concern_ccc: [AvailableCheckpoint irb]
 Effects with_concern: [set Thread = irb]
 Conditions with_concern.
 
@@ -838,7 +852,6 @@ ChoiceLabel talked_to_parents: Brush it off
 GoToChoice talked_to_parents when_approval.
 ChoiceCondition talked_to_parents talked_to_parents_c: [AvailableCheckpoint irb]
 ChoiceCondition talked_to_parents talked_to_parents_cc: [AvailableCheckpoint irb]
-ChoiceCondition talked_to_parents talked_to_parents_ccc: [AvailableCheckpoint irb]
 Effects talked_to_parents: [set Thread = irb]
 Conditions talked_to_parents.
 
@@ -852,7 +865,6 @@ ChoiceLabel when_approval: Continue
 GoToChoice when_approval herb.
 ChoiceCondition when_approval when_approval_c: [AvailableCheckpoint irb]
 ChoiceCondition when_approval when_approval_cc: [AvailableCheckpoint irb]
-ChoiceCondition when_approval when_approval_ccc: [AvailableCheckpoint irb]
 Effects when_approval: [set Thread = irb]
 Conditions when_approval.
 
@@ -867,7 +879,6 @@ GoToChoice herb irb.
 GoToChoice herb oregano.
 ChoiceCondition herb herb_c: [AvailableCheckpoint irb]
 ChoiceCondition herb herb_cc: [AvailableCheckpoint irb]
-ChoiceCondition herb herb_ccc: [AvailableCheckpoint irb]
 Effects herb: [set Thread = irb]
 Conditions herb.
 
@@ -887,12 +898,15 @@ Content irb:
 	
 	Ned fumbles for some papers.
 	
-	“The IRB reviews research studies to ensure that they comply with applicable regulations, meet commonly accepted ethical standards, follow institutional policies, and adequately protect research participants.”
+	“The IRB reviews research studies to ensure that they comply with applicable regulations, meet commonly accepted ethical standards, follow institutional policies, and adequately protect research participants, especially <b>vulverable populations</b>.”
 [end]
 Speaker irb ned.
 ChoiceLabel irb: Continue
 GoToChoice irb confession_3.
-Effects irb: [set Thread = irb]
+Effects irb: 
+	[set Thread = irb]
+	[add vulerable_pop_term Learnings]
+[end]
 Conditions irb.
 
 Content confession_3: “Oh…the thing is, I didn’t get approval yet.” Brad sheepishly looks down at his scuffed-up shoes.
@@ -1170,34 +1184,53 @@ Effects makes_sense:
 [end]
 Conditions makes_sense.
 
-Content respect_intro: Should I be respectful?
-Speaker respect_intro brad.
-ChoiceLabel respect_intro: Ask about respect for persons
-GoToChoice respect_intro placeholder.
 ChoiceCondition respect_intro respect_intro_c: [AvailableCheckpoint respect]
 ChoiceCondition respect_intro respect_intro_cc: [AvailableCheckpoint respect]
 ChoiceCondition respect_intro respect_intro_ccc: [AvailableCheckpoint respect]
-Effects respect_intro: [set Thread = respect]
+Effects respect_intro.
 Conditions respect_intro.
-Reusable respect_intro e0001.
 
-Content placeholder: placeholder
-Speaker placeholder ned.
-ChoiceLabel placeholder: Placeholder
-ChoiceCondition placeholder placeholder_c: [AvailableCheckpoint respect]
-ChoiceCondition placeholder placeholder_cc: [AvailableCheckpoint respect]
-ChoiceCondition placeholder placeholder_ccc: [AvailableCheckpoint respect]
-Effects placeholder: [set Thread = respect]
-Conditions placeholder.
-Reusable placeholder e0001.
+ChoiceCondition ned_respect_intro ned_respect_intro_c: [AvailableCheckpoint respect]
+ChoiceCondition ned_respect_intro ned_respect_intro_cc: [AvailableCheckpoint respect]
+ChoiceCondition ned_respect_intro ned_respect_intro_ccc: [AvailableCheckpoint respect]
+Effects ned_respect_intro.
+Conditions ned_respect_intro.
 
-Content top_level_fallback: You got nothin going on
-ChoiceCondition top_level_fallback top_level_fallback_c: [AvailableCheckpoint respect]
-ChoiceCondition top_level_fallback top_level_fallback_cc: [AvailableCheckpoint respect]
-ChoiceCondition top_level_fallback top_level_fallback_ccc: [AvailableCheckpoint respect]
-Effects top_level_fallback: [set Thread = respect]
-Conditions top_level_fallback.
-Reusable top_level_fallback e0001.
+ChoiceCondition respect_specific respect_specific_c: [AvailableCheckpoint respect]
+ChoiceCondition respect_specific respect_specific_cc: [AvailableCheckpoint respect]
+ChoiceCondition respect_specific respect_specific_ccc: [AvailableCheckpoint respect]
+Effects respect_specific.
+Conditions respect_specific.
+
+ChoiceCondition full_consent full_consent_c: [AvailableCheckpoint respect]
+ChoiceCondition full_consent full_consent_cc: [AvailableCheckpoint respect]
+ChoiceCondition full_consent full_consent_ccc: [AvailableCheckpoint respect]
+Effects full_consent.
+Conditions full_consent.
+
+ChoiceCondition what_is_consent what_is_consent_c: [AvailableCheckpoint respect]
+ChoiceCondition what_is_consent what_is_consent_cc: [AvailableCheckpoint respect]
+ChoiceCondition what_is_consent what_is_consent_ccc: [AvailableCheckpoint respect]
+Effects what_is_consent.
+Conditions what_is_consent.
+
+ChoiceCondition consent_definition consent_definition_c: [AvailableCheckpoint respect]
+ChoiceCondition consent_definition consent_definition_cc: [AvailableCheckpoint respect]
+ChoiceCondition consent_definition consent_definition_ccc: [AvailableCheckpoint respect]
+Effects consent_definition.
+Conditions consent_definition.
+
+ChoiceCondition end_respect_bad end_respect_bad_c: [AvailableCheckpoint respect]
+ChoiceCondition end_respect_bad end_respect_bad_cc: [AvailableCheckpoint respect]
+ChoiceCondition end_respect_bad end_respect_bad_ccc: [AvailableCheckpoint respect]
+Effects end_respect_bad.
+Conditions end_respect_bad.
+
+ChoiceCondition end_respect_good end_respect_good_c: [AvailableCheckpoint respect]
+ChoiceCondition end_respect_good end_respect_good_cc: [AvailableCheckpoint respect]
+ChoiceCondition end_respect_good end_respect_good_ccc: [AvailableCheckpoint respect]
+Effects end_respect_good.
+Conditions end_respect_good.
 
 Content justice_intro: "I am confused by something. Even if a person gets harmed by the research doesn't society still benefit at the end?"
 Speaker justice_intro brad.
