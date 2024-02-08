@@ -182,6 +182,7 @@ GoToChoice outside play_off.
 GoToChoice outside sneaky.
 Effects outside: [set Thread = entry]
 Conditions outside.
+CharacterTag outside brad expression happy.
 
 Content sneaky: This is a development cheat fragment
 Speaker sneaky ned.
@@ -195,6 +196,7 @@ Effects sneaky:
 	[set Thread = entry]
 [end]
 Conditions sneaky.
+CharacterTag sneaky brad expression neutral.
 
 Content bus: Brad hesitates outside of the door. He is already late. The bus had taken an extra thirty minutes to get to campus this morning, and now he doesn’t have enough time to prepare as much as he would have liked.
 Speaker bus brad.
@@ -202,6 +204,7 @@ ChoiceLabel bus: Take a moment to reflect
 GoToChoice bus enter.
 Effects bus: [set Thread = entry]
 Conditions bus: [= Thread entry]
+CharacterTag bus brad expression neutral.
 
 Content grill: Ned had a reputation for being passionate, but not unfair. He'd always been a bit tough on Brad, despite his outward kindness. He was sharp and was probably going to detect that Brad was hiding something. He should probably come clean about it: Ned will find out eventually. But… maybe he doesn’t need to. It's Ned's fault that the approval took so long to submit, and Brad is running out of time. Even if Ned did find out, he would understand, right…?
 Speaker grill brad.
@@ -210,6 +213,7 @@ GoToChoice grill enter.
 GoToChoice grill lament.
 Effects grill: [set Thread = entry]
 Conditions grill: [= Thread entry]
+CharacterTag bus brad expression sad.
 
 Content play_off: Brad knows it’s better to come clean about his mistake, but the delay had jeopardized his progress. He could lay this down carefully to Ned, and tell him that he was on track, without elaborating on what that meant. Brad grips the doorknob a little tighter and makes a decision: he’ll tell the truth, just not the whole truth.
 Speaker play_off brad.
@@ -218,6 +222,7 @@ GoToChoice play_off enter.
 GoToChoice play_off lament.
 Effects play_off: [set Thread = entry]
 Conditions play_off: [= Thread entry]
+CharacterTag play_off brad expression happy.
 
 Content enter: Ned clearly hadn’t missed Brad’s late arrival. No more stalling. Brad squares his shoulders and shuts the door behind himself.
 Speaker enter ned.
@@ -225,6 +230,7 @@ ChoiceLabel enter: Enter the office
 GoToChoice enter youre_late.
 Effects enter: [set Thread = entry]
 Conditions enter: [= Thread entry]
+CharacterTag play_off brad expression nervous.
 
 Content youre_late: "Ah, there you are!" Ned says cheerfully. "I was beginning to wonder if we'd canceled this week."
 Speaker youre_late ned.
@@ -232,6 +238,7 @@ ChoiceLabel youre_late: Greet Ned
 GoToChoice youre_late no_worries.
 Effects youre_late: [set Thread = entry]
 Conditions youre_late: [= Thread entry]
+CharacterTag youre_late brad expression sad.
 
 Content no_worries: "It's just us today," Ned smiles, "But I do have a time limit.I have a lecture right after this, so we’ll have to make this quick."
 Speaker no_worries ned.
@@ -241,6 +248,7 @@ GoToChoice no_worries relief.
 GoToChoice no_worries reflect.
 Effects no_worries: [set Thread = entry]
 Conditions no_worries: [= Thread entry]
+CharacterTag no_worries brad expression something_else.
 
 Content doubt: 
 	Brad can't tell if Ned doesn’t care or is just trying to relieve the tension. 
