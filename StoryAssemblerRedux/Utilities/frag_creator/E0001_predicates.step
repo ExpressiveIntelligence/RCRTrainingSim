@@ -1,6 +1,8 @@
+fluent BradAdmittedStudy ?scene.
 fluent PleasantriesOver ?scene.
 [function]
 fluent Check ?thread ?frag.
+
 
 # Scene specific tasks
 OpenThreads:
