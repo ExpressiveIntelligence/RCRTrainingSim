@@ -24,6 +24,9 @@ public class FragmentManager : MonoBehaviour
     public SerializedFragment currentSerializedFragment;
     public List<SerializedFragment> fragmentHistory;
 
+    public Character Ned;
+    public Character Brad;
+
     void Awake() 
     {
         if (instance == null)
@@ -103,6 +106,16 @@ public class FragmentManager : MonoBehaviour
     {
         this.backgroundManager.RenderBackgroundFromFragment(this.currentSerializedFragment);
         this.dialogueManager.RenderDialogueFromFragment(this.currentSerializedFragment);
+        //update brad and ned
+        if(this.currentSerializedFragment.characters[0].tags.ContainsKey("expression")){
+            Debug.Log("Found tag to render with: " + this.currentSerializedFragment.characters[0].tags["expression"]);
+            this.Brad.SetSprite(this.currentSerializedFragment.characters[0].tags["expression"]);
+        } else {
+            this.Brad.SetSprite("fallback");
+        }
+        
+        //Save for when we have Ned Sprites
+        //this.Ned.SetSprite(this.currentSerializedFragment.characters[0])
     }
 
     // Update is called once per frame

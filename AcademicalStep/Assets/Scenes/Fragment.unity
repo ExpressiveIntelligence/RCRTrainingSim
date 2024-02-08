@@ -123,6 +123,17 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &4220143 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8758823007416458855, guid: c021252b69f891d4c84a244723fb2071, type: 3}
+  m_PrefabInstance: {fileID: 1371634693}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43ffe3b311e65b345a92248446152eb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &133147501
 GameObject:
   m_ObjectHideFlags: 0
@@ -165,6 +176,8 @@ MonoBehaviour:
     backgroundPath: 
     systemMessage: 
   fragmentHistory: []
+  Ned: {fileID: 4220143}
+  Brad: {fileID: 349642908}
 --- !u!4 &133147503
 Transform:
   m_ObjectHideFlags: 0
@@ -345,6 +358,88 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c021252b69f891d4c84a244723fb2071, type: 3}
+--- !u!1 &349642906 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2231842894588188155, guid: c021252b69f891d4c84a244723fb2071, type: 3}
+  m_PrefabInstance: {fileID: 261297096}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &349642907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349642906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39ad1d6cc5816e24bba29e003de5013a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sprites:
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 8102620d9dd75414ea2a84fee278b6b0, type: 3}
+    tags:
+    - neutral
+    - front
+    - fallback
+    isFallback: 1
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 0cdb275a72c21a548900d07138482042, type: 3}
+    tags:
+    - neutral
+    - front
+    - speaking
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 6ad372a7e15a7d64c9c36bcfb39b0950, type: 3}
+    tags:
+    - happy
+    - front
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 91f9c9f22ffdbe34d88f661a6215e570, type: 3}
+    tags:
+    - happy
+    - front
+    - speaking
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: b24f1f404a4846345a9cb90b7b483982, type: 3}
+    tags:
+    - front
+    - nervous
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: c9155ade3885d52419d89a81f724354e, type: 3}
+    tags:
+    - nervous
+    - front
+    - speaking
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 0fdb726e639771d47ae9056af23f41c4, type: 3}
+    tags:
+    - sad
+    - front
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: f39bdde2328e8fc48983ff9df850b976, type: 3}
+    tags:
+    - sad
+    - front
+    - speaking
+    isFallback: 0
+--- !u!114 &349642908 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8758823007416458855, guid: c021252b69f891d4c84a244723fb2071, type: 3}
+  m_PrefabInstance: {fileID: 261297096}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349642906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43ffe3b311e65b345a92248446152eb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1080336221
 PrefabInstance:
   m_ObjectHideFlags: 0
