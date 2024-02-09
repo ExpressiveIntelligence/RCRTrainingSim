@@ -87,6 +87,7 @@ Fragment apologizes e0001.
 Fragment accept_apology e0001.
 Fragment doubt_apology e0001.
 Fragment thanks e0001.
+Fragment end_insecurity e0001.
 Fragment t0004_intro e0001.
 Fragment proud_of_me e0001.
 Fragment survey_was_fun e0001.
@@ -182,6 +183,8 @@ GoToChoice outside play_off.
 GoToChoice outside sneaky.
 Effects outside: [set Thread = entry]
 Conditions outside.
+CharacterTag outside ned expression neutral.
+CharacterTag outside brad expression neutral.
 
 Content sneaky: This is a development cheat fragment
 Speaker sneaky ned.
@@ -195,6 +198,8 @@ Effects sneaky:
 	[set Thread = entry]
 [end]
 Conditions sneaky.
+CharacterTag sneaky ned expression neutral.
+CharacterTag sneaky brad expression neutral.
 
 Content bus: Brad hesitates outside of the door. He is already late. The bus had taken an extra thirty minutes to get to campus this morning, and now he doesn’t have enough time to prepare as much as he would have liked.
 Speaker bus brad.
@@ -202,6 +207,8 @@ ChoiceLabel bus: Take a moment to reflect
 GoToChoice bus enter.
 Effects bus: [set Thread = entry]
 Conditions bus: [= Thread entry]
+CharacterTag bus ned expression neutral.
+CharacterTag bus brad expression nervous.
 
 Content grill: Ned had a reputation for being passionate, but not unfair. He'd always been a bit tough on Brad, despite his outward kindness. He was sharp and was probably going to detect that Brad was hiding something. He should probably come clean about it: Ned will find out eventually. But… maybe he doesn’t need to. It's Ned's fault that the approval took so long to submit, and Brad is running out of time. Even if Ned did find out, he would understand, right…?
 Speaker grill brad.
@@ -210,6 +217,8 @@ GoToChoice grill enter.
 GoToChoice grill lament.
 Effects grill: [set Thread = entry]
 Conditions grill: [= Thread entry]
+CharacterTag grill ned expression neutral.
+CharacterTag grill brad expression nervous.
 
 Content play_off: Brad knows it’s better to come clean about his mistake, but the delay had jeopardized his progress. He could lay this down carefully to Ned, and tell him that he was on track, without elaborating on what that meant. Brad grips the doorknob a little tighter and makes a decision: he’ll tell the truth, just not the whole truth.
 Speaker play_off brad.
@@ -218,6 +227,8 @@ GoToChoice play_off enter.
 GoToChoice play_off lament.
 Effects play_off: [set Thread = entry]
 Conditions play_off: [= Thread entry]
+CharacterTag play_off ned expression neutral.
+CharacterTag play_off brad expression nervous.
 
 Content enter: Ned clearly hadn’t missed Brad’s late arrival. No more stalling. Brad squares his shoulders and shuts the door behind himself.
 Speaker enter ned.
@@ -225,6 +236,8 @@ ChoiceLabel enter: Enter the office
 GoToChoice enter youre_late.
 Effects enter: [set Thread = entry]
 Conditions enter: [= Thread entry]
+CharacterTag enter ned expression neutral.
+CharacterTag enter brad expression neutral.
 
 Content youre_late: "Ah, there you are!" Ned says cheerfully. "I was beginning to wonder if we'd canceled this week."
 Speaker youre_late ned.
@@ -232,6 +245,8 @@ ChoiceLabel youre_late: Greet Ned
 GoToChoice youre_late no_worries.
 Effects youre_late: [set Thread = entry]
 Conditions youre_late: [= Thread entry]
+CharacterTag youre_late ned expression happy.
+CharacterTag youre_late brad expression neutral.
 
 Content no_worries: "It's just us today," Ned smiles, "But I do have a time limit.I have a lecture right after this, so we’ll have to make this quick."
 Speaker no_worries ned.
@@ -241,6 +256,8 @@ GoToChoice no_worries relief.
 GoToChoice no_worries reflect.
 Effects no_worries: [set Thread = entry]
 Conditions no_worries: [= Thread entry]
+CharacterTag no_worries ned expression happy.
+CharacterTag no_worries brad expression neutral.
 
 Content doubt: 
 	Brad can't tell if Ned doesn’t care or is just trying to relieve the tension. 
@@ -252,6 +269,8 @@ ChoiceLabel doubt: Blame the buses
 GoToChoice doubt remind.
 Effects doubt: [set Thread = entry][set BradInsecurityToNed = BradInsecurityToNed + 1]
 Conditions doubt: [= Thread entry]
+CharacterTag doubt ned expression netural.
+CharacterTag doubt brad expression nervous.
 
 Content relief: 
 	Ned seems like he's in a good mood. Maybe this will be easier than expected.
@@ -267,8 +286,14 @@ ChoiceLabel relief: Comment on the buses
 GoToChoice relief remind.
 Effects relief: [set Thread = entry]
 Conditions relief: [= Thread entry]
+CharacterTag relief ned expression happy.
+CharacterTag relief brad expression sad.
 
-Content reflect: Brad found out pretty soon after arriving at the lab that he had not been Ned's first choice. Ned's pick ended up at another university, and Brad had received the acceptance notice. Brad sometimes wonders if he’d been accepted because Ned just needed to reach a quota. Ned was hard on Brad, had him double and triple check his data, show up early to their lab meetings (to curb his tendency to arrive late), and was quick to correct his spoken mistakes. He was a brilliant researcher and Brad valued his attention, when he received it.
+Content reflect: 
+	Brad found out pretty soon after arriving at the lab that he had not been Ned's first choice. Ned's pick ended up at another university, and Brad had received the acceptance notice 
+	
+	Ned was hard on Brad, had him double and triple check his data, show up early to their lab meetings (to curb his tendency to arrive late), and was quick to correct his spoken mistakes. He was a brilliant researcher and Brad valued his attention, when he received it.
+[end]
 Speaker reflect brad.
 ChoiceLabel reflect: Reflect on Brad’s relationship with Ned
 GoToChoice reflect remind.
@@ -280,6 +305,8 @@ Effects reflect:
 	[OpenCheckpoint agenda t0002_start][OpenCheckpoint insecurity insecurity_start][OpenCheckpoint principles principles_intro]
 [end]
 Conditions reflect: [= Thread entry]
+CharacterTag reflect ned expression nervous.
+CharacterTag reflect brad expression nervous.
 
 Content remind: Ned interrupts Brad's train of thought. "Remind me where you're at again? Were you able to start on those surveys yet?" He pauses, and with some emphasis adds "Or are we still sitting on them?" He glances at his stack of notes, possibly annoyed. "I think we had decided we wanted to interview the children as well as their parents, is that right?"
 Speaker remind ned.
@@ -292,6 +319,8 @@ Effects remind:
 	[OpenCheckpoint agenda t0002_start]
 [end]
 Conditions remind: [= Thread entry]
+CharacterTag remind ned expression sad.
+CharacterTag remind brad expression nervous.
 
 Content lament: Brad dreaded the impending assumption that he hadn't gotten anything done this week. Sure, there had been weeks where he'd been more focused on his semi-pro hacky sack career, and Ned had noticed. But he'd been in the lab the past seven days! Surely this time he deserved some recognition.
 Speaker lament brad.
@@ -302,6 +331,8 @@ GoToChoice lament silence.
 GoToChoice lament subjects.
 Effects lament: [set BradInsecurityToNed = BradInsecurityToNed + 1][set Thread = entry]
 Conditions lament: [= Thread entry]
+CharacterTag lament ned expression neutral.
+CharacterTag lament brad expression nervous.
 
 Content overworked: Some of Brad's friends were in a lab that encouraged a four day work week, versus the six days Brad works. How can someone who works even on the weekends still have a reputation of laziness?
 Speaker overworked brad.
@@ -309,6 +340,8 @@ ChoiceLabel overworked: Think about reputation
 GoToChoice overworked youre_late.
 Effects overworked: [set Thread = entry]
 Conditions overworked: [= Thread entry]
+CharacterTag overworked ned expression neutral.
+CharacterTag overworked brad expression sad.
 
 Content silence: There is a moment of silence as Brad struggles to find something to say. The moment stretches to a few seconds. Ned looks on expectantly.
 Speaker silence brad.
@@ -316,6 +349,8 @@ ChoiceLabel silence: Consider what to say
 GoToChoice silence youre_late.
 Effects silence: [set Thread = entry]
 Conditions silence: [= Thread entry]
+CharacterTag silence ned expression neutral.
+CharacterTag silence brad expression neutral.
 
 Content subjects: Brad thinks about the participant surveys he had conducted over the past week. He had been so proud of his progress, even though he wasn't technically supposed to start yet. He managed to find a way around the IRB requirements and he is quite pleased with all that he accomplished despite the challenges. Perhaps he will get the grant he's gunning for after all.
 Speaker subjects brad.
@@ -323,6 +358,8 @@ ChoiceLabel subjects: Feel proud of accomplishments
 GoToChoice subjects youre_late.
 Effects subjects: [set Thread = entry]
 Conditions subjects: [= Thread entry]
+CharacterTag subjects ned expression neutral.
+CharacterTag subjects brad expression happy.
 
 Content t0002_start: Brad met with Ned weekly. They used a shared document to track - oh shoot - he forgot to update the document yesterday.
 Speaker t0002_start brad.
@@ -393,6 +430,7 @@ ChoiceLabel classes_r: Listen to Ned’s opinion
 GoToChoice classes_r what_else.
 Effects classes_r: [set Thread = agenda]
 Conditions classes_r.
+CharacterTag classes_r brad expression angry.
 
 Content department: 
 	"So, the whole department is talking about Katherine and company. Do you know what’s going on?"
@@ -407,6 +445,7 @@ ChoiceCondition department department_cc: [AvailableCheckpoint agenda]
 ChoiceCondition department department_ccc: [AvailableCheckpoint agenda]
 Effects department: [set Thread = agenda]
 Conditions department.
+CharacterTag department brad expression angry.
 
 Content department_r: 
 	"That’s not important -- department politics aren’t a place you want to spend too much time as a student."
@@ -424,6 +463,7 @@ Effects department_r:
 	[set Thread = agenda]
 [end]
 Conditions department_r.
+CharacterTag department_r brad expression nervous.
 
 Content admin: 
 	"Well, are there any key deadlines or forms I've got to hop on?"
@@ -439,6 +479,7 @@ ChoiceCondition admin admin_ccc: [AvailableCheckpoint agenda]
 Effects admin: [set Thread = agenda]
 Conditions admin.
 Reusable admin e0001.
+CharacterTag admin brad expression neutral.
 
 Content admin_r: 
 	"At this point, the deadlines depend on what you want to publish and where. We've got a lot of momentum on our Child Moral Development project; perhaps that's a good place for us to focus this meeting? We have some important admin work to do with the IRB."
@@ -460,6 +501,7 @@ Effects admin_r:
 [end]
 Conditions admin_r.
 Reusable admin_r e0001.
+CharacterTag admin_r brad expression netural.
 
 Content what_else: "What else is on the agenda for today?"
 Speaker what_else ned.
@@ -475,6 +517,7 @@ Effects what_else:
 [end]
 Conditions what_else.
 Reusable what_else e0001.
+CharacterTag what_else brad expression neutral.
 
 Content what_else_top_level: "What else should we talk about?" asks Ned.
 Speaker what_else_top_level ned.
@@ -490,6 +533,7 @@ Effects what_else_top_level:
 [end]
 Conditions what_else_top_level.
 Reusable what_else_top_level e0001.
+CharacterTag what_else_top_level brad expression neutral.
 
 Content what_else_transition: "We're a bit limited on time for today - let's stay on track and put that idea on next week’s agenda."
 Speaker what_else_transition ned.
@@ -502,6 +546,8 @@ ChoiceCondition what_else_transition what_else_transition_ccc: [AvailableCheckpo
 Effects what_else_transition: [set Thread = agenda]
 Conditions what_else_transition.
 Reusable what_else_transition e0001.
+CharacterTag what_else_transition ned expression nervous.
+CharacterTag what_else_transition brad expression nervous.
 
 Content stress: 
 	Most of Brad’s time was spent working on this project- his motivation wasn’t purely out of interest. The project provided a such direct path to future publications and funding that it seemed like his entire degree hinged on its success.
@@ -517,6 +563,7 @@ ChoiceCondition stress stress_ccc: [AvailableCheckpoint agenda]
 Effects stress: [set Thread = agenda]
 Conditions stress.
 Reusable stress e0001.
+CharacterTag stress brad expression happy.
 
 Content need_success: "I get it. It's easy to get overwhelmed, but try to take it one step at a time. For example, we can take one large task and break it down into many smaller tasks.That’ll make things easier! Let's try it. What are you working on right now?"
 Speaker need_success ned.
@@ -530,6 +577,8 @@ Effects need_success:
 	[set BradInsecurityToNed = BradInsecurityToNed + 1]
 [end]
 Conditions need_success.
+CharacterTag need_success ned expression happy.
+CharacterTag need_success brad expression happy.
 
 Content project_status: "I wanted to talk about that, you mentioned some more paperwork I need to do for the surveys."
 Speaker project_status brad.
@@ -544,6 +593,8 @@ Effects project_status:
 [end]
 Conditions project_status.
 Reusable project_status e0001.
+CharacterTag project_status ned expression neutral.
+CharacterTag project_status brad expression nervous.
 
 Content project: 
 	Brad had been recruiting participants for the study and had even gotten a wave of early responses from parents. This was a perfect example to prove how smoothly things were going.
@@ -562,6 +613,8 @@ Effects project:
 [end]
 Conditions project.
 Reusable project e0001.
+CharacterTag project ned expression nervous.
+CharacterTag project brad expression nervous.
 
 Content insecurity_start: Brad wonders how he could have possibly gotten this far behind. Could it be his tendency to procrastinate? Or was it that he simply wasn't cut out to be a PhD candidate?
 Speaker insecurity_start brad.
@@ -576,6 +629,8 @@ Effects insecurity_start:
 [end]
 Conditions insecurity_start: [>= BradInsecurityToNed 0]
 Reusable insecurity_start e0001.
+CharacterTag insecurity_start ned expression neutral.
+CharacterTag insecurity_start brad expression nervous.
 
 Content insecurity_doubt: Brad thinks about the criticism received by Ned and wonders if he is the best fit for this position. Maybe Ned doesn't believe Brad has what it takes to be a researcher.
 Speaker insecurity_doubt brad.
@@ -586,6 +641,8 @@ GoToChoice insecurity_doubt say_something.
 Effects insecurity_doubt: [set Thread = insecurity]
 Conditions insecurity_doubt: [>= BradInsecurityToNed 0]
 Reusable insecurity_doubt e0001.
+CharacterTag insecurity_doubt ned expression neutral.
+CharacterTag insecurity_doubt brad expression nervous.
 
 Content stressed: The problem is there's too much to do. Not only does Brad need to create the survey, but he needs to conduct it as well. Getting the IRB proposal took weeks of him working late nights. There's just too much riding on this.
 Speaker stressed brad.
@@ -596,6 +653,8 @@ ChoiceCondition stressed stressed_cc: [AvailableCheckpoint insecurity]
 ChoiceCondition stressed stressed_ccc: [AvailableCheckpoint insecurity]
 Effects stressed: [set Thread = insecurity]
 Conditions stressed.
+CharacterTag stressed ned expression neutral.
+CharacterTag stressed brad expression nervous.
 
 Content different_today: Applying for grants and fellowships was really overwhelming. The amount of money you need to do university-level research is mind-boggling.
 Speaker different_today brad.
@@ -606,6 +665,8 @@ ChoiceCondition different_today different_today_cc: [AvailableCheckpoint insecur
 ChoiceCondition different_today different_today_ccc: [AvailableCheckpoint insecurity]
 Effects different_today: [set Thread = insecurity]
 Conditions different_today.
+CharacterTag different_today ned expression neutral.
+CharacterTag different_today brad expression nervous.
 
 Content say_something: Brad thinks about his feelings of inadequacy, and whether he should bring it up with Ned. Confiding in Ned might make him feel better, but on the other hand, it might make Ned more critical of Brad. Maybe Brad should ignore these feelings and try to stay on Ned's good side. Surely, focusing this meeting on all the progress he's made so far will get him some points with his advisor.
 Speaker say_something brad.
@@ -617,6 +678,8 @@ ChoiceCondition say_something say_something_cc: [AvailableCheckpoint insecurity]
 ChoiceCondition say_something say_something_ccc: [AvailableCheckpoint insecurity]
 Effects say_something: [set Thread = insecurity]
 Conditions say_something.
+CharacterTag say_something ned expression neutral.
+CharacterTag say_something brad expression nervous.
 
 Content exit_bad: 
 	There isn't a great way to bring up the stress, because it only highlights his flaws. Let's focus on the work at hand instead.
@@ -630,6 +693,8 @@ ChoiceCondition exit_bad exit_bad_cc: [AvailableCheckpoint insecurity]
 ChoiceCondition exit_bad exit_bad_ccc: [AvailableCheckpoint insecurity]
 Effects exit_bad: [set Thread = insecurity]
 Conditions exit_bad.
+CharacterTag exit_bad ned expression neutral.
+CharacterTag exit_bad brad expression nervous.
 
 Content grants_funding: 
 	Brad wants to tell Ned about how stressed he is, but then he thinks about he thousands of dollars he's received to conduct this research. He needs to show that the money is being put to good use. Brad's hands shake as he takes his papers and begins to display his work. 
@@ -644,6 +709,8 @@ ChoiceCondition grants_funding grants_funding_cc: [AvailableCheckpoint insecurit
 ChoiceCondition grants_funding grants_funding_ccc: [AvailableCheckpoint insecurity]
 Effects grants_funding: [set Thread = insecurity]
 Conditions grants_funding.
+CharacterTag grants_funding ned expression neutral.
+CharacterTag grants_funding brad expression nervous.
 
 Content dissapointed_feeling: 
 	Brad takes a deep breath.  "I just don't think I'm handling any of this well," he confesses. "I feel like you’re disappointed in me with the way I'm not —"
@@ -658,6 +725,8 @@ ChoiceCondition dissapointed_feeling dissapointed_feeling_cc: [AvailableCheckpoi
 ChoiceCondition dissapointed_feeling dissapointed_feeling_ccc: [AvailableCheckpoint insecurity]
 Effects dissapointed_feeling: [set Thread = insecurity]
 Conditions dissapointed_feeling.
+CharacterTag dissapointed_feeling ned expression neutral.
+CharacterTag dissapointed_feeling brad expression nervous.
 
 Content frazzled: 
 	“Yeah, you're right,” says Brad, feigning confidence. “I’m just a bit stressed, that’s all!”
@@ -672,6 +741,8 @@ ChoiceCondition frazzled frazzled_cc: [AvailableCheckpoint insecurity]
 ChoiceCondition frazzled frazzled_ccc: [AvailableCheckpoint insecurity]
 Effects frazzled: [set Thread = insecurity]
 Conditions frazzled.
+CharacterTag frazzled ned expression happy.
+CharacterTag frazzled brad expression nervous.
 
 Content really_hard: 
 	Getting lost in his thoughts Brad almost doesn't notice Ned looking at him with an expression of concern. 
@@ -690,6 +761,8 @@ ChoiceCondition really_hard really_hard_cc: [AvailableCheckpoint insecurity]
 ChoiceCondition really_hard really_hard_ccc: [AvailableCheckpoint insecurity]
 Effects really_hard: [set Thread = insecurity]
 Conditions really_hard.
+CharacterTag really_hard ned expression sad.
+CharacterTag really_hard brad expression sad.
 
 Content apologizes: Brad anxiously sits across the desk from Professor Ned, shuffling through his latest research notes. His insecurities are overwhelming as he prepares his thoughts. Ned glances up from his paperwork with a look of confusion as he set down his pen. "Brad, you have been doing an excellent job," he says calmly, "I’m sorry if my judgement was too harsh, but trust me when I say that I can see the amount of time and work you have put into this."
 Speaker apologizes ned.
@@ -701,6 +774,7 @@ ChoiceCondition apologizes apologizes_cc: [AvailableCheckpoint insecurity]
 ChoiceCondition apologizes apologizes_ccc: [AvailableCheckpoint insecurity]
 Effects apologizes: [set Thread = insecurity]
 Conditions apologizes.
+CharacterTag apologizes brad expression nervous.
 
 Content accept_apology: Hearing these words of affirmation relieves some stress of off Brad’s shoulders. Knowing that his work is being, not only recognized, but praised allows him to feel less pressure from judgement. Brad now knows that he is on the right track with his research, and can reference back to his own work to continue forward.
 Speaker accept_apology brad.
@@ -711,6 +785,7 @@ ChoiceCondition accept_apology accept_apology_cc: [AvailableCheckpoint insecurit
 ChoiceCondition accept_apology accept_apology_ccc: [AvailableCheckpoint insecurity]
 Effects accept_apology: [set Thread = insecurity]
 Conditions accept_apology.
+CharacterTag accept_apology brad expression happy.
 
 Content doubt_apology: Brad wants to accept Ned's kind remarks, but the voice in the back of his head tells him that Ned is lying. If Ned was honest and said his work was inadequate, Brad would have to spend time fixing it, precious time they did not have. Maybe Ned is just telling him he’s doing a good job so that he doesn’t waste even more time than he already has.
 Speaker doubt_apology brad.
@@ -721,18 +796,27 @@ ChoiceCondition doubt_apology doubt_apology_cc: [AvailableCheckpoint insecurity]
 ChoiceCondition doubt_apology doubt_apology_ccc: [AvailableCheckpoint insecurity]
 Effects doubt_apology: [set Thread = insecurity]
 Conditions doubt_apology.
+CharacterTag doubt_apology brad expression sad.
 
-Content thanks: "Thanks," Brad says. There is a moment of silence as they look for what to say next. Ned continues to look through the paperwork before saying "I'm glad you spoke to me about this, but now let's get back to the task at hand. Tell me, how are the surveys going? "
+Content thanks: "Thanks," Brad says. There is a moment of silence as they look for what to say next.
 Speaker thanks brad.
 ChoiceLabel thanks: Back to business
-ChoiceCondition thanks thanks_c: [AvailableCheckpoint insecurity]
-ChoiceCondition thanks thanks_cc: [AvailableCheckpoint insecurity]
-ChoiceCondition thanks thanks_ccc: [AvailableCheckpoint insecurity]
-Effects thanks: 
+GoToChoice thanks end_insecurity.
+Effects thanks: [set Thread = insecurity]
+Conditions thanks.
+CharacterTag thanks brad expression nervous.
+
+Content end_insecurity: Ned continues to look through the paperwork before saying "I'm glad you spoke to me about this, but now let's get back to the task at hand. Tell me, how are the surveys going? "
+ChoiceLabel end_insecurity: Continue
+ChoiceCondition end_insecurity end_insecurity_c: [AvailableCheckpoint insecurity]
+ChoiceCondition end_insecurity end_insecurity_cc: [AvailableCheckpoint insecurity]
+ChoiceCondition end_insecurity end_insecurity_ccc: [AvailableCheckpoint insecurity]
+Effects end_insecurity: 
 	[set Thread = insecurity]
 	[add dont_be_insecure Learnings]
 [end]
-Conditions thanks.
+Conditions end_insecurity.
+CharacterTag end_insecurity brad expression nervous.
 
 Content t0004_intro: Brad feels like he’s been letting Ned down with the project as of late. If he talks about how well things are going with the project, maybe Ned will finally be proud of Brad and won’t regret his decision of being the advisor for this study.
 Speaker t0004_intro brad.

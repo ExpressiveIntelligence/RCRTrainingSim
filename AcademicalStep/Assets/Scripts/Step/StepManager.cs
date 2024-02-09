@@ -181,7 +181,8 @@ public class StepManager : MonoBehaviour
     // <param> choiceID </param> the id of the choice as defined in the Step file, returned by Render or PrintChoices
     private string MakeChoice(string choiceID)
     { 
-        return ExecuteStep($"[MakeChoice {choiceID}]");
+        var result =  ExecuteStep($"[MakeChoice {choiceID}]");
+        return result;
     }
 
     /**
@@ -280,7 +281,7 @@ public class StepManager : MonoBehaviour
             Debug.Log("Execution Error" + e);
             return null;
         }
-        
+
         try {
             return ParseStepOutputFormat<T>(result);
         } catch (Exception e) {
@@ -304,7 +305,7 @@ public class StepManager : MonoBehaviour
     */
     private T[] ParseStepOutputFormat<T>(string stepOutput) {
         string[] items = stepOutput.Trim().Split(this.itemDelim);
-        // for each, parse into a choice
+        
         var parsedItems = new List<T>();
         for (int i = 0; i < items.Length; i++)
         {
@@ -327,13 +328,13 @@ public class StepManager : MonoBehaviour
         else if (typeof(T) == typeof(SerializedCharacter))
         {
             SerializedCharacter character = new SerializedCharacter() { 
-                id        = Normalize(fields[0]),
+                id        = Normalize(fields[0]).ToLower(), // [RenderCharacters] is meant to call the new verbatimCase flag in Step, but itsAZZA
                 name      = Normalize(fields[1]),
                 x         = Int32.Parse(Normalize(fields[2])),
                 y         = Int32.Parse(Normalize(fields[3])),
             };
 
-            KeyValuePair<string, string>[] tagsArray = ExecuteStep<KeyValuePair<string, string>>("[RenderCharacterTags ?" + character.id + "]");
+            KeyValuePair<string, string>[] tagsArray = ExecuteStep<KeyValuePair<string, string>>("[RenderCharacterTags " + character.id + "]");
             character.tags = tagsArray.ToDictionary(tuple => tuple.Key.ToLower(), tuple => tuple.Value.ToLower());
 
             return (T) (object) character;
