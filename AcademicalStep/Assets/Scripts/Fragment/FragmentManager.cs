@@ -113,6 +113,13 @@ public class FragmentManager : MonoBehaviour
         } else {
             this.Brad.SetSprite("fallback");
         }
+
+        if(this.currentSerializedFragment.characters[1].tags.ContainsKey("expression")){
+            Debug.Log("Found tag to render with: " + this.currentSerializedFragment.characters[1].tags["expression"]);
+            this.Ned.SetSprite(this.currentSerializedFragment.characters[1].tags["expression"]);
+        } else {
+            this.Ned.SetSprite("fallback");
+        }
         
         //Save for when we have Ned Sprites
         //this.Ned.SetSprite(this.currentSerializedFragment.characters[0])

@@ -128,7 +128,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8758823007416458855, guid: c021252b69f891d4c84a244723fb2071, type: 3}
   m_PrefabInstance: {fileID: 1371634693}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1371634694}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 43ffe3b311e65b345a92248446152eb4, type: 3}
@@ -777,6 +777,77 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c021252b69f891d4c84a244723fb2071, type: 3}
+--- !u!1 &1371634694 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2231842894588188155, guid: c021252b69f891d4c84a244723fb2071, type: 3}
+  m_PrefabInstance: {fileID: 1371634693}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1371634695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1371634694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39ad1d6cc5816e24bba29e003de5013a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sprites:
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: a36b0f56fea027e4191db199af95f400, type: 3}
+    tags:
+    - neutral
+    - front
+    - fallback
+    isFallback: 1
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: c68de7726a87d3f41bee8e5195a05891, type: 3}
+    tags:
+    - neutral
+    - front
+    - speaking
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 7543cafb140b966499bbf7403292b08a, type: 3}
+    tags:
+    - sad
+    - front
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 8a4c7d5343102b24495ba2417bdb1ea7, type: 3}
+    tags:
+    - sad
+    - front
+    - speaking
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 9babd86d8c7b0324da738a6761648dad, type: 3}
+    tags:
+    - nervous
+    - front
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: e82cfa2a90f5a05459a21af41a0963d9, type: 3}
+    tags:
+    - nervous
+    - front
+    - speaking
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 591363e0ba526e147afe14fb1ddd275b, type: 3}
+    tags:
+    - happy
+    - front
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 942851b6e91c3a0479b3d421f90e537c, type: 3}
+    tags:
+    - happy
+    - front
+    - speaking
+    isFallback: 0
 --- !u!1 &1429551391
 GameObject:
   m_ObjectHideFlags: 0
