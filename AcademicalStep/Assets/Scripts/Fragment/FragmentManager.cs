@@ -24,8 +24,12 @@ public class FragmentManager : MonoBehaviour
     public SerializedFragment currentSerializedFragment;
     public List<SerializedFragment> fragmentHistory;
 
-    public Character Ned;
-    public Character Brad;
+    public Character ned;
+    public Character brad;
+    public Background background;
+
+    public int backgroundCounter = 0; //counts how many choices have passed between backgrounds
+    public int backgroundRotation = 3; //indicates how many choices should pass before changing backgrounds
 
     void Awake() 
     {
@@ -109,18 +113,27 @@ public class FragmentManager : MonoBehaviour
         //update brad and ned
         if(this.currentSerializedFragment.characters[0].tags.ContainsKey("expression")){
             Debug.Log("Found tag to render with: " + this.currentSerializedFragment.characters[0].tags["expression"]);
-            this.Brad.SetSprite(this.currentSerializedFragment.characters[0].tags["expression"]);
+            this.brad.SetSprite(this.currentSerializedFragment.characters[0].tags["expression"]);
         } else {
-            this.Brad.SetSprite("fallback");
+            this.brad.SetSprite("fallback");
         }
 
         if(this.currentSerializedFragment.characters[1].tags.ContainsKey("expression")){
             Debug.Log("Found tag to render with: " + this.currentSerializedFragment.characters[1].tags["expression"]);
-            this.Ned.SetSprite(this.currentSerializedFragment.characters[1].tags["expression"]);
+            this.ned.SetSprite(this.currentSerializedFragment.characters[1].tags["expression"]);
         } else {
-            this.Ned.SetSprite("fallback");
+            this.ned.SetSprite("fallback");
         }
         
+        //change background every 3 turns
+        if(this.backgroundCounter == 0){
+            this.background.SetSprite("random");
+        }
+        backgroundCounter++;
+        if(this.backgroundCounter >= this.backgroundRotation){
+            this.backgroundCounter = 0;
+        }
+
         //Save for when we have Ned Sprites
         //this.Ned.SetSprite(this.currentSerializedFragment.characters[0])
     }

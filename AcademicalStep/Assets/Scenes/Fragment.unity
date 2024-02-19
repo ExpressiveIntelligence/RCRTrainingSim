@@ -176,8 +176,9 @@ MonoBehaviour:
     backgroundPath: 
     systemMessage: 
   fragmentHistory: []
-  Ned: {fileID: 4220143}
-  Brad: {fileID: 349642908}
+  ned: {fileID: 4220143}
+  brad: {fileID: 349642908}
+  background: {fileID: 835319684}
 --- !u!4 &133147503
 Transform:
   m_ObjectHideFlags: 0
@@ -440,6 +441,186 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43ffe3b311e65b345a92248446152eb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &835319683 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 300362412704600381, guid: 83ad5a74c34b4234f8b30ff08536e0ac, type: 3}
+  m_PrefabInstance: {fileID: 1080336221}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &835319684 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 269430251725834446, guid: 83ad5a74c34b4234f8b30ff08536e0ac, type: 3}
+  m_PrefabInstance: {fileID: 1080336221}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835319683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1a7292bfc4e5b84097c178baa25031e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &835319687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835319683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39ad1d6cc5816e24bba29e003de5013a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_sprites:
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: fff89d9f8e5c60f4aa397fb6b11efcae, type: 3}
+    tags:
+    - random
+    isFallback: 1
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: ec67ba768e8597046b29a96916e12ba1, type: 3}
+    tags:
+    - random
+    - fallback
+    isFallback: 1
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 83b6ebe852e5848418a5305526a273c6, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 6bde11fe6d7349b4bbbfeaf6028dc995, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 102dead0d697dbd46af7321334723a8c, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 7f59c6ce53e0ac643abde1773e5542bb, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: f64ad75c8d327034582d5ae4ee4b85e2, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: f4ec3d803226eb34ba04235e3e2894c3, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 49e5abe155f8bfb43bc6d1e1e10a0e35, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 5af803acf108b484395b456d2148198c, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: edad4a3ab3f00a946b2566c28497f134, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 85a4a4873e0518443943c5f3293036bb, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 768bf7f8f4f52544e834c35f312a9eae, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 97eaa85d3aa24254ca1cf141aedd8abe, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: c395d7c0e4f8dfc4c9feda4019e43031, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: c24127a50eaae9540aa78e57c1505055, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 9b949e0f6e52eaa4eb40bad5971a6300, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: d7d4aa644f25edb4b80427c50f28470c, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: e688ebc7642d4b64d8a782f1205a1300, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 3abdf132a4d1e3d4b87cde935e676bbd, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 5b99a9e401d05b14d80b4ed81dc7bd02, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 302bd63c151b62b4190a7345305b158f, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 9f4519f6a17dca34aa9d269d2e5fd775, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 1824c62695f3c9046b7e809da8e36d6b, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: ab9ad0d6fa5169f44b3e4e5cedc9d462, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 123f613eb1099e6428647b0a6a650846, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: b411734e3c1838e4d9b59032d36d60e1, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 1d2fe8537815cff419b6c476904cb988, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 3eee6b858dd78e74c8e71578bfb5f7dc, type: 3}
+    tags:
+    - random
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 73ba2222b896f9a4ab8600b2346da65c, type: 3}
+    tags:
+    - random
+    isFallback: 0
 --- !u!1001 &1080336221
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -449,7 +630,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 300362412704600381, guid: 83ad5a74c34b4234f8b30ff08536e0ac, type: 3}
       propertyPath: m_Name
-      value: Background_Proto
+      value: Background
       objectReference: {fileID: 0}
     - target: {fileID: 5160084865821099044, guid: 83ad5a74c34b4234f8b30ff08536e0ac, type: 3}
       propertyPath: m_RootOrder
