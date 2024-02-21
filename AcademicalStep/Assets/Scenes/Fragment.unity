@@ -439,6 +439,12 @@ MonoBehaviour:
     - front
     - speaking
     isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: b5a680f616e784846a5699dd1a7836cd, type: 3}
+    tags:
+    - confident
+    - front
+    isFallback: 0
 --- !u!114 &349642908 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8758823007416458855, guid: c021252b69f891d4c84a244723fb2071, type: 3}
@@ -1042,6 +1048,13 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: 32b09671c2ef4584f9bcfb5eaf197e13, type: 3}
     tags:
     - confused
+    - front
+    - speaking
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 4e55ff7de50cf534e846b8700323ed48, type: 3}
+    tags:
+    - confident
     - front
     - speaking
     isFallback: 0
