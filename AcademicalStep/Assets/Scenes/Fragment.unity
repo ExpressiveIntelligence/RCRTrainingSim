@@ -179,6 +179,8 @@ MonoBehaviour:
   ned: {fileID: 4220143}
   brad: {fileID: 349642908}
   background: {fileID: 835319684}
+  backgroundCounter: 0
+  backgroundRotation: 3
 --- !u!4 &133147503
 Transform:
   m_ObjectHideFlags: 0
@@ -427,6 +429,13 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: f39bdde2328e8fc48983ff9df850b976, type: 3}
     tags:
     - sad
+    - front
+    - speaking
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: c1c90dcf9bee09740944706b4bf872cd, type: 3}
+    tags:
+    - confused
     - front
     - speaking
     isFallback: 0
@@ -1026,6 +1035,13 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: 942851b6e91c3a0479b3d421f90e537c, type: 3}
     tags:
     - happy
+    - front
+    - speaking
+    isFallback: 0
+  - spriteName: 
+    sprite: {fileID: 21300000, guid: 32b09671c2ef4584f9bcfb5eaf197e13, type: 3}
+    tags:
+    - confused
     - front
     - speaking
     isFallback: 0
