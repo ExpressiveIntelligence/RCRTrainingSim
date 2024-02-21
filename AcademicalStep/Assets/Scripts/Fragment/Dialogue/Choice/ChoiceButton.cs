@@ -10,9 +10,12 @@ public class ChoiceButton : MonoBehaviour
     public Color idleColor = new Color(.25f,.25f,.25f,1f);
     public Color hoverColor = new Color(.35f, .35f, .35f, 1f);
 
+    public GameObject loadingPanel;
+
     // Start is called before the first frame update
     void Start()
     {
+        this.loadingPanel = GameObject.FindWithTag("Loading").transform.GetChild(0).gameObject; //get reference to loading panel for coroutine
         this.isHover = false;
     }
 
@@ -33,8 +36,9 @@ public class ChoiceButton : MonoBehaviour
 
     void OnMouseDown() 
     {
+        //this.loadingPanel.SetActive(true);
+        //StartCoroutine(SubmitChoice());
         this.transform.parent.GetComponent<Choice>().SubmitChoiceToDialogue();
-        
     }
 
     void OnMouseExit()
@@ -45,4 +49,16 @@ public class ChoiceButton : MonoBehaviour
             this.choiceButtonSR.color = this.idleColor;
         }
     }
+
+    IEnumerator TurnOnLoadingPanel() 
+    {
+        this.loadingPanel.SetActive(true);
+        yield return null;
+    }
+    IEnumerator SubmitChoice() 
+    {
+        this.transform.parent.GetComponent<Choice>().SubmitChoiceToDialogue();
+        yield return null;
+    }
+
 }

@@ -31,6 +31,8 @@ public class FragmentManager : MonoBehaviour
     public int backgroundCounter = 0; //counts how many choices have passed between backgrounds
     public int backgroundRotation = 3; //indicates how many choices should pass before changing backgrounds
 
+    public GameObject loadingPanel;
+
     void Awake() 
     {
         if (instance == null)
@@ -92,11 +94,18 @@ public class FragmentManager : MonoBehaviour
                 this.dialogueManager = dialogueManagers[0].GetComponent<DialogueManager>();
             }
         }
+        StepManager.OnReady += HandleStepManagerOnReady;
 
         //Initializes Step Interpreter and render the first fragment
-        SerializedFragment fragment = this.stepManager.InitializeStepStoryAssembler();
+        //SerializedFragment fragment = this.stepManager.InitializeStepStoryAssembler();
+        this.stepManager.InitializeStepStoryAssembler();
 
-        this.currentSerializedFragment = fragment;
+
+    }
+
+    public void HandleStepManagerOnReady()
+    {  
+        this.currentSerializedFragment = this.stepManager.currentFragment;
 
         //create history, set intro scene as first in history.
         this.fragmentHistory = new List<SerializedFragment>();
@@ -108,6 +117,7 @@ public class FragmentManager : MonoBehaviour
 
     public void RenderFromCurrentFragment() 
     {
+
         this.backgroundManager.RenderBackgroundFromFragment(this.currentSerializedFragment);
         this.dialogueManager.RenderDialogueFromFragment(this.currentSerializedFragment);
         //update brad and ned
@@ -133,6 +143,9 @@ public class FragmentManager : MonoBehaviour
         if(this.backgroundCounter >= this.backgroundRotation){
             this.backgroundCounter = 0;
         }
+
+        //turn off loading pannel
+       //this.loadingPanel.SetActive(false);
 
         //Save for when we have Ned Sprites
         //this.Ned.SetSprite(this.currentSerializedFragment.characters[0])

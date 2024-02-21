@@ -26,10 +26,13 @@ public class Dialogue : MonoBehaviour
     public Choice choice4;
     public Choice choice5;
 
+  
+
     // Start is called before the first frame update
     void Start()
     {
         this.gameSession = GameSession.instance;
+        StepManager.OnReady += handleStepManagerReady;
 
 
     }
@@ -42,11 +45,16 @@ public class Dialogue : MonoBehaviour
 
     public void SubmitChoiceToStoryAssembler(string choiceId) 
     {
+       this.gameSession.stepManager.Select(choiceId.ToLower());
+    }
 
-        SerializedFragment temp = this.gameSession.stepManager.Select(choiceId.ToLower());
+    public void handleStepManagerReady()
+    {
+        SerializedFragment temp = this.gameSession.stepManager.currentFragment;
         this.gameSession.fragmentManager.currentSerializedFragment = temp;
         this.gameSession.fragmentManager.fragmentHistory.Add(temp);
         this.gameSession.fragmentManager.RenderFromCurrentFragment();
+
     }
 
     public void SetChoices(SerializedChoice[] choices) 

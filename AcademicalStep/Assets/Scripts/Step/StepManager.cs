@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Step; // Using this line gives us the debug error "The identifier ParseAndExecute is not in scope." To fix it:
 // using static Step.Module; 
 using System.Text.RegularExpressions;
@@ -33,6 +34,12 @@ public class StepManager : MonoBehaviour
     private bool optionalScenePathLoaded = false;
     private string itemDelim = "";
     private string subItem = "";
+
+    public GameObject loadingPanel;
+
+    public static UnityAction OnLoading;
+    public static UnityAction OnReady;
+    public SerializedFragment currentFragment {get; private set;}
     
     // Awake is used to instantiate class as singleton
     void Awake()
@@ -81,7 +88,7 @@ public class StepManager : MonoBehaviour
         SerializedFragment fragment = Render();
         var currentSceneJson = JsonUtility.ToJson(fragment);
         Debug.Log(currentSceneJson);
-        fragment = Select("welcome");
+        //fragment = Select("welcome");
         currentSceneJson = JsonUtility.ToJson(fragment);
         Debug.Log(currentSceneJson);
         var save = SaveState();
@@ -101,7 +108,7 @@ public class StepManager : MonoBehaviour
     /** 
      *  Initialize StoryAssembler and the Step library interface
      */
-    public SerializedFragment InitializeStepStoryAssembler()
+    public void InitializeStepStoryAssembler()
     {
         this.module = CreateModule();
         this.state = State.Empty;
@@ -133,10 +140,11 @@ public class StepManager : MonoBehaviour
 
         if (doReRender) {
             string choice = fragment.choices[0].id.ToLower(); // We shouldn't have to lower case: TODO call verbatm case in Step
-            fragment = Select(choice); 
+            //fragment = Select(choice); 
+            Select(choice);
         }
 
-        return fragment;
+        //return fragment;
     }
 
     /** 
@@ -191,6 +199,7 @@ public class StepManager : MonoBehaviour
     **/
     public SerializedFragment Render() 
     {
+
         var renderedScene = new SerializedFragment()
         {
             fragmentID =  Normalize(ExecuteStep("[CurrentFragment]")), 
@@ -231,18 +240,31 @@ public class StepManager : MonoBehaviour
     * Represents the user selecting the choice with the given id.
     * Returns the next fragment to be rendered.
     */
-    public SerializedFragment Select(string choiceID)
-    {
-        MakeChoice(choiceID);
-        if (this.extraDebugLogging) {
-            Debug.Log("Thread: " + ExecuteStep("[Thread]" + " Frag: " + ExecuteStep("[CurrentFragment]")));
-            var conditionalChoices = ExecuteStep(" [DoAll [Member ?path AllPaths] [SecondGoToChoices ?second ?path] [Write ?second]]", stateful: false);
-            if (conditionalChoices != null && conditionalChoices.Trim() != "") {
-                Debug.Log("Conditional Choices: " + conditionalChoices);
-            }
-        }
+    // public SerializedFragment Select(string choiceID)
+    // {
+ 
+    //     MakeChoice(choiceID);
+    //     if (this.extraDebugLogging) {
+    //         Debug.Log("Thread: " + ExecuteStep("[Thread]" + " Frag: " + ExecuteStep("[CurrentFragment]")));
+    //         var conditionalChoices = ExecuteStep(" [DoAll [Member ?path AllPaths] [SecondGoToChoices ?second ?path] [Write ?second]]", stateful: false);
+    //         if (conditionalChoices != null && conditionalChoices.Trim() != "") {
+    //             Debug.Log("Conditional Choices: " + conditionalChoices);
+    //         }
+    //     }
 
-        return Render();
+    //     return Render();
+    // }
+    public void Select(string choiceID){
+        StartCoroutine(SelectCoroutine(choiceID));
+    }
+
+    public IEnumerator SelectCoroutine(string choiceID)
+    {
+        OnLoading?.Invoke();
+        MakeChoice(choiceID);
+        this.currentFragment = Render();
+        OnReady?.Invoke();
+        yield return null;
     }
 
     /* 
