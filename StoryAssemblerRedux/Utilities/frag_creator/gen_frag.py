@@ -28,7 +28,7 @@ sys.path.append('../frag_utils')
 from step_template import step_template
 
 sheet_id = "10d4UvR6uY8BSDfV4k_nIjLiSm5O7sRez8NCbchAtk4s"
-threads = ["entry", "agenda", "insecurity", "irb", "principles", "beneficence", "respect", "justice", "milgram"]
+threads = ["entry", "agenda", "insecurity", "irb", "principles", "beneficence", "resolution", "justice", "milgram"]
 threads = ["T_" + thread for thread in threads]
 
 parser = argparse.ArgumentParser(description="Write code to a specified file and visualize the graph.")
@@ -152,7 +152,7 @@ def create_frag(row):
     else:
         code += f"Effects {row.id}.\n"
     if row.get('conditions'):
-        code += f"Conditions {row.id}: {row.conditions}\n"
+        code += f"Conditions {row.id}: {multi(row.conditions)}\n"
     else: 
         code += f"Conditions {row.id}.\n"
     if row.get('reusable'):
