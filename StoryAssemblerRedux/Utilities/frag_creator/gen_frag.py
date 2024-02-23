@@ -28,7 +28,7 @@ sys.path.append('../frag_utils')
 from step_template import step_template
 
 sheet_id = "10d4UvR6uY8BSDfV4k_nIjLiSm5O7sRez8NCbchAtk4s"
-threads = ["entry", "agenda", "insecurity", "irb", "principles", "beneficence", "respect", "justice", "milgram"]
+threads = ["entry", "agenda", "insecurity", "irb", "principles", "beneficence", "resolution", "reflection", "justice", "milgram", "vulnerable", "stanford"] # respect
 threads = ["T_" + thread for thread in threads]
 
 parser = argparse.ArgumentParser(description="Write code to a specified file and visualize the graph.")
@@ -152,7 +152,7 @@ def create_frag(row):
     else:
         code += f"Effects {row.id}.\n"
     if row.get('conditions'):
-        code += f"Conditions {row.id}: {row.conditions}\n"
+        code += f"Conditions {row.id}: {multi(row.conditions)}\n"
     else: 
         code += f"Conditions {row.id}.\n"
     if row.get('reusable'):
@@ -269,7 +269,13 @@ Character ned {scene} |Ned|.
 CharacterAsset ned {scene} |./ned.png|.
 CharacterLocation ned {scene} [0, 0]."""
 assets = f"BackgroundAsset {scene}: |./scene_name_background.png|."
-wants = f"""Want {scene} entry.
+wants = f"""
+Want {scene} entry.
+Want {scene} entry_2.
+Want {scene} justice.
+Want {scene} beneficence.
+Want {scene} irb.
+Want {scene} end.
 Want {scene} insecurity.
 Want {scene} justice.
 Want {scene} beneficence.
@@ -292,11 +298,15 @@ Want {scene} pedagogy_14.
 Want {scene} pedagogy_15.
 Want {scene} pedagogy_16.
 """
+
+# this should probably be extracted to its own file
 fulfillments = """Fulfilled entry: [Expanded entry CurrentScene]
-Fulfilled justice: [Expanded brad_confused CurrentScene]
-Fulfilled beneficence: [Expanded t0006_intro CurrentScene]
-Fulfilled irb: [Expanded t0004_intro CurrentScene]
-Fulfilled entry: [Expanded entry CurrentScene]
+Fulfilled justice: [Expanded justice_intro CurrentScene]
+Fulfilled beneficence: [Expanded beneficence_intro CurrentScene]
+Fulfilled irb: [Expanded irb_intro CurrentScene]
+Fulfilled entry: [Expanded outside CurrentScene]
+Fulfilled entry_2: [Expanded remind CurrentScene]
+Fulfilled end: [Expanded end CurrentScene]
 Fulfilled insecurity: [Expanded t_start_fix CurrentScene]
 Fulfilled pedagogy_1: [Length Learnings ?l] [> ?l 1] # Eventually we want the score to be able to check *how close* to the goal we are
 Fulfilled pedagogy_2: [Length Learnings ?l] [> ?l 2]

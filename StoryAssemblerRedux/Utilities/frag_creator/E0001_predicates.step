@@ -3,11 +3,21 @@ fluent PleasantriesOver ?scene.
 [function]
 fluent Check ?thread ?frag.
 
-
 # Scene specific tasks
 OpenThreads:
+    [UnlockPrinciples]
+    [UnlockExtra]
+[end]
+
+UnlockPrinciples:
     [OpenCheckpoint beneficence beneficence_intro]
-    [OpenCheckpoint justice justice_intro]
     [OpenCheckpoint respect respect_intro]
+    [OpenCheckpoint justice justice_intro]
+[end]
+
+UnlockExtra: 
+    [OpenCheckpoint resolution resolution_intro]
+    [OpenCheckpoint vulnerable vulnerable_intro]
+    [OpenCheckpoint stanford stanford_intro]
     [OpenCheckpoint milgram you_remember]
 [end]
