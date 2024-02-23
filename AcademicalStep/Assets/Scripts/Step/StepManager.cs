@@ -1,29 +1,30 @@
 using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Step; // Using this line gives us the debug error "The identifier ParseAndExecute is not in scope." To fix it:
 // using static Step.Module;
-using System.Text.RegularExpressions;
 using System.Linq;
 
 public class StepManager : MonoBehaviour
 {
+    #region Fields
+
     // Singleton instance variable
-    public static StepManager instance = null;
+    public static StepManager instance { get; private set; }
+
     // Unity Variables
-    public string storyAssemblerPath; // The path to the StoryAssembler step implmentation
+    public string storyAssemblerPath; // The path to the StoryAssembler step implementation
 
     // This will be deprecated once we are using m_stepFiles
     public string optionalScenePath; // If desired, you can specify an additional path to a file containing your current scene (e.g. "Assets/Scripts/Scenes/Maze.step")
 
-
     public string sceneName;
-    public GameSession gameSession;
+
     // Debug Variables
     public bool extraDebugLogging = true;
+
     // Step Variables
     private Module module;
     public State state;
@@ -32,14 +33,24 @@ public class StepManager : MonoBehaviour
     private string itemDelim = "";
     private string subItem = "";
 
-    public GameObject loadingPanel;
+    // Fragment History
 
     public SerializedFragment currentFragment { get; private set; }
     public List<SerializedFragment> fragmentHistory;
 
+    public bool IsLoading { get; private set; }
+    public bool IsReady { get; private set; }
+
+    #endregion
+
+    #region Events and Actions
 
     public static UnityAction OnLoading;
     public static UnityAction OnReady;
+
+    #endregion
+
+    #region Unity Messages
 
     // Awake is used to instantiate class as singleton
     void Awake()
@@ -47,40 +58,17 @@ public class StepManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
+            IsLoading = true;
+            IsReady = true;
+            DontDestroyOnLoad(gameObject);
         }
         else if (instance != this)
         {
             Destroy(gameObject);
         }
-        DontDestroyOnLoad(gameObject);
-
-        //Get gameSession reference
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        //safety check for gameSession
-        if (!this.gameSession)
-        {
-            //get by tag
-            GameObject[] gameSessions = GameObject.FindGameObjectsWithTag("GameSession");
-            if (gameSessions.Length == 0)
-            {
-                Debug.Log("ERROR: GameSession GameObject not found.");
-            }
-            else
-            {
-                this.gameSession = gameSessions[0].GetComponent<GameSession>();
-            }
-        }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+    #endregion
 
     /// An example of how to use the StepManager
     void UsageDemo()
@@ -110,6 +98,23 @@ public class StepManager : MonoBehaviour
      */
     public void InitializeStepStoryAssembler()
     {
+        StartCoroutine(InitializeCoroutine());
+    }
+
+    /**
+     * This is an overloaded version of the same function, but takes a state object as an argument.
+    **/
+    public void InitializeStepStoryAssembler(State state)
+    {
+        StartCoroutine(InitializeCoroutine(state));
+    }
+
+    private IEnumerator InitializeCoroutine()
+    {
+        // Reset state
+        IsLoading = true;
+        IsReady = false;
+        OnLoading?.Invoke();
         fragmentHistory = new List<SerializedFragment>();
 
         this.module = CreateModule();
@@ -119,12 +124,16 @@ public class StepManager : MonoBehaviour
         LoadStoryAssembler();
 
         // Call the step Initialize function and set the delimiter variables
-        Initialize(this.sceneName);
+        this.subItem = ExecuteStep("[Delim]");
+        this.itemDelim = ExecuteStep("[ItemDelim]");
+        ExecuteStep($"[Initialize {sceneName}]");
 
         bool doReRender = false;
 
         // We need to call Render once to get the first fragment
         SerializedFragment fragment = Render();
+        currentFragment = fragment;
+
         // Check the length of choices
         if (this.extraDebugLogging)
             Debug.Log("Choices: " + fragment.choices.Length);
@@ -148,18 +157,25 @@ public class StepManager : MonoBehaviour
         if (doReRender)
         {
             string choice = fragment.choices[0].id.ToLower(); // We shouldn't have to lower case: TODO call verbatm case in Step
-            //fragment = Select(choice);
-            Select(choice);
+            yield return SelectCoroutine(choice);
         }
 
-        //return fragment;
+        if (!IsReady)
+        {
+            IsLoading = false;
+            IsReady = true;
+            OnReady?.Invoke();
+        }
+
+        yield return null;
     }
 
-    /**
-     * This is an overloaded version of the same function, but takes a state object as an argument.
-    **/
-    public SerializedFragment InitializeStepStoryAssembler(State state)
+    private IEnumerator InitializeCoroutine(State state)
     {
+        IsLoading = true;
+        IsReady = false;
+        OnLoading?.Invoke();
+
         this.module = CreateModule();
         this.state = state;
 
@@ -169,45 +185,34 @@ public class StepManager : MonoBehaviour
         this.itemDelim = ExecuteStep("[ItemDelim]");
 
         SerializedFragment fragment = Render();
-        return fragment;
-    }
 
+        currentFragment = fragment;
 
-    // Should be called before anything else with a scene name as defined in the Step file:
-    // Step syntax:
-    //      Scene maze.
-    // the scene name would be "maze"
-    string Initialize(string sceneName)
-    {
-        this.subItem = ExecuteStep("[Delim]");
-        this.itemDelim = ExecuteStep("[ItemDelim]");
+        if (!IsReady)
+        {
+            IsLoading = false;
+            IsReady = true;
+            OnReady?.Invoke();
+        }
 
-        return ExecuteStep($"[Initialize {sceneName}]");
-    }
-
-    // Print the choices available in the current scene=
-    // Unnecessary if you are using the Select or Render functions
-    string PrintChoices()
-    {
-        return ExecuteStep("[PrintChoices]");
+        yield return null;
     }
 
     // Represents a player selecting a choice.
     // This function should not be used if you plan to render a fragment after making a choice. In that case, use Select() instead.
     // <param> choiceID </param> the id of the choice as defined in the Step file, returned by Render or PrintChoices
-    private string MakeChoice(string choiceID)
-    {
-        var result = ExecuteStep($"[MakeChoice {choiceID}]");
-        return result;
-    }
+    // private string MakeChoice(string choiceID)
+    // {
+    //     var result = ExecuteStep($"[MakeChoice {choiceID}]");
+    //     return result;
+    // }
 
     /**
      * Parse Raw Current Step Fragment into Fragment GameObject
      * if the step parse fails for a given field, it will be null.
     **/
-    public SerializedFragment Render()
+    private SerializedFragment Render()
     {
-
         var renderedScene = new SerializedFragment()
         {
             fragmentID = Normalize(ExecuteStep("[CurrentFragment]")),
@@ -217,7 +222,7 @@ public class StepManager : MonoBehaviour
             speakerID = ExecuteStep("[RenderSpeaker]"), // this can be empty
             backgroundPath = ExecuteStep("[RenderBackground]"),
             systemMessage = ExecuteStep("[Error]"), // Error messages, etc.
-            // warnings = ExecuteStep("[Warnings ^CurrentScene]"), // Warning messages, etc.
+                                                    // warnings = ExecuteStep("[Warnings ^CurrentScene]"), // Warning messages, etc.
         };
 
         // there is a more elegant way of doing this
@@ -227,7 +232,7 @@ public class StepManager : MonoBehaviour
         return renderedScene;
     }
 
-    SerializedSaveState SaveState()
+    public SerializedSaveState SaveState()
     {
         var save = new SerializedSaveState()
         {
@@ -240,7 +245,7 @@ public class StepManager : MonoBehaviour
         return save;
     }
 
-    void LoadState(SerializedSaveState save)
+    public void LoadState(SerializedSaveState save)
     {
         InitializeStepStoryAssembler(save.stepState);
     }
@@ -249,32 +254,38 @@ public class StepManager : MonoBehaviour
     * Represents the user selecting the choice with the given id.
     * Returns the next fragment to be rendered.
     */
-    // public SerializedFragment Select(string choiceID)
-    // {
-
-    //     MakeChoice(choiceID);
-    //     if (this.extraDebugLogging) {
-    //         Debug.Log("Thread: " + ExecuteStep("[Thread]" + " Frag: " + ExecuteStep("[CurrentFragment]")));
-    //         var conditionalChoices = ExecuteStep(" [DoAll [Member ?path AllPaths] [SecondGoToChoices ?second ?path] [Write ?second]]", stateful: false);
-    //         if (conditionalChoices != null && conditionalChoices.Trim() != "") {
-    //             Debug.Log("Conditional Choices: " + conditionalChoices);
-    //         }
-    //     }
-
-    //     return Render();
-    // }
     public void Select(string choiceID)
     {
         StartCoroutine(SelectCoroutine(choiceID));
     }
 
-    public IEnumerator SelectCoroutine(string choiceID)
+    private IEnumerator SelectCoroutine(string choiceID)
     {
-        OnLoading?.Invoke();
-        MakeChoice(choiceID);
+        if (!IsLoading)
+        {
+            IsLoading = true;
+            IsReady = false;
+            OnLoading?.Invoke();
+        }
+
+        ExecuteStep($"[MakeChoice {choiceID}]");
         this.currentFragment = Render();
         fragmentHistory.Add(currentFragment);
+
+        if (this.extraDebugLogging)
+        {
+            Debug.Log("Thread: " + ExecuteStep("[Thread]" + " Frag: " + ExecuteStep("[CurrentFragment]")));
+            var conditionalChoices = ExecuteStep(" [DoAll [Member ?path AllPaths] [SecondGoToChoices ?second ?path] [Write ?second]]", stateful: false);
+            if (conditionalChoices != null && conditionalChoices.Trim() != "")
+            {
+                Debug.Log("Conditional Choices: " + conditionalChoices);
+            }
+        }
+
+        IsLoading = false;
+        IsReady = true;
         OnReady?.Invoke();
+
         yield return null;
     }
 
@@ -289,7 +300,7 @@ public class StepManager : MonoBehaviour
     * @return The result of the execution.
     * Returns null and throws a debug message if the execution or parse fails.
     */
-    public string ExecuteStep(string code, bool stateful = true)
+    private string ExecuteStep(string code, bool stateful = true)
     {
         try
         {
@@ -308,7 +319,7 @@ public class StepManager : MonoBehaviour
     * Generic overload for ExecuteStep that parses the result into a list of serializable objects
     * e.g. ExecuteStep<SerializedChoice>("[RenderNextBestChoices]")
     */
-    public T[] ExecuteStep<T>(string code)
+    private T[] ExecuteStep<T>(string code)
     {
         string result = null;
         try

@@ -2691,9 +2691,7 @@ MonoBehaviour:
   storyAssemblerPath: ../StoryAssemblerRedux/StoryAssembler
   optionalScenePath: Assets/Resources/E0001.step
   sceneName: e0001
-  gameSession: {fileID: 1354342498}
   extraDebugLogging: 0
-  loadingPanel: {fileID: 0}
   fragmentHistory: []
 --- !u!4 &1429551393
 Transform:
