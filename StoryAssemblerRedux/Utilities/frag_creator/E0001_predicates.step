@@ -15,9 +15,19 @@ UnlockPrinciples:
     [OpenCheckpoint justice justice_intro]
 [end]
 
-UnlockExtra: 
-    [OpenCheckpoint resolution resolution_intro]
+UnlockExtra:
     [OpenCheckpoint vulnerable vulnerable_intro]
     [OpenCheckpoint stanford stanford_intro]
     [OpenCheckpoint milgram you_remember]
+[end]
+
+MentionAllExtra:
+    [add milgram_mentioned Learnings]
+    [add vulnerable_mentioned Learnings]
+    [add stanford_mentioned Learnings]
+[end]
+
+
+MentionIfNotMentioned: 
+    [OpenCheckpoint resolution resolution_intro] # To Do make sure this is called
 [end]
