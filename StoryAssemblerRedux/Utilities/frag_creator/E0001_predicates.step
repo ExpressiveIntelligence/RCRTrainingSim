@@ -4,6 +4,11 @@ fluent PleasantriesOver ?scene.
 fluent Check ?thread ?frag.
 
 # Scene specific tasks
+
+[predicate]
+BradLearned: [Member justice Learnings] [Member beneficence Learnings] [Member vulnerable Learnings]
+# TODO vulnerable should be switched to [Member respect Learnings] when its done
+
 OpenThreads:
     [UnlockPrinciples]
     [UnlockExtra]
@@ -28,6 +33,37 @@ MentionAllExtra:
 [end]
 
 
-MentionIfNotMentioned: 
-    [OpenCheckpoint resolution resolution_intro] # To Do make sure this is called
+DoMentionOfExtraThread: Also, this reminds me of [MentionUnmentioned], which we should also talk about.
+DoMentionOfExtraThread.
+
+[predicate]
+MentionUnmentioned: [MentionMilgram]
+MentionUnmentioned: [MentionStanford]
+MentionUnmentioned: [MentionVulnerable]
+
+[predicate]
+MentionMilgram:
+    [Not [Member milgram_mentioned Learnings]]
+    [add milgram_mentioned Learnings]
+    the Milgram syphilis study
+[end]
+
+[predicate]
+MentionStanford:
+    [Not [Member milgram_mentioned Learnings]]
+    [add milgram_mentioned Learnings]
+    the Stanford prison experiment
+[end]
+
+[predicate]
+MentionVulnerable:
+    [Not [Member milgram_mentioned Learnings]]
+    [add milgram_mentioned Learnings]
+    the concept of vulnerable populations
+[end]
+
+# Open the final thread
+# gets called at the end of each Extra Thread (so you have to visit at least one)
+OpenResolution: 
+    [OpenCheckpoint resolution resolution_intro]
 [end]

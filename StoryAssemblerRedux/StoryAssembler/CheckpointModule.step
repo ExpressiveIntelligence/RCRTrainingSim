@@ -16,8 +16,11 @@ CloseCheckpoint ?thread ?frag:
 [end]
 
 CloseAllCheckpoints ?thread:
-    [ForEach [Fragment ?frag ?thread] [CloseCheckpoint ?thread ?frag]]
+	[Check ?thread ?frag]
+	[now [Not [Check ?thread ?frag]]]
 [end]
+CloseAllCheckpoints ?thread.
+
 
 # Check if the current fragment 1.) is an open checkpoint 2.) is a different thread than ?thread
 [predicate]

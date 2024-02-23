@@ -11,6 +11,11 @@ fluent PleasantriesOver ?scene.
 fluent Check ?thread ?frag.
 
 # Scene specific tasks
+
+[predicate]
+BradLearned: [Member justice Learnings] [Member beneficence Learnings] [Member vulnerable Learnings]
+# TODO vulnerable should be switched to [Member respect Learnings] when its done
+
 OpenThreads:
     [UnlockPrinciples]
     [UnlockExtra]
@@ -35,8 +40,39 @@ MentionAllExtra:
 [end]
 
 
-MentionIfNotMentioned: 
-    [OpenCheckpoint resolution resolution_intro] # To Do make sure this is called
+DoMentionOfExtraThread: Also, this reminds me of [MentionUnmentioned], which we should also talk about.
+DoMentionOfExtraThread.
+
+[predicate]
+MentionUnmentioned: [MentionMilgram]
+MentionUnmentioned: [MentionStanford]
+MentionUnmentioned: [MentionVulnerable]
+
+[predicate]
+MentionMilgram:
+    [Not [Member milgram_mentioned Learnings]]
+    [add milgram_mentioned Learnings]
+    the Milgram syphilis study
+[end]
+
+[predicate]
+MentionStanford:
+    [Not [Member milgram_mentioned Learnings]]
+    [add milgram_mentioned Learnings]
+    the Stanford prison experiment
+[end]
+
+[predicate]
+MentionVulnerable:
+    [Not [Member milgram_mentioned Learnings]]
+    [add milgram_mentioned Learnings]
+    the concept of vulnerable populations
+[end]
+
+# Open the final thread
+# gets called at the end of each Extra Thread (so you have to visit at least one)
+OpenResolution: 
+    [OpenCheckpoint resolution resolution_intro]
 [end]
 
 # Define the initial state as required by StoryAssembler
@@ -479,7 +515,7 @@ ChoiceCondition admin_r admin_r_cc: [AvailableCheckpoint agenda]
 ChoiceCondition admin_r admin_r_ccc: [AvailableCheckpoint agenda]
 Effects admin_r: 
 	[set Thread = agenda]
-	 [OpenCheckpoint agenda what_else_transition]
+	[OpenCheckpoint agenda what_else_transition]
 [end]
 Conditions admin_r.
 Reusable admin_r e0001.
@@ -495,7 +531,7 @@ ChoiceCondition what_else what_else_cc: [AvailableCheckpoint agenda]
 ChoiceCondition what_else what_else_ccc: [AvailableCheckpoint agenda]
 Effects what_else: 
 	[set Thread = agenda]
-	 [OpenCheckpoint agenda what_else_transition]
+	[OpenCheckpoint agenda what_else_transition]
 [end]
 Conditions what_else.
 Reusable what_else e0001.
@@ -511,13 +547,13 @@ ChoiceCondition what_else_top_level what_else_top_level_cc: [AvailableCheckpoint
 ChoiceCondition what_else_top_level what_else_top_level_ccc: [AvailableCheckpoint agenda]
 Effects what_else_top_level: 
 	[set Thread = agenda]
-	 [OpenCheckpoint agenda what_else_transition]
+	[OpenCheckpoint agenda what_else_transition]
 [end]
 Conditions what_else_top_level.
 Reusable what_else_top_level e0001.
 CharacterTag what_else_top_level brad expression neutral.
 
-Content what_else_transition: "We're a bit limited on time for today - let's stay on track and put that idea on next week’s agenda."
+Content what_else_transition: "We're a bit limited on time for today - let's stay on track."
 Speaker what_else_transition ned.
 ChoiceLabel what_else_transition: Await Ned's response
 GoToChoice what_else_transition stress.
@@ -552,7 +588,7 @@ ChoiceCondition need_success need_success_cc: [AvailableCheckpoint agenda]
 ChoiceCondition need_success need_success_ccc: [AvailableCheckpoint agenda]
 Effects need_success: 
 	[set Thread = agenda]
-	 [set BradInsecurityToNed = BradInsecurityToNed + 1]
+	[set BradInsecurityToNed = BradInsecurityToNed + 1]
 [end]
 Conditions need_success.
 CharacterTag need_success ned expression happy.
@@ -566,7 +602,7 @@ ChoiceCondition project_status project_status_cc: [AvailableCheckpoint agenda]
 ChoiceCondition project_status project_status_ccc: [AvailableCheckpoint agenda]
 Effects project_status: 
 	[set Thread = agenda]
-	 [OpenCheckpoint irb irb_intro]
+	[OpenCheckpoint irb irb_intro]
 	[CloseAllCheckpoints agenda]
 [end]
 Conditions project_status.
@@ -586,7 +622,7 @@ ChoiceCondition project project_cc: [AvailableCheckpoint agenda]
 ChoiceCondition project project_ccc: [AvailableCheckpoint agenda]
 Effects project: 
 	[set Thread = agenda]
-	 [OpenCheckpoint irb irb_intro]
+	[OpenCheckpoint irb irb_intro]
 	[CloseAllCheckpoints agenda]
 [end]
 Conditions project.
@@ -814,7 +850,6 @@ Content proud_of_me: “I’ve gotten a lot of good feedback from some of the pa
 Speaker proud_of_me brad.
 ChoiceLabel proud_of_me: Talk about how well the project is going
 GoToChoice proud_of_me ned_shocked.
-ChoiceCondition proud_of_me proud_of_me_c: [AvailableCheckpoint irb]
 Effects proud_of_me: [set Thread = irb]
 Conditions proud_of_me.
 Reusable proud_of_me e0001.
@@ -823,7 +858,6 @@ Content survey_was_fun: Since he’s been getting ahead in the project, Brad dec
 Speaker survey_was_fun brad.
 ChoiceLabel survey_was_fun: Talk about the survey
 GoToChoice survey_was_fun ned_shocked.
-ChoiceCondition survey_was_fun survey_was_fun_c: [AvailableCheckpoint irb]
 Effects survey_was_fun: [set Thread = irb]
 Conditions survey_was_fun.
 Reusable survey_was_fun e0001.
@@ -906,7 +940,7 @@ Effects confession_2: [set Thread = irb]
 Conditions confession_2.
 Reusable confession_2 e0001.
 
-Content with_concern: "Brad, you know you’re technically not supposed to start interviews without herb approval."
+Content with_concern: "Brad, you know you’re not supposed to start interviews without herb approval."
 Speaker with_concern ned.
 ChoiceLabel with_concern: Await Ned's response
 GoToChoice with_concern herb.
@@ -992,12 +1026,10 @@ Speaker ned_dont_press ned.
 ChoiceLabel ned_dont_press: Continue
 GoToChoice ned_dont_press bad_feeling.
 GoToChoice ned_dont_press brad_goes_along.
-ChoiceCondition ned_dont_press ned_dont_press_c: [AvailableCheckpoint irb]
-ChoiceCondition ned_dont_press ned_dont_press_cc: [AvailableCheckpoint irb]
-ChoiceCondition ned_dont_press ned_dont_press_ccc: [AvailableCheckpoint irb]
 Effects ned_dont_press: 
 	[set Thread = irb]
 	[OpenCheckpoint principles principles_intro]
+	[CloseAllCheckpoints irb]
 [end]
 Conditions ned_dont_press.
 
@@ -1065,6 +1097,7 @@ ChoiceCondition tenants tenants_ccc: [AvailableCheckpoint principles]
 Effects tenants: 
 	[set Thread = principles] 
 	[UnlockPrinciples]
+	[add vulnerable_mentioned Learnings]
 [end]
 Conditions tenants.
 Reusable tenants e0001.
@@ -1080,7 +1113,11 @@ Effects beneficence_intro:
 Conditions beneficence_intro: [Not [Member beneficence Learnings]]
 Reusable beneficence_intro e0001.
 
-Content beneficence_define: Ned leans back in his ergonomic chair. "Beneficence is the idea that research should not harm participants. Researchers need to keep the greater good and wellbeing of participants in mind when choosing the next course of action."
+Content beneficence_define: 
+	Ned leans back in his ergonomic chair. "Beneficence is the idea that research should not harm participants. Researchers need to keep the greater good and wellbeing of participants in mind when choosing the next course of action."
+	
+	"[DoMentionOfExtraThread]"
+[end]
 Speaker beneficence_define ned.
 ChoiceLabel beneficence_define: Listen to Ned's explanation of benefience
 GoToChoice beneficence_define research_good_thing.
@@ -1336,7 +1373,7 @@ Speaker brad_thinks_ready brad.
 ChoiceLabel brad_thinks_ready: Assert understanding
 GoToChoice brad_thinks_ready try_again.
 Effects brad_thinks_ready: [set Thread = resolution]
-Conditions brad_thinks_ready.
+Conditions brad_thinks_ready: [Not [BradLearned]]
 Reusable brad_thinks_ready e0001.
 
 Content brad_not_ready: "This conversation has been useful, but I still have some more questions about the IRB," says Brad.
@@ -1370,7 +1407,7 @@ Speaker resolution_complete brad.
 ChoiceLabel resolution_complete: Show that he has learned
 GoToChoice resolution_complete end.
 Effects resolution_complete: [set Thread = resolution]
-Conditions resolution_complete.
+Conditions resolution_complete: [BradLearned]
 Reusable resolution_complete e0001.
 
 Content end: 
@@ -1447,7 +1484,6 @@ Speaker justice_intro brad.
 ChoiceLabel justice_intro: Ask about harm to participants
 GoToChoice justice_intro brad_jokes.
 GoToChoice justice_intro why_board.
-ChoiceCondition justice_intro justice_intro_c: [AvailableCheckpoint justice]
 Effects justice_intro: 
 	[set Thread = justice]
 	[add justice_intro Learnings]
@@ -1467,14 +1503,11 @@ Content why_board: "It seems like the worst thing that can happen with bad ethic
 Speaker why_board brad.
 ChoiceLabel why_board: Ask for clarification
 GoToChoice why_board principles_important.
-ChoiceCondition why_board why_board_c: [AvailableCheckpoint justice]
-ChoiceCondition why_board why_board_cc: [AvailableCheckpoint justice]
-ChoiceCondition why_board why_board_ccc: [AvailableCheckpoint justice]
 Effects why_board: [set Thread = justice]
 Conditions why_board: [Not [Member justice Learnings]]
 Reusable why_board e0001.
 
-Content ned_corrects: "The historical events behind these principles are very sensitive topics, and should be handled with empathy for the people affected by them."
+Content ned_corrects: "The historical events behind these principles are very sensitive topics, and should be handled with empathy for the people affected by them. [DoMentionOfExtraThread]"
 Speaker ned_corrects ned.
 ChoiceLabel ned_corrects: Continue
 GoToChoice ned_corrects brad_apologizes.
@@ -1574,7 +1607,7 @@ Reusable syphilis e0001.
 
 Content violation_of_ben: "So, did they violate beneficence?"
 Speaker violation_of_ben brad.
-ChoiceLabel violation_of_ben: Ask about beneficence
+ChoiceLabel violation_of_ben: Ask if this is about beneficence
 GoToChoice violation_of_ben yes_beneficence.
 ChoiceCondition violation_of_ben violation_of_ben_c: [AvailableCheckpoint justice]
 ChoiceCondition violation_of_ben violation_of_ben_cc: [AvailableCheckpoint justice]
@@ -1595,9 +1628,6 @@ Content violation_of_something: "So, what principle was violated in the syphilus
 Speaker violation_of_something brad.
 ChoiceLabel violation_of_something: Ask which principles were violated
 GoToChoice violation_of_something violation_of_justice.
-ChoiceCondition violation_of_something violation_of_something_c: [AvailableCheckpoint justice]
-ChoiceCondition violation_of_something violation_of_something_cc: [AvailableCheckpoint justice]
-ChoiceCondition violation_of_something violation_of_something_ccc: [AvailableCheckpoint justice]
 Effects violation_of_something: [set Thread = justice]
 Conditions violation_of_something: [Not [Member justice Learnings]]
 Reusable violation_of_something e0001.
@@ -1733,6 +1763,7 @@ ChoiceCondition milgram_explain milgram_explain_ccc: [AvailableCheckpoint milgra
 Effects milgram_explain: 
 	[set Thread = milgram]
 	[add milgram Learnings]
+	[OpenResolution]
 [end]
 Conditions milgram_explain: [Not [Member milgram Learnings]]
 Reusable milgram_explain e0001.
@@ -1754,7 +1785,11 @@ Conditions vulnerable_intro:
 [end]
 Reusable vulnerable_intro e0001.
 
-Content ned_vulnerable_intro: "IRBs have a federal requirement to protect particularly vulverable populations. That includes those who may not be able to make informed decisions for themselves. People who can't fully consent. As well as populations that are simply convienent and readily available."
+Content ned_vulnerable_intro: 
+	"IRBs have a federal requirement to protect particularly vulverable populations. That includes those who may not be able to make informed decisions for themselves. People who can't fully consent. As well as populations that are simply convienent and readily available."
+	
+	"[DoMentionOfExtraThread]"
+[end]
 Speaker ned_vulnerable_intro ned.
 ChoiceLabel ned_vulnerable_intro: Listen to Ned's explanation of vulnerable persons
 GoToChoice ned_vulnerable_intro vulnerable_specific.
@@ -1818,7 +1853,7 @@ ChoiceCondition end_vulnerable_bad end_vulnerable_bad_cc: [AvailableCheckpoint v
 ChoiceCondition end_vulnerable_bad end_vulnerable_bad_ccc: [AvailableCheckpoint vulnerable]
 Effects end_vulnerable_bad: 
 	[set Thread = vulnerable]
-	[add vulnerable Learnings]
+	[add vulnerable Learnings][OpenResolution]
 [end]
 Conditions end_vulnerable_bad: [BradAdmittedStudy e0001][Member consent_def Learnings]
 Reusable end_vulnerable_bad e0001.
@@ -1831,7 +1866,7 @@ ChoiceCondition end_vulnerable_good end_vulnerable_good_cc: [AvailableCheckpoint
 ChoiceCondition end_vulnerable_good end_vulnerable_good_ccc: [AvailableCheckpoint vulnerable]
 Effects end_vulnerable_good: 
 	[set Thread = vulnerable]
-	[add vulnerable Learnings]
+	[add vulnerable Learnings][OpenResolution]
 [end]
 Conditions end_vulnerable_good: [Member consent_def Learnings]
 Reusable end_vulnerable_good e0001.
@@ -2004,7 +2039,7 @@ ChoiceCondition stanford_end stanford_end_cc: [AvailableCheckpoint stanford]
 ChoiceCondition stanford_end stanford_end_ccc: [AvailableCheckpoint stanford]
 Effects stanford_end: 
 	[set Thread = stanford]
-	[add stanford Learnings]
+	[add stanford Learnings][OpenResolution]
 [end]
 Conditions stanford_end: [Not [Member stanford Learnings]]
 Reusable stanford_end e0001.
