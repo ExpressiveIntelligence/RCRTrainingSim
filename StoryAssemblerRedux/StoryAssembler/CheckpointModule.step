@@ -2,6 +2,10 @@
 # It allows for 'Checkpoints' which function as a way to track the progress of a thread
 # and to allow the user to jump to specific points in threads
 
+# A predicate to mark a fragment as a checkpoint
+[function]
+fluent Check ?thread ?frag.
+
 # Scene specific tasks
 OpenCheckpoint ?thread ?frag:
 	[now [Check ?thread ?frag]]
@@ -30,4 +34,5 @@ IsAvailableCheckpoint thread_opening ?frag. # This is a special case for the ope
 
 AvailableOpenCheckpoints ?checkpoints: 
 	[FindUnique ?checkpoint [Check ?thread ?checkpoint] ?checkpoints]
+	[DoAll [Member ?checkpoint ?checkpoints] [Write ?checkpoint]]
 [end]
