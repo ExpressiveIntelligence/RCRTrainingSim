@@ -112,7 +112,7 @@ def split_task_call(string_to_split):
 def multi(content):
     """
     Format content for step methods which have multiple lines.
-    Content         vent_irb:
+    Content vent_irb:
         Brad looks frustrated. "We're still waiting! It's a minimal-risk proposal, too. I mean, we're literally just recording interviews. I don't get why it's taking so long. I've been waiting for a month and I still haven't heard back."
     [end]
     """
@@ -120,6 +120,12 @@ def multi(content):
     if "\n" in content:
         content = re.sub(r'\n', r'\n\t', content) # each new line should be indented
         content = f"\n\t{content}\n[end]"
+    return content
+
+def literal(content):
+    content = "|" + content.strip() + "|"
+    content = re.sub(r'\n\s*', r'|<br><br>\n|', content)
+    content = content.replace("[", "|[").replace("]", "]|")
     return content
 
 def create_frag(row):
@@ -135,12 +141,16 @@ def create_frag(row):
     code = ""
     # if row.content:
     if row.get('content'):
-        content = multi(row.content)
+        content = row.content
+        content = literal(content)
+        content = multi(content)
         code += f"Content {row.id}: {content}\n"
     if row.get('speaker'):
         code += f"Speaker {row.id} {row.speaker.lower()}.\n"
     if row.get('choice_label'):
-        code += f"ChoiceLabel {row.id}: {multi(row.choice_label)}\n"
+        label = row.choice_label
+        label = literal(label)
+        code += f"ChoiceLabel {row.id}: {label}\n"
     if row.get('gotochoices'):
         for token in split_data(row.gotochoices):
             code += f"GoToChoice {row.id} {token}.\n"
