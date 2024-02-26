@@ -42,6 +42,7 @@ namespace Academical
                 {
                     string choiceID = choices[i].id.ToLower();
                     _choiceButtons[i].GetComponentInChildren<TMP_Text>().text = choices[i].text;
+                    _choiceButtons[i].onClick.RemoveAllListeners();
                     _choiceButtons[i].onClick.AddListener(() =>
                     {
                         OnChoiceSelected?.Invoke(choiceID);
@@ -50,6 +51,7 @@ namespace Academical
                 }
                 else
                 {
+                    _choiceButtons[i].onClick.RemoveAllListeners();
                     _choiceButtons[i].gameObject.SetActive(false);
                 }
             }
