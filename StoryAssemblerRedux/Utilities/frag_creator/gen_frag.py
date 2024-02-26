@@ -149,7 +149,6 @@ def create_frag(row):
         code += f"Speaker {row.id} {row.speaker.lower()}.\n"
     if row.get('choice_label'):
         label = row.choice_label
-        label = multi(label)
         label = literal(label)
         code += f"ChoiceLabel {row.id}: {label}\n"
     if row.get('gotochoices'):
