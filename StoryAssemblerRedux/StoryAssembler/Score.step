@@ -29,8 +29,8 @@ LengthValue ?path ?value:
 [end]
 
 SatisfactionValue ?path ?value: [Length ?path 0] [= ?value 0]
-SatisfactionValue ?path ?value: 
-    [WantsSatisfied ?wants] 
+SatisfactionValue ?path ?value:
+    [WantsSatisfied ?wants]
     [set M = MaxDepth + 1]
     [set V = ?wants * M]
     [= ?value V]
