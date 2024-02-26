@@ -166,7 +166,6 @@ def create_frag(row):
                 code += f"CharacterTag {row.id} {char} expression {expression}.\n"
 
     code += "\n"
-
     return frag_name, code
 
 # Read the Google Sheets data and print it

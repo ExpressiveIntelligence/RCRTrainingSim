@@ -198,15 +198,6 @@ public class StepManager : MonoBehaviour
         yield return null;
     }
 
-    // Represents a player selecting a choice.
-    // This function should not be used if you plan to render a fragment after making a choice. In that case, use Select() instead.
-    // <param> choiceID </param> the id of the choice as defined in the Step file, returned by Render or PrintChoices
-    // private string MakeChoice(string choiceID)
-    // {
-    //     var result = ExecuteStep($"[MakeChoice {choiceID}]");
-    //     return result;
-    // }
-
     /**
      * Parse Raw Current Step Fragment into Fragment GameObject
      * if the step parse fails for a given field, it will be null.
@@ -215,7 +206,7 @@ public class StepManager : MonoBehaviour
     {
         var renderedScene = new SerializedFragment()
         {
-            fragmentID = Normalize(ExecuteStep("[CurrentFragment]")).ToLower(),
+            fragmentID = Normalize(ExecuteStep("[RenderCurrentFragmentID]")),
             content = ExecuteStep("[RenderFragmentContent]"),
             choices = ExecuteStep<SerializedChoice>("[RenderNextBestChoices]"),
             characters = ExecuteStep<SerializedCharacter>("[RenderCharacters]"),
@@ -405,7 +396,7 @@ public class StepManager : MonoBehaviour
 
     private string Normalize(object o)
     {
-        return ((string)o).Trim();
+        return ((string) o).Trim();
     }
 
     /*

@@ -21,7 +21,6 @@ Br: [NewLine]
 Error: [DoAll [Member ?e ErrorList] [WriteVerbatim ?e] [ItemDelim]]
 Error.
 
-
 # Create the output format that will be JSONified by the StepManager
 # Any changes to this should be accompanied by a change with the StepManager
 RenderOutputFormat:
@@ -101,6 +100,8 @@ RenderFragmentContent:
     root
 [end]
 RenderFragmentContent: [add |No fragment available| ErrorList] 
+
+RenderCurrentFragmentID: [verbatimCase] ^CurrentFragment
 
 [retriable]
 DisplayDynamic ?call: 
