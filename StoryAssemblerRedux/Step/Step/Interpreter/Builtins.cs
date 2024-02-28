@@ -115,6 +115,9 @@ namespace Step.Interpreter
                 .Arguments()
                 .Documentation("debugging", "Breakpoint; pauses execution and displays the current stack in the debugger.");
 
+            g["Listing"] =
+                new DeterministicTextGenerator<CompoundTask>("Listing", t => t.Methods.Select(m => m.MethodCode+"\n"));
+
             g["Throw"] = new SimpleNAryPredicate("Throw", Throw)
                 .Arguments("message", "...")
                 .Documentation("control flow", "Throws an exception (error) containing the specified message.");
@@ -185,7 +188,11 @@ namespace Step.Interpreter
             Documentation.SectionIntroduction("data structures//lists",
                 "Predicates access lists in particular.  These work with any C# object that implements the IList interface, including Step tuples (which are the C# type object[]).");
 
-            g["Member"] = new GeneralPredicate<object, IEnumerable<object>>("Member", (member, collection) => collection != null && collection.Contains(member), null, collection => collection ?? EmptyArray, null)
+            g["Member"] = new GeneralPredicate<object, IEnumerable<object>>("Member",
+                    (member, collection) => collection != null && collection.Contains(member),
+                    null,
+                    collection => collection ?? EmptyArray,
+                    null)
                 .Arguments("element", "collection")
                 .Documentation("data structures//lists", "True when element is an element of collection.");
 
@@ -431,6 +438,7 @@ namespace Step.Interpreter
             HigherOrderBuiltins.DefineGlobals();
             ReflectionBuiltins.DefineGlobals();
             Documentation.DefineGlobals(Module.Global);
+            ElNode.DefineGlobals();
         }
 
         // ReSharper disable once UnusedMember.Global
@@ -502,24 +510,15 @@ namespace Step.Interpreter
 
         private static bool Throw(object?[] args)
         {
-            
-
             string Stringify(object? o)
             {
-                if (o == null) return "null";
-
-                if (o is string s) return s;
-
-                if (o is object[] array)
-                {
-                    string[] elements = array.Select(element => Stringify(element)).ToArray();
-                    return $"[{string.Join(", ", elements)}]";
-                }
-
-                return o.ToString();
+                if (o == null)
+                    return "null";
+                var s = o.ToString();
+                if (s != "")
+                    return s;
+                return o.GetType().Name;
             }
-
-
 
             throw new Exception(args.Select(Stringify).Untokenize());
         }

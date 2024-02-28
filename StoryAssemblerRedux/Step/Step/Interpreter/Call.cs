@@ -115,6 +115,10 @@ namespace Step.Interpreter
             foreach (var e in tuple)
                 switch (e)
                 {
+                    case CompoundTask t:
+                        yield return t;
+                        break;
+
                     case StateVariableName _:
                         yield return e;
                         break;
@@ -128,8 +132,7 @@ namespace Step.Interpreter
         }
 
         internal override IEnumerable<Call> Calls => new[] {this};
-
-
+        
         /// <summary>
         /// Attempt to run this task
         /// </summary>
@@ -153,9 +156,15 @@ namespace Step.Interpreter
         {
             switch (target)
             {
+                case "/":
+                    return ElNode.ElLookupPrimitive.Call(arglist, output, env, predecessor,
+                        (newOutput, u, s, newPredecessor)
+                            => Continue(newOutput, new BindingEnvironment(env, u, s), k, newPredecessor));
+
                 case Task p:
                     return p.Call(arglist, output, env, predecessor,
-                        (newOutput, u, s, newPredecessor) => Continue(newOutput, new BindingEnvironment(env, u, s), k, newPredecessor));
+                        (newOutput, u, s, newPredecessor)
+                            => Continue(newOutput, new BindingEnvironment(env, u, s), k, newPredecessor));
 
                 case string[] text:
                     return Continue(output.Append(text), env, k, predecessor);
@@ -167,8 +176,8 @@ namespace Step.Interpreter
                     var arg1 = arglist[1];
                     if (v0 == null)
                     {
-                        return d.Contains(arg0)
-                               && env.Unify(arg1, d[arg0], out var u)
+                        return d.Contains(arg0!)
+                               && env.Unify(arg1, d[arg0!], out var u)
                                && Continue(output,
                                    new BindingEnvironment(env, u, env.State), k, predecessor);
                     }

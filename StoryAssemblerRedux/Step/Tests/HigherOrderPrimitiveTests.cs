@@ -40,6 +40,24 @@ namespace Tests
         }
 
         [TestMethod]
+        public void CallPrimitiveTest()
+        {
+            var m = Module.FromDefinitions("Test: [Call [Write foo]]");
+            Assert.AreEqual("Foo", m.Call("Test"));
+        }
+
+        [TestMethod]
+        public void CallDiscardingStateChangesTest()
+        {
+            var m = Module.FromDefinitions(
+                "Test: [set A = 0] ^A [CallDiscardingStateChanges [Update ?local]] ?local ^A",
+                "[predicate] FailTest: [CallDiscardingStateChanges [Update b]]",
+                "[predicate] Update a: [set A = 1] ^A");
+            Assert.AreEqual("0 1 a 0", m.Call("Test"));
+            Assert.IsFalse(m.CallPredicate("FailTest"));
+        }
+
+        [TestMethod]
         public void FindAllTest()
         {
             var m = Module.FromDefinitions("Test ?result: [FindAll ?x [Foo ?x] ?result]",
@@ -127,6 +145,13 @@ namespace Tests
             var m = Module.FromDefinitions("Succeed.", "[fallible] FailTest: [Not [Succeed]]", "SucceedTest: [Not [Fail]]");
             Assert.IsTrue(m.CallPredicate(State.Empty, "SucceedTest"));
             Assert.IsFalse(m.CallPredicate(State.Empty, "FailTest"));
+        }
+
+        [TestMethod]
+        public void NotAnyNotAnyTest()
+        {
+            var m = Module.FromDefinitions("P 1.", "Test: [NotAny [NotAny [P ?x]]] [Var ?x]");
+            Assert.IsTrue(m.CallPredicate(State.Empty, "Test"));
         }
 
         [TestMethod]
@@ -250,6 +275,28 @@ namespace Tests
                 "Foo 3: 3");
             Assert.AreEqual("1 2 3", m.Call("Test"));
             Assert.AreEqual(null, m.Call("FailTest"));
+        }
+
+        [TestMethod]
+        public void TreeSearch()
+        {
+            Module.SearchLimit = 0;
+            var m = Module.FromDefinitions("[predicate] Adjacent a b.",
+                "Adjacent a d.",
+                "Adjacent a e.",
+                "Adjacent b c.",
+                "Adjacent e f.",
+                "Utility b 1.",
+                "Utility c 2.",
+                "Utility ? 0.",
+                "[predicate] Done c.",
+                "Done f.",
+                "[predicate] Next ?node ?neighbor: ?node/Write [Adjacent ?node ?neighbor]",
+                "Test: [TreeSearch a ?end ?u Next Done Utility] ?end/Write ?u/Write",
+                "Test2: [TreeSearch a ?end ?u Next Done Utility] [= ?end f] ?end/Write ?u/Write");
+            
+            Assert.AreEqual("A b c 2", m.Call("Test"));
+            Assert.AreEqual("A e f 0", m.Call("Test2"));
         }
     }
 }

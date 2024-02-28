@@ -23,11 +23,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 #endregion
 
-using System.IO;
-using System.Linq;
+using System.Net.Mail;
 using Step;
 using Step.Parser;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Step.Interpreter;
 using Step.Output;
 
@@ -86,7 +84,7 @@ namespace Tests
         {
             var m = Module.FromDefinitions("[10.5] Test ?x.", "[2] Test a.", "Test ?: foo", "[randomly] [1] Foo.", "[randomly]\n[1]\nFoo.");
             var test = (CompoundTask) m["Test"];
-            Assert.AreEqual(10.5f, test.Methods[0].Weight);
+            Assert.AreEqual(10.5f, test!.Methods[0].Weight);
             Assert.AreEqual(2, test.Methods[1].Weight);
             Assert.AreEqual(1, test.Methods[2].Weight);
         }
@@ -473,6 +471,45 @@ Baz: baz");
                 "Foo ?x: [Write ?x]",
                 "Bar a b.");
             Assert.AreEqual("A a b", m.Call("Test"));
+        }
+
+        [TestMethod]
+        public void DeclarationGroupTest()
+        {
+            var m = new Module(nameof(DeclarationGroupTest));
+            m.LoadDefinitions(new StringReader(@"predicate Beat ?name.
+                DeclarationGroup [beat ?beatName].
+                DeclarationExpansion [beat ?beatName] [beat ?beatName] [|Beat| ?beatName].
+                DeclarationExpansion [beat ?beatName] [|Text|] [|Text| ?beatName].
+                DeclarationExpansion [beat ?beatName] [|Attributes| ?x] [|Attributes| ?beatName ?x].
+                [beat test]
+                Text: Hello World!
+                Attributes foo.
+                NotPartOfTheGroup."),
+                null);
+            Assert.AreEqual("Hello World!", m.Call("Text", "test"));
+            Assert.AreEqual("foo", m.CallFunction<string>("Attributes", "test"));
+            Assert.IsTrue(m.CallPredicate("NotPartOfTheGroup"));
+            Assert.IsTrue(m.CallPredicate("Beat", "test"));
+            Assert.IsFalse(m.CallPredicate("Beat", 1));
+        }
+
+        [TestMethod]
+        public void DeclarationGroupTemplateTest()
+        {
+            var m = new Module(nameof(DeclarationGroupTest));
+            m.LoadDefinitions(new StringReader(@"
+                DeclarationGroup [beat ?beatName].
+                DeclarationExpansion [beat ?beatName] [|Attributes| ?x] [|Attributes| ?beatName ?x].
+                [beat [foo ?x]]
+                Attributes [bar ?x]."),
+                null);
+            //var exp = m.CallFunction<object[]>("DeclarationExpansion",
+            //    new object[] { "beat", new object[] { "foo", "?x" } },
+            //    new object[] { "Attributes", new object[] { "bar", "?x" } });
+
+            var attr = m.CallFunction<object[]>("Attributes", new object[] { new object[] { "foo", 1 } });
+            CollectionAssert.AreEqual(new object[] { "bar", 1 }, attr);
         }
     }
 }

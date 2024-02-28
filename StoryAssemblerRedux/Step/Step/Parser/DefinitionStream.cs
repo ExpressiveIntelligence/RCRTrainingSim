@@ -81,6 +81,7 @@ namespace Step.Parser
             this.expressions = expressionStream.Expressions.GetEnumerator();
             MoveNext();
             chainBuilder = new Interpreter.Step.ChainBuilder(GetLocal, Canonicalize, CanonicalizeArglist);
+            groupExpander = new DeclarationGroupExpander(module);
         }
 
         /// <summary>
@@ -91,6 +92,8 @@ namespace Step.Parser
         #region Stream interface
 
         private readonly ExpressionStream expressionStream;
+
+        private readonly DeclarationGroupExpander groupExpander;
 
         public string? SourceFile
         {
@@ -132,7 +135,7 @@ namespace Step.Parser
             get
             {
                 var next = Peek;
-                if (next is object[] a && a.Length == 1 && a[0] is string keyword &&
+                if (next is object[] { Length: 1 } a && a[0] is string keyword &&
                     Substitutions.TryGetValue(keyword, out var subst))
                     return subst;
                 return next;
@@ -191,10 +194,10 @@ namespace Step.Parser
         private bool ExplicitEndToken => KeywordMarker("end");
 
         private bool KeywordMarker(string keyword) =>
-            Peek is object[] array && array.Length == 1 && array[0].Equals(keyword);
+            Peek is object[] { Length: 1 } array && array[0].Equals(keyword);
 
         private bool OneOfKeywordMarkers(params string[] keywords) =>
-            Peek is object[] array && array.Length == 1 && array[0] is string k && Array.IndexOf(keywords, k) >= 0;
+            Peek is object[] { Length: 1 } array && array[0] is string k && Array.IndexOf(keywords, k) >= 0;
 
         private readonly string[] keywordMarkers = new[] {"end", "or", "else", "then" };
         private bool AtKeywordMarker => OneOfKeywordMarkers(keywordMarkers);
@@ -417,7 +420,39 @@ namespace Step.Parser
             get
             {
                 while (!end)
+                {
                     yield return ReadDefinition();
+                    while (groupExpander.Assertions.Count > 0)
+                    {
+                        var assertionLocals = new List<LocalVariableName>();
+
+                        LocalVariableName MakeLocal(string name)
+                        {
+                            // ReSharper disable once RedundantSuppressNullableWarningExpression
+                            var l = new LocalVariableName(name, assertionLocals!.Count);
+                            assertionLocals.Add(l);
+                            return l;
+                        }
+
+                        LocalVariableName Localize(string name) =>
+                            assertionLocals.FirstOrDefault(l => l.Name == name) ?? MakeLocal(name);
+
+                        object? Variablize(object? o) => o switch
+                        {
+                            null => null,
+                            string s when IsLocalVariableName(s) => Localize(s),
+                            object?[] tuple => VariablizeTuple(tuple),
+                            _ => o
+                        };
+
+                        object?[] VariablizeTuple(object?[] tuple) => tuple.Select(Variablize).ToArray();
+
+                        var assertion = groupExpander.Assertions.Dequeue();
+                        var pattern = VariablizeTuple(assertion.pattern);
+                        yield return (assertion.task, 1, pattern, assertionLocals.ToArray(), null, CompoundTask.TaskFlags.None,
+                            null, SourcePath, lineNumber);
+                    }
+                }
             }
         }
 
@@ -441,7 +476,8 @@ namespace Step.Parser
             Interpreter.Step? chain, 
             CompoundTask.TaskFlags flags,
             string? declaration,
-                string? path, int lineNumber) ReadDefinition()
+                string? path, int lineNumber)
+            ReadDefinition()
         {
             InitParserState();
 
@@ -457,18 +493,18 @@ namespace Step.Parser
             if (DeclarationKeywords.Contains(Peek))
                 return ReadDeclaration(flags);
             
-            var (taskName, pattern) = ReadHead();
+            var (taskName, pattern) = groupExpander.ExpandHead(ReadHead(), GetLocal, SourcePath, lineNumber);
 
             ReadBody(chainBuilder, () => EndOfDefinition);
             
-            CheckForWarnings();
+            CheckForWarnings(taskName, SourcePath, lineNumber);
 
             // Eat end token
             if (EndOfDefinition && !end)
                 Get(); // Skip over the delimiter
             SwallowNewlines();
 
-            return (StateVariableName.Named(taskName), weight, pattern.ToArray(), locals.ToArray(), chainBuilder.FirstStep, flags, null, expressionStream.FilePath, lineNumber);
+            return (StateVariableName.Named(taskName), weight, pattern, locals.ToArray(), chainBuilder.FirstStep, flags, null, expressionStream.FilePath, lineNumber);
         }
 
         private (StateVariableName task, float weight, object?[] pattern, 
@@ -511,57 +547,61 @@ namespace Step.Parser
             while (Peek is object[] optionKeyword)
             {
                 Get();
-                string? keyword = null;
-                if (optionKeyword.Length == 1 && optionKeyword[0] is string op0)
-                    keyword = op0;
-                else
-                    ThrowInvalid(optionKeyword);
-
-                switch (keyword)
+                if (!groupExpander.HandleGroupAttribute(optionKeyword, SourcePath, lineNumber))
                 {
-                    // Shuffle rules when calling
-                    case "randomly":
-                        flags |= CompoundTask.TaskFlags.Shuffle;
-                        break;
+                    string? keyword = null;
+                    if (optionKeyword.Length == 1 && optionKeyword[0] is string op0)
+                        keyword = op0;
+                    else
+                        ThrowInvalid(optionKeyword);
 
-                    case "remembered":
-                        flags |= CompoundTask.TaskFlags.ReadCache | CompoundTask.TaskFlags.WriteCache;
-                        break;
+                    switch (keyword)
+                    {
+                        // Shuffle rules when calling
+                        case "randomly":
+                            flags |= CompoundTask.TaskFlags.Shuffle;
+                            break;
 
-                    case "fluent":
-                        flags |= CompoundTask.TaskFlags.Fallible | CompoundTask.TaskFlags.MultipleSolutions | CompoundTask.TaskFlags.ReadCache;
-                        break;
+                        case "remembered":
+                            flags |= CompoundTask.TaskFlags.ReadCache | CompoundTask.TaskFlags.WriteCache;
+                            break;
 
-                    case "function":
-                        flags |= CompoundTask.TaskFlags.Function;
-                        break;
+                        case "fluent":
+                            flags |= CompoundTask.TaskFlags.Fallible | CompoundTask.TaskFlags.MultipleSolutions |
+                                     CompoundTask.TaskFlags.ReadCache;
+                            break;
 
-                    case "generator":
-                    case "predicate":
-                        flags |= CompoundTask.TaskFlags.Fallible | CompoundTask.TaskFlags.MultipleSolutions;
-                        break;
+                        case "function":
+                            flags |= CompoundTask.TaskFlags.Function;
+                            break;
 
-                    // Limit it to first solution, as if the call were wrapped in Once.
-                    case "fallible":
-                        flags |= CompoundTask.TaskFlags.Fallible;
-                        break;
+                        case "generator":
+                        case "predicate":
+                            flags |= CompoundTask.TaskFlags.Fallible | CompoundTask.TaskFlags.MultipleSolutions;
+                            break;
 
-                    case "retriable":
-                        flags |= CompoundTask.TaskFlags.MultipleSolutions;
-                        break;
+                        // Limit it to first solution, as if the call were wrapped in Once.
+                        case "fallible":
+                            flags |= CompoundTask.TaskFlags.Fallible;
+                            break;
 
-                    case "main":
-                        flags |= CompoundTask.TaskFlags.Main;
-                        break;
+                        case "retriable":
+                            flags |= CompoundTask.TaskFlags.MultipleSolutions;
+                            break;
 
-                    case "suffix":
-                        flags |= CompoundTask.TaskFlags.Suffix;
-                        break;
+                        case "main":
+                            flags |= CompoundTask.TaskFlags.Main;
+                            break;
 
-                    default:
-                        if (!float.TryParse(keyword, out weight))
-                            ThrowInvalid(optionKeyword);
-                        break;
+                        case "suffix":
+                            flags |= CompoundTask.TaskFlags.Suffix;
+                            break;
+
+                        default:
+                            if (!float.TryParse(keyword, out weight))
+                                ThrowInvalid(optionKeyword);
+                            break;
+                    }
                 }
 
                 SwallowNewlines();
@@ -975,12 +1015,13 @@ namespace Step.Parser
         /// <summary>
         /// Issue warnings for any singleton variables
         /// </summary>
-        private void CheckForWarnings()
+        private void CheckForWarnings(string taskName, string? sourcePath, int warningLine)
         {
             for (var i = 0; i < locals.Count; i++)
-                if (referenceCounts[i] == 1 && !IsIntendedAsSingleton(locals[i]))
+                if (referenceCounts[i] == 1 && !IsIntendedAsSingleton(locals[i]) && !groupExpander.IsVariableFromCurrentDeclarationGroup(locals[i]))
                     Module.AddWarning(
-                        $"{SourceFile}:{lineNumber} Variable {locals[i].Name} used only once, which often means it's a type-o.  If it's deliberate, change the name to {locals[i].Name.Replace("?", "?_")} to suppress this message.\n");
+                        $"{SourceFile}:{warningLine} Variable {locals[i].Name} used only once, which often means it's a type-o.  If it's deliberate, change the name to {locals[i].Name.Replace("?", "?_")} to suppress this message.",
+                        new MethodPlaceholder(taskName, sourcePath, warningLine));
         }
     }
 }

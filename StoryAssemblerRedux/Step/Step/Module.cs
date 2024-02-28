@@ -31,9 +31,11 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using Step.Interpreter;
 using Step.Output;
 using Step.Parser;
+using Task = Step.Interpreter.Task;
 
 [assembly: InternalsVisibleTo("Tests")]
 
@@ -50,10 +52,37 @@ namespace Step
         /// </summary>
         public static bool RichTextStackTraces;
 
+        public static int DefaultSearchLimit = 10000;
+
         /// <summary>
         /// Number of steps system is allowed to execute before being interrupted.
         /// </summary>
         public static int SearchLimit;
+
+        /// <summary>
+        /// True if we are in the process of trying to cancel the running Step thread.
+        /// </summary>
+        // ReSharper disable once InconsistentNaming
+        private static bool isCanceling;
+
+        /// <summary>
+        /// Force whatever worker thread is running Step code to stop and throw a TaskCanceledException.
+        /// </summary>
+        public static void Cancel()
+        {
+            isCanceling = true;
+            SearchLimit = 1;
+        }
+
+        /// <summary>
+        /// Reset control variables to let the task run again.
+        /// </summary>
+        /// <param name="searchLimit">Value to set for SearchLimit.  Defaults to DefaultSearchLimit.</param>
+        internal void Uncancel(int? searchLimit = null)
+        {
+            SearchLimit = searchLimit??DefaultSearchLimit;
+            isCanceling = false;
+        }
         
         #region Fields
         /// <summary>
@@ -83,7 +112,7 @@ namespace Step
         /// </summary>
         public static readonly Module Global;
 
-        private List<string>? loadTimeWarnings;
+        private List<WarningInfo>? loadTimeWarnings;
 
         /// <summary>
         /// Name of the module for debugging purposes
@@ -294,9 +323,9 @@ namespace Step
             State state, string taskName, params object?[] args)
         {
             var maybeTask = this[StateVariableName.Named(taskName)];
-            var t = maybeTask as CompoundTask;
+            var t = maybeTask as Task;
             if (t == null)
-                throw new ArgumentException($"{taskName} is a task.  Its value is {maybeTask}");
+                throw new ArgumentException($"The value of the task argument to Call, {taskName}, is not a task.  It is {maybeTask}");
             return Call(state, t, args);
         }
 
@@ -310,6 +339,7 @@ namespace Step
         public (string? output, State newDynamicState) Call(
             State state, Task task, params object?[] args)
         {
+            Uncancel();
 var output = TextBuffer.NewEmpty();
             var env = new BindingEnvironment(this, null!, null, state);
 
@@ -350,15 +380,15 @@ var output = TextBuffer.NewEmpty();
         public bool CallPredicate(
             State state, string taskName, params object?[] args)
         {
+            Uncancel();
             var maybeTask = this[StateVariableName.Named(taskName)];
-            var t = maybeTask as CompoundTask;
+            var t = maybeTask as Task;
             if (t == null)
-                throw new ArgumentException($"{taskName} is a task.  Its value is {maybeTask}");
+                throw new ArgumentException($"The value of the task argument to Call, {taskName}, is not a task.  It is {maybeTask}");
             var output = new TextBuffer(0);
             var env = new BindingEnvironment(this, null!, null, state);
 
-            return t.Call(args, output, env, null,
-                (o, u, s, p) => true);
+            return t.Call(args, output, env, null, Interpreter.Step.SucceedContinuation);
         }
 
         /// <summary>
@@ -381,10 +411,11 @@ var output = TextBuffer.NewEmpty();
         public T CallFunction<T>(
             State state, string taskName, params object?[] args)
         {
+            Uncancel();
             var maybeTask = this[StateVariableName.Named(taskName)];
-            var t = maybeTask as CompoundTask;
+            var t = maybeTask as Task;
             if (t == null)
-                throw new ArgumentException($"{taskName} is a task.  Its value is {maybeTask}");
+                throw new ArgumentException($"The value of the task argument to Call, {taskName}, is not a task.  It is {maybeTask}");
 
             var env = new BindingEnvironment(this, null!, null, state);
             var resultVar = new LogicVariable(FunctionResult);
@@ -442,8 +473,8 @@ var output = TextBuffer.NewEmpty();
         /// <param name="path">Path to the file</param>
         public void LoadDefinitions(string path)
         {
-            using (var defs = new DefinitionStream(this, path))
-                LoadDefinitions(defs);
+            using var defs = new DefinitionStream(this, path);
+            LoadDefinitions(defs);
         }
 
         /// <summary>
@@ -459,6 +490,7 @@ var output = TextBuffer.NewEmpty();
         /// </summary>
         private void LoadDefinitions(DefinitionStream defs)
         {
+            Uncancel();  // Just to be paranoid
             foreach (var (task, weight, pattern, locals, chain, flags, declaration, path, line) 
                 in defs.Definitions)
             {
@@ -472,19 +504,19 @@ var output = TextBuffer.NewEmpty();
                         compoundTask.Flags |= flags;
                     else
                         compoundTask.AddMethod(weight, pattern, locals, chain, flags, path, line);
-                    if (compoundTask.Arglist == null)
-                        compoundTask.Arglist = pattern.Select(x =>x==null?"?":x.ToString()).ToArray();
+                    compoundTask.Arglist ??= pattern.Select(x => x == null ? "?" : x.ToString()).ToArray();
 
                     if (declaration == "folder_structure")
                     {
                         var dir = Path.GetDirectoryName(defs.SourcePath);
+                        Debug.Assert(dir != null, nameof(dir) + " != null");
                         DefineMethodsFromFolderStructure(compoundTask, dir);
                     }
                 }
             }
         }
 
-        private static readonly LocalVariableName[] NoLocals = new LocalVariableName[0];
+        private static readonly LocalVariableName[] NoLocals = Array.Empty<LocalVariableName>();
         private void DefineMethodsFromFolderStructure(CompoundTask task, string parentDirectory)
         {
             void Walk(string path, string? name)
@@ -522,10 +554,10 @@ var output = TextBuffer.NewEmpty();
                 throw new SyntaxError("Initially command cannot take arguments", path, line);
             State bindings = State.Empty;
             var fakeInitiallyMethod = new Method(new CompoundTask("initially", 0), 1, Array.Empty<object?>(),
-                new LocalVariableName[0], null, path, line);
+                Array.Empty<LocalVariableName>(), null, path, line);
             if (!Step.Interpreter.Step.Try(chain, new TextBuffer(0),
                 new BindingEnvironment(this,
-                    new MethodCallFrame(fakeInitiallyMethod, null, locals.Select(name => new LogicVariable(name)).ToArray(), 
+                    new MethodCallFrame(fakeInitiallyMethod, null, locals!.Select(name => new LogicVariable(name)).ToArray(), 
                         MethodCallFrame.CurrentFrame, MethodCallFrame.CurrentFrame)),
                 (o, u, d, p ) =>
                 {
@@ -571,6 +603,7 @@ var output = TextBuffer.NewEmpty();
         /// <returns>Text output of the task and the resulting state</returns>
         public (string? output, State state) ParseAndExecute(string code, State state)
         {
+            Uncancel();
             if (Defines("TopLevelCall"))
                 ((CompoundTask?) this["TopLevelCall"])?.EraseMethods();
             AddDefinitions($"TopLevelCall: {code}");
@@ -592,8 +625,7 @@ var output = TextBuffer.NewEmpty();
         // ReSharper disable once UnusedMember.Global
         public void AddBindHook(BindHook hook)
         {
-            if (bindHooks == null)
-                bindHooks = new List<BindHook>();
+            bindHooks ??= new List<BindHook>();
             bindHooks.Add(hook);
         }
 
@@ -602,7 +634,7 @@ var output = TextBuffer.NewEmpty();
         /// <summary>
         /// Returns any warnings found by code analysis
         /// </summary>
-        public IEnumerable<string> Warnings()
+        public IEnumerable<WarningInfo> WarningsWithOffenders()
         {
             if (loadTimeWarnings != null)
                 foreach (var w in loadTimeWarnings)
@@ -611,7 +643,9 @@ var output = TextBuffer.NewEmpty();
                 yield return w;
         }
 
-        private IEnumerable<string> Lint()
+        public IEnumerable<string> Warnings() => WarningsWithOffenders().Select(pair => pair.Warning);
+
+        private IEnumerable<WarningInfo> Lint()
         {
             foreach (var pair in dictionary.ToArray())  // Copy the dictionary because it might get modified by TaskDefined
             {
@@ -619,12 +653,9 @@ var output = TextBuffer.NewEmpty();
                 if (pair.Value is CompoundTask task)
                     foreach (var method in task.Methods)
                         for (var step = method.StepChain; step != null; step = step.Next)
-                            if (step is Call c && c.Task is StateVariableName g && !TaskDefined(g))
-                            {
-                                var fileName = method.FilePath == null ? "Unknown" : Path.GetFileName(method.FilePath);
+                            if (step is Call { Task: StateVariableName g } && !TaskDefined(g))
                                 yield return
-                                    $"{fileName}:{method.LineNumber} {variable.Name} called undefined task {g.Name}";
-                            }
+                                    (method, $"{variable.Name} called undefined task {g.Name}");
             }
 
             foreach (var t in DefinedTasks)
@@ -639,11 +670,11 @@ var output = TextBuffer.NewEmpty();
                         }
 
                     if (!called)
-                        yield return RichTextStackTraces?$"<b>{t}</b> is defined but never called.  If this is deliberate, you can add the annotation [main] to {t} to suppress this message.\n" : $"{t} is defined but never called.    If this is deliberate, you can add the annotation [main] to {t} to suppress this message.";
+                        yield return (t, RichTextStackTraces?$"<b>{t}</b> is defined but never called.  If this is deliberate, you can add the annotation [main] to {t} to suppress this message." : $"{t} is defined but never called.    If this is deliberate, you can add the annotation [main] to {t} to suppress this message.");
                 }
         }
 
-        private bool TaskDefined(StateVariableName stateVariableName)
+        private bool TaskDefined(StateVariableName? stateVariableName)
         {
             if (stateVariableName == null)
                 return false;
@@ -665,11 +696,10 @@ var output = TextBuffer.NewEmpty();
             }
         }
 
-        internal void AddWarning(string warning)
+        internal void AddWarning(string warning, object? offender=null)
         {
-            if (loadTimeWarnings == null)
-                loadTimeWarnings = new List<string>();
-            loadTimeWarnings.Add(warning);
+            loadTimeWarnings ??= new List<WarningInfo>();
+            loadTimeWarnings.Add((offender, warning));
         }
 
         private object? ResolveVariables(object? o)
@@ -726,10 +756,9 @@ var output = TextBuffer.NewEmpty();
         public static string StackTrace(BindingList? currentBindings = null)
         {
                 var b = new StringBuilder();
-                if (MethodCallFrame.CurrentFrame != null && MethodCallFrame.CurrentFrame.CallerChain != null)
+                if (MethodCallFrame.CurrentFrame != null)
                 {
-                    if (currentBindings == null)
-                        currentBindings = MethodCallFrame.CurrentFrame.BindingsAtCallTime;
+                    currentBindings ??= MethodCallFrame.CurrentFrame.BindingsAtCallTime;
                     foreach (var frame in MethodCallFrame.CurrentFrame.CallerChain)
                         b.AppendLine(frame.GetCallSourceText(currentBindings));
                 }
@@ -779,7 +808,11 @@ var output = TextBuffer.NewEmpty();
         internal void TraceMethod(MethodTraceEvent e, Method method, object?[] args, TextBuffer output, BindingEnvironment env)
         {
             if (--SearchLimit == 0)
+            {
+                if (isCanceling)
+                    throw new TaskCanceledException();
                 throw new StepTaskTimeoutException();
+            }
             Trace?.Invoke(e, method, args, output, env);
         }
 

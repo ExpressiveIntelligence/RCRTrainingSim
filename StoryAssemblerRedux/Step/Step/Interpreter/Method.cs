@@ -129,7 +129,7 @@ namespace Step.Interpreter
         /// The argument pattern for this method expressed as the course code for a call
         /// </summary>
         public string HeadString => Writer.TermToString(ArgumentPattern.Prepend(Task.Name).ToArray());
-        
+
         /// <summary>
         /// An approximate reconstruction of the original course text for this method.
         /// </summary>
@@ -139,7 +139,8 @@ namespace Step.Interpreter
             get
             {
                 var b = new StringBuilder();
-                b.Append(HeadString);
+                var headWithBrackets = HeadString;
+                b.Append(headWithBrackets.Substring(1, headWithBrackets.Length-2));
                 if (StepChain == null)
                     b.Append(".");
                 else

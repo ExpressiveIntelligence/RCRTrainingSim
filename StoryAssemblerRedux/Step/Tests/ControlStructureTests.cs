@@ -78,6 +78,26 @@ namespace Tests
             Assert.IsTrue(m.CallPredicate("Test"));
         }
 
+
+
+        [TestMethod]
+        public void TupleFluentTest()
+        {
+            var m = Module.FromDefinitions("fluent Believes ?char ?belief.",
+                "Test: [now [Believes mirror [fairest snow_white]]] [Believes mirror [fairest ?fair]] [Write ?fair]");
+            Assert.AreEqual("Snow white", m.Call("Test"));
+        }
+
+        [TestMethod]
+        public void NullaryFluentTest()
+        {
+            var m = Module.FromDefinitions("fluent B.",
+                "TestF: [F] true",
+                "TestF: false",
+                "Test: [TestF] [now [F]] [TestF] [now [Not [F]]] [TestF]");
+            Assert.AreEqual("False true false", m.Call("Test"));
+        }
+
         [TestMethod, ExpectedException(typeof(ArgumentInstantiationException))]
         public void NowInstantiationExceptionTest()
         {
