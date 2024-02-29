@@ -1,0 +1,211 @@
+fluent DebugMode.
+
+initially:
+    [set CurrentScene = test]
+    [set AddTemp = empty]
+    [set Test = none]
+    [now [DebugMode]]
+[end]
+
+Warnings ?scene: 
+    [Scene ?scene]
+    [Missing [Content] ?scene]
+    [Missing [ChoiceLabel] ?scene]
+    [Missing [GoToChoice ?] ?scene]
+    [Missing [Conditions] ?scene]
+    [Missing [Effects] ?scene]
+    [ChoiceWarnings ?scene]
+    [FragmentNameWarnings ?scene]
+    # [OverlapCheck ?scene]
+[end]
+
+# OverlapCheck ?scene: 
+#     [once]
+#         [DoOverLapCheck ?scene]
+#     [else]
+#     [end]
+# [end]
+
+# [predicate]
+# DoOverLapCheck ?scene:
+#     [FindAll ?f
+#         [Begin
+#             [Fragment ?f ?scene]
+#             [ChoiceCondition ?f2 ?f]
+#         ]
+#         ?overlaps
+#     ]
+#     [Member ?m ?overlaps]
+#     [Throw |Error, these fragment names overlap with choice ids| ?overlaps]
+# [end]
+# DoOverLapCheck ?.
+
+Missing ?call ?scene:
+    [FindAll ?frag
+        [Begin [Call ?call ?frag] [Not [Fragment ?frag ?scene]] ]
+        ?bad_content
+    ]
+    [Member ?m ?bad_content]
+    Warning, these ?call/WriteVerbatim declarations have no fragments: ?bad_content/WriteVerbatim
+[end]
+Missing ? ?.
+
+[predicate]
+IllegalFragmentName dynamic.
+IllegalFragmentName direct.
+IllegalFragmentName none.
+
+[predicate]
+FragmentNameWarnings ?scene:
+    [FindAll ?frag
+        [Begin 
+            [Fragment ?frag ?scene]
+            [IllegalFragmentName ?frag]
+        ]
+        ?bad_content
+    ]
+    [Member ?m ?bad_content]
+    [Throw ?bad_content not allowed as fragment names]
+[end]
+FragmentNameWarnings ?.
+
+GoToWarnings ?scene:
+    [FindAll ?frag
+        [Begin [GoToChoice ?frag ?out] [Not [Fragment ?frag ?scene]] ]
+        ?bad_content
+    ]
+    [Member ?m ?bad_content]
+    Warning, these GoToChoice declarations have no fragments: ?bad_content
+[end]
+GoToWarnings ?.
+
+ChoiceWarnings ?scene:
+    [FindAll ?frag
+        [Begin [GoToChoice ?frag ?out] [Not [Fragment ?frag ?scene]] ]
+        ?bad_content
+    ]
+    [Member ?m ?bad_content]
+    Warning, these GoToChoice declarations have no fragments: ?bad_content
+[end]
+ChoiceWarnings ?.
+
+# We define a 'choice' as a fragment name follwed by an identifier specifying how the
+# fragment was reached in a playtrace. For instance, thorugh a choice id from the referring fragment
+[predicate]
+ChoiceInList [?frag ?choice_id] ?list:
+    [Member ?m ?list]
+    [= ?m [?frag ?choice_id]]
+[end]
+
+# Call ?call one time and return the result but reset variables and text output
+# Example usage:  [Backtrack [SetA ?args] ?result]
+# This would call [SetA ?args ?result] exactly one time and bind the the final argument to ?result
+Backtrack ?call ?result:
+    [FindAll ?intermediate_result [BacktrackHelper ?call ?intermediate_result] [?result]]
+[end]
+BacktrackHelper ?call ?result:
+    [ExactlyOnce [Call ?call ?result]]
+[end]
+
+# Custom list operations
+
+# Add an element to a list
+Add ?element ?list ?new_list:
+    [set AddTemp = ?list]
+    [AddHelper ?element]
+    [= ?new_list AddTemp]
+[end]
+
+Reverse ?list ?reversed:
+    [set AddTemp = empty]
+    [ForEach [Member ?x ?list] [AddHelper ?x]]
+    [= ?reversed AddTemp]
+[end]
+
+AddHelper ?element: 
+    [add ?element AddTemp]
+[end]
+
+
+# SetUnion ?l1 ?l2 ?union:
+#     [set AddTemp = empty]
+#     [ForEach [Member ?x ?l1] [AddHelper ?x]]
+#     [ForEach [Member ?y ?l2] [Not [Member ?y ?l1]] [AddHelper ?y]]
+#     [= ?union AddTemp]
+# [end]
+
+# SetIntersection ?l1 ?l2 ?int:
+#     [set AddTemp = empty]
+#     [ForEach [Member ?x ?l1] [Member ?x ?l2] [AddHelper ?x]]
+#     [= ?int AddTemp]
+# [end]
+
+Cat ?l1 ?l2 ?cat:
+    [set AddTemp = empty]
+    [ForEach [Member ?x ?l1] [AddHelper ?x]]
+    [ForEach [Member ?y ?l2] [AddHelper ?y]]
+    [= ?cat AddTemp]
+[end]
+
+Flatten2D ?list empty: [Length ?list 0]
+Flastten2D ?list empty: [NotAny [InnerMember ?m ?list]]
+Flatten2D ?list ?flattened:
+    [FindAll ?member [InnerMember ?member ?list] ?flattened]
+[end]
+[predicate]
+InnerMember ?m ?list:
+    [Member ?sublist ?list] [Member ?m ?sublist]
+[end]
+
+[predicate]
+ToTuple ?a ?b ?tuple:
+    [= ?tuple [?a ?b]]
+[end]
+
+[predicate] # Extra logic to handle things like tuples
+InList ?tuple ?list: [Member ?m ?list] [= ?m ?tuple]
+
+RemoveFromList ?m ?list ?without:
+    [NotAny 
+        [Member ?n ?list]
+        [= ?n ?m]
+    ]
+    [Throw RemoveFromList: element not in list ?m ?list]
+[end]
+RemoveFromList ?m ?list ?without:
+    [FindAll ?n [Begin [Member ?n ?list] [Not [= ?m ?n]]] ?without]
+[end]
+
+# Slower than RemoveFromList
+RemoveTupleFromList ?tuple ?list ?without:
+    [NotAny 
+        [Member ?m ?list]
+        [= ?m ?tuple]
+    ]
+    [Throw RemoveTupleFromList: element not in list ?tuple ?list]
+[end]
+RemoveTupleFromList ?tuple ?list ?without:
+    [FindAll ?n [Begin [Member ?n ?list] [Different ?tuple ?n]] ?without]
+[end]
+
+Last ?last ?list:
+    [Reverse ?list ?reversed]
+    [set Reversed = ?reversed]
+    [removeNext ?last Reversed]
+[end]
+
+[predicate]
+Second ?second ?list:
+    [set List = ?list]
+    [removeNext ?first List]
+    [removeNext ?second List]
+[end]
+
+
+# Debugging utility
+[predicate]
+SecondGoToChoices ?second ?path:
+    [ScoredPath ?choices ?score ?path] 
+    [Second ?second ?choices]
+    [NotAny [= ?second [? direct]]]
+[end]
