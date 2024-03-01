@@ -2958,7 +2958,7 @@ MonoBehaviour:
   - {fileID: 2811297602134710623, guid: 34bcafe7d82614314bda32ee0ff615c3, type: 3}
   - {fileID: 2811297602134710623, guid: 07fbad24ed83148d99ad3c228b49be49, type: 3}
   - {fileID: 2811297602134710623, guid: 6fb850b1d4a484e06bccc001c269c6b0, type: 3}
-  optionalScene: {fileID: 2811297602134710623, guid: d5caea9a9ef834df497d99c1245f0651, type: 3}
+  scene: {fileID: 2811297602134710623, guid: d5caea9a9ef834df497d99c1245f0651, type: 3}
   sceneName: e0001
   extraDebugLogging: 0
   fragmentHistory: []

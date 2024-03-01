@@ -19,8 +19,10 @@ public class StepManager : MonoBehaviour
     // Unity Variables
     public List<TextAsset> storyAssemblerFiles; // The path to the StoryAssembler step implementation
 
-    public TextAsset optionalScene;
+    public TextAsset scene;
 
+
+    [Tooltip("The string that the .step file uses to refer to the scene. Case sensitive.")]
     public string sceneName;
 
     // Debug Variables
@@ -30,7 +32,7 @@ public class StepManager : MonoBehaviour
     private Module module;
     public State state;
     private bool storyAssemblerLoaded = false;
-    private bool optionalSceneLoaded = false;
+    private bool sceneLoaded = false;
     private string itemDelim = "";
     private string subItem = "";
 
@@ -365,7 +367,7 @@ public class StepManager : MonoBehaviour
 
     private T InitStepItem<T>(object[] fields)
     {
-        // switch statement on type of T, if it is a character create a Character, etc
+        // switch statement on type of T: if it is a Character create, a Character, etc
         if (typeof(T) == typeof(KeyValuePair<string, string>))
         { // Right now we only support two item tuples
             return (T)(object)new KeyValuePair<string, string>(Normalize(fields[0]), Normalize(fields[1]));
@@ -411,16 +413,16 @@ public class StepManager : MonoBehaviour
             this.module.LoadDefinitions(stream, null);
         }
 
-        if (optionalScene != null)
+        if (scene != null)
         {
-            var stream = new StringReader(optionalScene.text);
+            var stream = new StringReader(scene.text);
             this.module.LoadDefinitions(stream, null);
-            this.optionalSceneLoaded = true;
+            this.sceneLoaded = true;
         }
         this.storyAssemblerLoaded = true;
 
         string debugMessage = storyAssemblerLoaded ? "StoryAssembler Loaded." : "StoryAssembler FAILED to Load.";
-        debugMessage += optionalSceneLoaded ? " Optional scene loaded." : " Optional scene FAILED to load.";
+        debugMessage += sceneLoaded ? " Scene loaded." : " Scene FAILED to load.";
         Debug.Log(debugMessage);
     }
 
