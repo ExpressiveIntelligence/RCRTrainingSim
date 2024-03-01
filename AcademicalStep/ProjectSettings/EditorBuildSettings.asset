@@ -5,8 +5,11 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: Assets/Scenes/Fragment.unity
+    guid: 1c7ed808b62972f4d83413dc7eeebc9f
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 83a111a326f33ee489d2c4f9f3cd060a, type: 2}
