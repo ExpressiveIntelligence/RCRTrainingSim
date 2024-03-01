@@ -6,6 +6,8 @@ using UnityEngine.Events;
 using Step; // Using this line gives us the debug error "The identifier ParseAndExecute is not in scope." To fix it:
 // using static Step.Module;
 using System.Linq;
+using JetBrains.Annotations;
+using System.IO;
 
 public class StepManager : MonoBehaviour
 {
@@ -15,11 +17,12 @@ public class StepManager : MonoBehaviour
     public static StepManager instance { get; private set; }
 
     // Unity Variables
-    public string storyAssemblerPath; // The path to the StoryAssembler step implementation
+    public List<TextAsset> storyAssemblerFiles; // The path to the StoryAssembler step implementation
 
-    // This will be deprecated once we are using m_stepFiles
-    public string optionalScenePath; // If desired, you can specify an additional path to a file containing your current scene (e.g. "Assets/Scripts/Scenes/Maze.step")
+    public TextAsset scene;
 
+
+    [Tooltip("The string that the .step file uses to refer to the scene. Case sensitive.")]
     public string sceneName;
 
     // Debug Variables
@@ -29,7 +32,7 @@ public class StepManager : MonoBehaviour
     private Module module;
     public State state;
     private bool storyAssemblerLoaded = false;
-    private bool optionalSceneLoaded = false;
+    private bool sceneLoaded = false;
     private string itemDelim = "";
     private string subItem = "";
 
@@ -364,7 +367,7 @@ public class StepManager : MonoBehaviour
 
     private T InitStepItem<T>(object[] fields)
     {
-        // switch statement on type of T, if it is a character create a Character, etc
+        // switch statement on type of T: if it is a Character create, a Character, etc
         if (typeof(T) == typeof(KeyValuePair<string, string>))
         { // Right now we only support two item tuples
             return (T)(object)new KeyValuePair<string, string>(Normalize(fields[0]), Normalize(fields[1]));
@@ -396,7 +399,7 @@ public class StepManager : MonoBehaviour
 
     private string Normalize(object o)
     {
-        return ((string) o).Trim();
+        return ((string)o).Trim();
     }
 
     /*
@@ -404,16 +407,22 @@ public class StepManager : MonoBehaviour
     */
     private void LoadStoryAssembler()
     {
-        this.module.LoadDirectory(this.storyAssemblerPath);
-        if (optionalScenePath != null && optionalScenePath != "")
+        foreach (var stepModule in storyAssemblerFiles)
         {
-            this.module.LoadDefinitions(this.optionalScenePath);
-            this.optionalSceneLoaded = true;
+            var stream = new StringReader(stepModule.text);
+            this.module.LoadDefinitions(stream, null);
+        }
+
+        if (scene != null)
+        {
+            var stream = new StringReader(scene.text);
+            this.module.LoadDefinitions(stream, null);
+            this.sceneLoaded = true;
         }
         this.storyAssemblerLoaded = true;
 
         string debugMessage = storyAssemblerLoaded ? "StoryAssembler Loaded." : "StoryAssembler FAILED to Load.";
-        debugMessage += optionalSceneLoaded ? " Optional scene loaded." : " Optional scene FAILED to load.";
+        debugMessage += sceneLoaded ? " Scene loaded." : " Scene FAILED to load.";
         Debug.Log(debugMessage);
     }
 

@@ -1,0 +1,156 @@
+fluent DebugMode.
+
+initially: 
+    [set MaxDepth = 2] # The maximum depth of the search tree
+    [now [DebugMode]]
+    [set AllPaths = empty] # A list of all paths found in the search tree, for debug
+[end]
+
+# Exposed function headers
+task BestChoices ?source_frag ?choices.
+
+# Helper function to call our FindPaths search algorithm with the correct initial state
+# The directs and empties can get confusing
+[predicate]
+AllPathsFrom ?source_frag ?paths: [FindPaths [?source_frag direct] empty ?paths]
+
+BestChoices ?frag ?choices:
+    [AllPathsFrom ?frag ?paths]
+    [set AllPaths = ?paths]
+
+    [AllGoToChoices ?frag ?goto_frags]
+    [Backtrack [BestConditionalChoices ?frag ?paths] ?conditional_choice_frags]
+
+    [Cat ?goto_frags ?conditional_choice_frags ?running_choices]
+    [case ?running_choices] [Length 0]: 
+        [BestTopLevelChoice ?paths ?best_top_level_choice ?value] # Fails if there are no top level choices
+        [= ?choices [?best_top_level_choice]]
+    [else]
+        [= ?choices ?running_choices]
+    [end]
+[end]
+BestChoices ?frag empty. # If there are no choices bind with an empty list
+
+BestConditionalChoices ?frag ?paths ?best:
+    [PotentialConditionalChoices ?frag ?paths ?potential]
+    [BestOfPotential ?potential ?best]
+[end]
+BestConditionalChoices ?frag ?paths empty.
+
+PotentialConditionalChoices ?frag ?paths ?potential:
+    [Member ?m ?paths] [ScoredPath ? ? ?m] # Assert that we have a list of paths
+    [FindUnique ?choice
+        [Begin 
+            [Member ?scored_path ?paths] 
+            [ScoredPath ?path ?value ?scored_path] 
+            [NextStepFulfillsChoice ?path ?new_frag ?choice_id]
+            [Different ?choice_id direct] # Check that it is a conditional choice
+            [= ?choice [?new_frag ?choice_id ?value]]
+        ]
+        ?potential
+    ]
+[end]
+PotentialConditionalChoices ?frag ?paths empty.
+
+BestOfPotential ?potential empty: [Length ?potential 0]
+BestOfPotential ?potential ?best:   
+    [set Choices = empty]
+    [set PickedFrags = empty]
+    [FindUnique ?choice_id [Begin [Member ?m ?potential] [= ?m [? ?choice_id ?]]] ?choice_ids]
+    [ForEach 
+        [Member ?p_choice_id ?choice_ids]
+        [SaveMaxValChoiceToChoices ?p_choice_id ?potential]
+    ]
+    [= ?best Choices]
+[end]
+
+[predicate]
+SaveMaxValChoiceToChoices ?choice_id ?potential:
+    [Write ?PickedFrags]
+    [Max ?value
+        [Member ?m ?potential]
+        [= ?m [?frag ?choice_id ?value]]
+        [Not [Member ?frag PickedFrags]]
+    ]
+    [add [?frag ?choice_id] Choices] 
+    # For the next round of searching, don't include the one we selected
+    [add ?frag PickedFrags]
+[end]
+
+[predicate]
+NextStepFulfillsChoice ?path ?next_frag ?linking_choice_id:
+    [set Path = ?path]
+    [removeNext [?cur_frag ?] Path]
+    [removeNext [?next_frag ?linking_choice_id] Path]
+[end]
+
+[predicate]
+BestTopLevelChoice ?paths ?choice ?value:
+    # From the paths provided, return the top level fragment with the highest path score
+    [Max ?value 
+        [Member ?scored_path ?paths] 
+        [ScoredPath ?path ?value ?scored_path] 
+        [NextStepTopIsTopLevel ?path ?choice]
+    ]
+[end]
+
+[predicate]
+NextStepTopIsTopLevel ?path ?target_choice:
+    [set Path = ?path]
+    [removeNext [?cur_frag ?] Path]             # The first step in the path is always the current fragment
+    [removeNext ?target_choice Path]
+    [AvailableTopLevelChoice ?target_choice]    # We check if the next step in the path is a top level choice
+[end]
+
+# Find all outgoing paths from ?frag
+# The wrapper for this Task is AllPathsFrom
+# Example usage: [AllPathsFrom root ?paths]
+[predicate]
+FindPaths [?frag ?choice_id] ?path ?found_paths:
+    [Var ?frag]
+    [Throw FindPaths called with unbound frag]
+[end]
+FindPaths [?frag ?choice_id] ?path ?found_paths:
+    [Var ?choice_id]
+    [Throw FindPaths called with unbound choice_id]
+[end]
+FindPaths [?frag ?choice_id] ?path ?found_paths:
+    [Length ?path MaxDepth]
+    [ScorePath ?path ?scored_path]
+    [= ?found_paths [?scored_path]]
+[end]
+FindPaths [?frag ?choice_id] ?path ?found_paths:
+    [case ?frag] [Different root] : [Visit ?frag] [else] [end]
+    [NotAny [AvailableNextFragment ?frag ?next_choice]]
+    [ScorePath ?path ?scored_path]
+    [= ?found_paths [?scored_path]]
+[end]
+FindPaths [?frag ?choice_id] ?path ?paths_from_children:
+    [case ?frag] [Different root] : [Visit ?frag] [else]  [end]
+    # All possible next fragments that can be selected are 'children' of the current fragment. 
+    # FindUnique and FindAll will backtrack all AvailableNextFragment calls
+    [FindUnique ?next_choice [AvailableNextFragment ?frag ?next_choice] ?potential_choices]
+    [FindUnique ?paths_from_child
+        [FindAllPathsFromAChildOf ?potential_choices [?frag ?choice_id] ?path ?paths_from_child] 
+        ?list_of_paths_from_children
+    ]
+    [Flatten2D ?list_of_paths_from_children ?paths_from_children]
+[end]
+
+[predicate]
+FindAllPathsFromAChildOf ?choices ?current ?current_path ?paths_from_child:
+    # TODO double check that we are actually getting all children and not just the first 
+    # TODO really do this ^ I think it may be a bug...
+    [Not [Length ?choices 0]]
+    [Member ?child ?choices] # select a choice from the potential choices
+    [FindPathsForChild ?child ?current ?current_path ?paths_from_child]
+[end]
+
+[predicate]
+FindPathsForChild ?child ?current ?current_path ?paths_from_child:
+    # Construct the path to the child (not including the child)
+    [Add ?current ?current_path ?child_path]  
+    # Findall the paths from the child, store the result, and undo the state changes
+    # This line does not Fail unless FindPaths fails
+    [Backtrack [FindPaths ?child ?child_path] ?paths_from_child]
+[end]

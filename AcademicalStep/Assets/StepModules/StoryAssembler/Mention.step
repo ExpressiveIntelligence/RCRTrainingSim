@@ -1,0 +1,11 @@
+# Mention ?path:
+#     [Length ?path ?l]
+#     [Different ?l 0]
+#     [DoAll [Member ?choice ?path] [PrintChoiceTuple ?choice]]
+# [end]
+
+# Mention [?frag ?choice_id]:
+#     ?frag/WriteVerbatim ?choice_id/WriteVerbatim
+# [end]
+
+Mention ?x: ?x/Write

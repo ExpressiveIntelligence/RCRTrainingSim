@@ -1,0 +1,143 @@
+task Delim.
+task ItemDelim.
+
+PreRender:
+    [verbatimCase]
+    [PrepareRender]
+[end]
+
+PrepareRender: 
+    [set ErrorList = empty]
+[end]
+
+initially:
+    [PrepareRender]
+[end]
+
+ItemDelim: [WriteVerbatim |<ItemDelim>|]
+Delim: [WriteVerbatim |<Delim>|]
+Br: [NewLine]
+
+Error: [DoAll [Member ?e ErrorList] [WriteVerbatim ?e] [ItemDelim]]
+Error.
+
+# Create the output format that will be JSONified by the StepManager
+# Any changes to this should be accompanied by a change with the StepManager
+RenderOutputFormat:
+    [PreRender]
+    [RenderCharacters][Br]
+    [RenderFragmentContent] [Br]
+    [RenderSpeaker][Br]
+    [RenderNextBestChoices] [Br]
+    [Error] [Br]
+[end]
+
+# Abbreviation of Show
+S: [Show]
+
+# Human readable version of Render
+Show:
+    [PreRender]
+    Content: [RenderFragmentContent] [Br]
+    Speaker: [RenderSpeaker][Br]
+    Choices: [RenderNextBestChoices] [Br]
+    --- [Br]
+    Characters: [RenderCharacters][Br]
+    Fragment: [CurrentFragment] [Br]
+    Paths: [Length AllPaths ?l] ?l [Br]
+    Warnings: [Warnings CurrentScene] [Br]
+    Errors: [Error] [Br]
+    Paths: ^AllPaths [Br]
+[end]
+
+RenderCharacters: [NotAny [Character ? ^CurrentScene ?]]
+RenderCharacters:
+    [DoAll [Character ?id ^CurrentScene ?n] [RenderCharacter ?id ^CurrentScene] [ItemDelim]]
+[end]
+
+RenderCharacter ?id ?scene:
+    ?id/WriteVerbatim [Delim]
+    [PrintName ?id ?scene] [Delim]
+    [RenderLocation ?id ?scene] [Delim]
+    [PrintAsset ?id ?scene] [Delim]
+[end]
+RenderCharacter ?id ?scene.
+
+RenderLocation ?char_id ?scene: [CharacterLocation ?char_id ?scene ?loc] [= ?loc [?x ?y]] ?x/WriteVerbatim [Delim] ?y/WriteVerbatim 
+RenderLocation ?char_id ?scene: [add |No location found| ErrorList] -1 [Delim] -1 
+
+RenderBackground: [BackgroundAsset CurrentScene] 
+RenderBackground.
+
+RenderFragmentTags:
+    [DoAll 
+        [FragmentTag CurrentFragment ?key ?value] 
+        [RenderFragmentTag ?frag ?key ?value]
+        [ItemDelim]
+    ]
+[end]
+RenderFragmentTags.
+
+# TODO we need to know what to do for default expressions and poses
+RenderFragmentTag ?frag ?key ?value: ?key/WriteVerbatim [Delim] ?value/WriteVerbatim
+
+RenderCharacterTags ?character:
+    [DoAll 
+        [CharacterTag CurrentFragment ?character ?key ?value] 
+        [RenderCharacterTag CurrentFragment ?character ?key ?value]
+        [ItemDelim]
+    ]
+[end]
+RenderCharacterTags ?character.
+
+RenderCharacterTag ?frag ?character ?key ?value: ?key/WriteVerbatim [Delim] ?value/WriteVerbatim
+
+RenderFragmentContent:
+    [Different CurrentFragment root]
+    [DisplayDynamic [Content]]
+[end]
+RenderFragmentContent:
+    root
+[end]
+RenderFragmentContent: [add |No fragment available| ErrorList] 
+
+RenderCurrentFragmentID: [verbatimCase] ^CurrentFragment
+
+[retriable]
+DisplayDynamic ?call: 
+    [Call ?call CurrentFragment] # Try to call the content of the current fragment
+[end]
+DisplayDynamic ?call:
+    [Different DynamicParent none]
+    [Call ?call DynamicParent] # Call the dynamic parent fragment
+[end]
+DisplayDynamic ?call: [DefaultDisplay ?call]
+DisplayDynamic ?call.
+
+[retriable]
+DefaultDisplay [Content]: root
+DefaultDisplay [RenderSpeaker]: narrator
+DefaultDisplay ?.
+
+RenderSpeaker:
+    [Different CurrentFragment root]
+    [Speaker CurrentFragment ?speaker]
+    [PrintName ?speaker CurrentScene]
+[end]
+RenderSpeaker: |narrator|
+
+RenderNextBestChoices: [RenderChoices NextBestChoices]
+
+RenderChoices ?choices: [Length ?choices 0] [add |No choices available| ErrorList]
+RenderChoices ?choices:
+    [Length ?choices ?l]
+    [DoAll [Member ?c ?choices] [RenderChoice ?c] [ItemDelim]] 
+[end]
+
+RenderChoice [?frag ?choice_id]:  [GetID [?frag ?choice_id]] [Delim] [ChoiceLabel ?frag]   
+RenderChoice [?frag ?choice_id]:  [= ?frag root] [GetID [?frag ?choice_id]] [Delim] Start  
+RenderChoice [?frag ?choice_id]:   [GetID [?frag ?choice_id]] [Delim] Continue
+
+GetID [?frag ?choice_id]: [Different ?choice_id direct] ?choice_id/WriteVerbatim
+GetID [?frag ?choice_id]: [Fragment ?frag CurrentScene] ?frag/WriteVerbatim
+GetID ?x: ?x

@@ -1,0 +1,41 @@
+# This is a scene specific file that is an extension to the base StoryAssembler module
+# It allows for 'Checkpoints' which function as a way to track the progress of a thread
+# and to allow the user to jump to specific points in threads
+
+# A predicate to mark a fragment as a checkpoint
+[function]
+fluent Check ?thread ?frag.
+
+# Scene specific tasks
+OpenCheckpoint ?thread ?frag:
+	[now [Check ?thread ?frag]]
+[end]
+
+CloseCheckpoint ?thread ?frag:
+	[now [Not [Check ?thread ?frag]]]
+[end]
+
+CloseAllCheckpoints ?thread:
+	[Check ?thread ?frag]
+	[now [Not [Check ?thread ?frag]]]
+[end]
+CloseAllCheckpoints ?thread.
+
+
+# Check if the current fragment 1.) is an open checkpoint 2.) is a different thread than ?thread
+[predicate]
+AvailableCheckpoint ?thread:
+	[IsAvailableCheckpoint ?thread LastConditionsChecked]
+[end]
+
+[predicate]
+IsAvailableCheckpoint ?source_thread ?frag:
+	[Check ?checkpoint_thread ?frag]
+	[Different ?checkpoint_thread ?source_thread]
+[end]
+IsAvailableCheckpoint thread_opening ?frag. # This is a special case for the opening fragment of a thread
+
+AvailableOpenCheckpoints ?checkpoints: 
+	[FindUnique ?checkpoint [Check ?thread ?checkpoint] ?checkpoints]
+	[DoAll [Member ?checkpoint ?checkpoints] [Write ?checkpoint]]
+[end]
