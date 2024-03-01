@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "deploy": "gh-pages -d AcademicalStep/Build/webgl_academical"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.1.1"
+  }
+}
