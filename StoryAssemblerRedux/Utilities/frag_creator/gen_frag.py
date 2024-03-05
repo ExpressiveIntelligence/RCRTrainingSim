@@ -97,7 +97,7 @@ def split_task_call(string_to_split):
     tasks = []
     current_task = ""
     open_brackets = 0
-    for char in string_to_split:
+    for char in string_to_split.strip():
         if char == '[':
             open_brackets += 1
         if char == ']':
@@ -123,7 +123,7 @@ def multi(content):
     return content
 
 def literal(content):
-    content = "|" + content.strip() + "|"
+    content = "|" + content.strip() + " |"
     content = re.sub(r'\n\s*', r'|<br><br>\n|', content)
     content = content.replace("[", "|[").replace("]", "]|")
     return content
@@ -261,14 +261,6 @@ code = fragment_declarations + "\n\n" + fragments
 
 # read E0001_predicates.step
 predicates = open("E0001_predicates.step", "r").read()
-
-# initial_state = "# No Initial State"
-initial_state = multi("""[Not [PleasantriesOver e0001]]
-[set BradInsecurityToNed = 0]
-[set Thread = none]
-[set Learnings = empty]
-[now [Not [BradAdmittedStudy e0001]]]
-""")
 
 characters = f"""Character brad {scene} |Brad|.
 CharacterAsset brad {scene} |./brad.png|.

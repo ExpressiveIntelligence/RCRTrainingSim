@@ -2,6 +2,10 @@
 # It allows for 'Checkpoints' which function as a way to track the progress of a thread
 # and to allow the user to jump to specific points in threads
 
+initially:
+    [set ClosedThreads = empty]
+[end]
+
 # A predicate to mark a fragment as a checkpoint
 [function]
 fluent Check ?thread ?frag.
@@ -18,8 +22,9 @@ CloseCheckpoint ?thread ?frag:
 CloseAllCheckpoints ?thread:
 	[Check ?thread ?frag]
 	[now [Not [Check ?thread ?frag]]]
+	[CloseAllCheckpoints ?thread]
 [end]
-CloseAllCheckpoints ?thread.
+CloseAllCheckpoints ?thread: [add ?thread ClosedThreads] # base case
 
 
 # Check if the current fragment 1.) is an open checkpoint 2.) is a different thread than ?thread

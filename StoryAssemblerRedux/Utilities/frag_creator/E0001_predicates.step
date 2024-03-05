@@ -3,8 +3,17 @@ fluent PleasantriesOver ?scene.
 [function]
 fluent Check ?thread ?frag.
 
-# Scene specific tasks
+# Define the initial state as required by StoryAssembler
+InitialSceneState e0001: 
+    [Not [PleasantriesOver e0001]]
+    [set BradInsecurityToNed = 0]
+    [set Thread = none]
+    [set Learnings = empty]
+    [set ClosedThreads = empty]
+    [now [Not [BradAdmittedStudy e0001]]]
+[end]
 
+# Scene specific tasks
 [predicate]
 BradLearned: [Member justice Learnings] [Member beneficence Learnings] [Member vulnerable Learnings]
 # TODO vulnerable should be switched to [Member respect Learnings] when its done
