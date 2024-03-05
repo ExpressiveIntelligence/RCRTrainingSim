@@ -4,7 +4,6 @@ I:
 [end]
 
 Initialize ?scene:
-    [verbatimCase]
     [InitializeSceneGlobals ?scene]
     [ResetScene ?scene]
     [InitializeChoices]
@@ -16,7 +15,8 @@ InitializeSceneGlobals ?scene:
     [set LastConditionsChecked = root]  # The most recent fragment that has had its conditions checked. Used for indicating the current fragment during a search
     [Scene ?scene]
     [set CurrentScene = ?scene]
-    [InitScene CurrentScene] # Calls the scene's init task
+    [SetSearchDepth 2]                  # The maximum depth of the search tree
+    [InitScene CurrentScene]            # Calls the scene's init task
 [end]
 
 ResetScene ?scene: [ForEach [Fragment ?frag ?scene] [Unvisit ?frag ?scene]]

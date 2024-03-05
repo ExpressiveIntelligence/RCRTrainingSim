@@ -1,9 +1,9 @@
 fluent DebugMode.
 
 initially: 
-    [set MaxDepth = 2] # The maximum depth of the search tree
     [now [DebugMode]]
     [set AllPaths = empty] # A list of all paths found in the search tree, for debug
+    [set MaxDepth = 2]     # Will also be overwritten in StoryAssembler.step
 [end]
 
 # Exposed function headers
@@ -154,3 +154,5 @@ FindPathsForChild ?child ?current ?current_path ?paths_from_child:
     # This line does not Fail unless FindPaths fails
     [Backtrack [FindPaths ?child ?child_path] ?paths_from_child]
 [end]
+
+SetSearchDepth ?depth: [set MaxDepth = ?depth]

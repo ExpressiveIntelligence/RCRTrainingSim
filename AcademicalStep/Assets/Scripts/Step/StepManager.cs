@@ -19,8 +19,12 @@ public class StepManager : MonoBehaviour
     // Unity Variables
     public List<TextAsset> storyAssemblerFiles; // The path to the StoryAssembler step implementation
 
-    public TextAsset scene;
+    [Range(1, 10)]
+    [SerializeField]
+    [Tooltip("The maximum depth of the search tree for the next best choices.")]
+    private int searchDepth;
 
+    public TextAsset scene;
 
     [Tooltip("The string that the .step file uses to refer to the scene. Case sensitive.")]
     public string sceneName;
@@ -37,7 +41,6 @@ public class StepManager : MonoBehaviour
     private string subItem = "";
 
     // Fragment History
-
     public SerializedFragment currentFragment { get; private set; }
     public List<SerializedFragment> fragmentHistory;
 
@@ -129,7 +132,9 @@ public class StepManager : MonoBehaviour
         // Call the step Initialize function and set the delimiter variables
         this.subItem = ExecuteStep("[Delim]");
         this.itemDelim = ExecuteStep("[ItemDelim]");
+
         ExecuteStep($"[Initialize {sceneName}]");
+        SetSearchDepth(this.searchDepth);
 
         bool doReRender = false;
 
@@ -186,6 +191,8 @@ public class StepManager : MonoBehaviour
 
         this.subItem = ExecuteStep("[Delim]"); // Normally this is accomplished in Initialize() which we don't call here
         this.itemDelim = ExecuteStep("[ItemDelim]");
+
+        SetSearchDepth(this.searchDepth);
 
         SerializedFragment fragment = Render();
 
@@ -430,5 +437,11 @@ public class StepManager : MonoBehaviour
     private static Module CreateModule()
     {
         return new Module("StepManager");
+    }
+
+    public void SetSearchDepth(int depth)
+    {
+        this.searchDepth = depth;
+        ExecuteStep($"[SetSearchDepth {depth}]");
     }
 }
