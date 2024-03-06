@@ -27,10 +27,12 @@ CloseAllCheckpoints ?thread:
 CloseAllCheckpoints ?thread: [add ?thread ClosedThreads] # base case
 
 
-# Check if the current fragment 1.) is an open checkpoint 2.) is a different thread than ?thread
+# Used during search to check if the fragment being explored
+# is an open checkpoint and different from the source_thread
+# because we don't want to jump to checkpoint within the same thread
 [predicate]
-AvailableCheckpoint ?thread:
-	[IsAvailableCheckpoint ?thread LastConditionsChecked]
+AvailableCheckpoint ?source_thread:
+	[IsAvailableCheckpoint ?source_thread LastConditionsChecked]
 [end]
 
 [predicate]

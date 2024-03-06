@@ -271,6 +271,7 @@ CharacterAsset ned {scene} |./ned.png|.
 CharacterLocation ned {scene} [0, 0]."""
 assets = f"BackgroundAsset {scene}: |./scene_name_background.png|."
 wants = f"""
+Want {scene} resolution.
 Want {scene} entry.
 Want {scene} entry_2.
 Want {scene} justice.
@@ -301,7 +302,8 @@ Want {scene} pedagogy_16.
 """
 
 # this should probably be extracted to its own file
-fulfillments = """Fulfilled entry: [Expanded entry CurrentScene]
+fulfillments = """Fulfilled resolution: [Expanded resolution_intro CurrentScene]
+Fulfilled entry: [Expanded entry CurrentScene]
 Fulfilled justice: [Expanded justice_intro CurrentScene]
 Fulfilled beneficence: [Expanded beneficence_intro CurrentScene]
 Fulfilled irb: [Expanded irb_intro CurrentScene]
@@ -332,6 +334,7 @@ code = step_template.format(**locals())
 with open(file_name, "w") as f:
     f.write(code)
     f.close()
+print(f"Successfully wrote to {file_name}")
 
 
 if write_step_to_sheet:
@@ -346,7 +349,6 @@ if write_step_to_sheet:
         update_cell(row.step_row_index, row.step_col_index, frag_code)
     print()
 
-print(f"Successfully wrote to {file_name}")
 
 print("Visualizing the graph...")
 import thread_vis
