@@ -25,6 +25,9 @@ public class GameSession : MonoBehaviour
 
     public GameObject loadingPanel;
 
+    public string participantId = "participant";
+    public GoogleSheetsManager sheetManager;
+
     // Awake is used to instantiate class as singleton
     void Awake()
     {
@@ -67,6 +70,11 @@ public class GameSession : MonoBehaviour
         UpdateVisuals();
     }
 
+    public void SaveFragmentHistory() 
+    {
+        sheetManager.SavePlaythroughData(this.participantId, StepManager.instance.fragmentHistory);
+    }
+
     public void UpdateVisuals()
     {
         var currentSerializedFragment = StepManager.instance.currentFragment;
@@ -106,5 +114,6 @@ public class GameSession : MonoBehaviour
         _dialoguePanel.SetSpeakerName(currentSerializedFragment.speakerID);
         _dialoguePanel.SetTextContent(currentSerializedFragment.content);
         _dialoguePanel.SetChoices(currentSerializedFragment.choices);
+
     }
 }
