@@ -42,7 +42,7 @@ MentionAllExtra:
 [end]
 
 
-DoMentionOfExtraThread: For instance, we could talk about [MentionUnmentioned].
+DoMentionOfExtraThread: "For instance, we could talk about [MentionUnmentioned]. "
 DoMentionOfExtraThread.
 
 [predicate]
