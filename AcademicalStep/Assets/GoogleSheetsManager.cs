@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.IO;
+using System;
 
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Sheets.v4;
@@ -17,6 +18,8 @@ public class GoogleSheetsManager : MonoBehaviour
     static readonly string ApplicationName = "academical";
     static readonly string SpreadsheetId = "1rgajs7U8nwZRaVcEmtKjKtO6DRxI484UCz8f4shHRMk";
     static readonly string sheet = "academical";
+
+    static bool sheetCreated = false;
 
 
     private SheetsService service;
@@ -47,7 +50,8 @@ public class GoogleSheetsManager : MonoBehaviour
         {
             values.Add(new List<object> {
                 fragment.fragmentID,
-                fragment.content
+                fragment.content,
+                fragment.timeRendered
             });
         }
         StartCoroutine(CreateSheetAndSavePlaythroughData(sheetName, values));
@@ -55,7 +59,9 @@ public class GoogleSheetsManager : MonoBehaviour
 
     IEnumerator CreateSheetAndSavePlaythroughData(string sheetName, List<IList<object>> values) 
     { 
-        yield return CreateNewSheet(sheetName);
+        if(!GoogleSheetsManager.sheetCreated){
+            yield return CreateNewSheet(sheetName);
+        }
         yield return SaveFragmentValues(sheetName, values);
     }
 
@@ -75,10 +81,13 @@ public class GoogleSheetsManager : MonoBehaviour
 
     IEnumerator CreateNewSheet(string sheetName) 
     {
+        
         // Add new Sheet
         var addSheetRequest = new AddSheetRequest();
         addSheetRequest.Properties = new SheetProperties();
         addSheetRequest.Properties.Title = sheetName;
+
+
         BatchUpdateSpreadsheetRequest batchUpdateSpreadsheetRequest = new BatchUpdateSpreadsheetRequest();
         batchUpdateSpreadsheetRequest.Requests = new List<Request>();
         batchUpdateSpreadsheetRequest.Requests.Add(new Request
@@ -89,7 +98,21 @@ public class GoogleSheetsManager : MonoBehaviour
         var batchUpdateRequest =
             this.service.Spreadsheets.BatchUpdate(batchUpdateSpreadsheetRequest, SpreadsheetId);
 
-        yield return batchUpdateRequest.Execute();
+        //indicate that sheet has been created
+        GoogleSheetsManager.sheetCreated = true;
+
+        try
+        {
+            batchUpdateRequest.Execute();
+        } 
+        catch(Exception e)
+        {
+            Debug.Log("ERROR: Duplicate spreadsheetname found while attempting to create new sheet. Overwriting existing with new data.");
+            Debug.Log(e.ToString());
+        }
+
+        yield return null;
+        
     }
 
 
