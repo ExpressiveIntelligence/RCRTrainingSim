@@ -278,8 +278,7 @@ Character ned {scene} |Ned|.
 CharacterAsset ned {scene} |./ned.png|.
 CharacterLocation ned {scene} [0, 0]."""
 assets = f"BackgroundAsset {scene}: |./scene_name_background.png|."
-wants = f"""
-Want {scene} entry.
+wants = f"""Want {scene} entry.
 Want {scene} entry_2.
 Want {scene} justice.
 Want {scene} beneficence.
