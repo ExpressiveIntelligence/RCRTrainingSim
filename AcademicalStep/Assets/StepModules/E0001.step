@@ -270,7 +270,6 @@ Speaker outside brad.
 ChoiceLabel outside: |Stand outside of Ned's office |
 GoToChoice outside grill.
 GoToChoice outside play_off.
-GoToChoice outside sneaky.
 Effects outside: 
 	[set Thread = entry]
 	[UnlockExtra] # Unlock additional content threads (they will still be gated)

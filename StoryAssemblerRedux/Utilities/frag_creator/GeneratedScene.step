@@ -49,7 +49,7 @@ MentionAllExtra:
 [end]
 
 
-DoMentionOfExtraThread: For instance, we could talk about [MentionUnmentioned].
+DoMentionOfExtraThread: "For instance, we could talk about [MentionUnmentioned]. "
 DoMentionOfExtraThread.
 
 [predicate]
@@ -216,7 +216,6 @@ Fragment justice_intro e0001.
 Fragment brad_jokes e0001.
 Fragment why_board e0001.
 Fragment ned_corrects e0001.
-Fragment ned_corrects_transition e0001.
 Fragment principles_important e0001.
 Fragment just_making_a_joke e0001.
 Fragment brad_apologizes e0001.
@@ -283,9 +282,7 @@ Content sneaky: |extra threads unlocked |
 Speaker sneaky ned.
 ChoiceLabel sneaky: |Cheat (dev shortcut) |
 GoToChoice sneaky enter.
-GoToChoice sneaky resolution_intro.
-GoToChoice sneaky agenda_start.
-GoToChoice sneaky principles_intro.
+GoToChoice sneaky irb_intro.
 ChoiceCondition sneaky sneaky_c: [AvailableCheckpoint entry]
 ChoiceCondition sneaky sneaky_cc: [AvailableCheckpoint entry]
 ChoiceCondition sneaky sneaky_ccc: [AvailableCheckpoint entry]
@@ -371,7 +368,7 @@ CharacterTag relief brad expression sad.
 
 Content remind: |Ned interrupts Brad's train of thought. "Remind me where you're at again? Were you able to start on those surveys yet?" He pauses, and with some emphasis adds "Or are we still sitting on them?" He glances at his stack of notes, possibly annoyed. "I think we had decided we wanted to interview the children as well as their parents, is that right?" |
 Speaker remind ned.
-ChoiceLabel remind: |Direct attention to Ned |
+ChoiceLabel remind: |Continue |
 ChoiceCondition remind remind_c: [AvailableCheckpoint entry]
 ChoiceCondition remind remind_cc: [AvailableCheckpoint entry]
 ChoiceCondition remind remind_ccc: [AvailableCheckpoint entry]
@@ -384,7 +381,7 @@ Conditions remind: [= Thread entry][Not [Member entry ClosedThreads]]
 CharacterTag remind ned expression sad.
 CharacterTag remind brad expression nervous.
 
-Content agenda_start: |Brad met with Ned weekly. They used a shared document to track - oh shoot - he forgot to update the document yesterday. |
+Content agenda_start: |Brad met with Ned weekly. They used a shared document to track- Oh shoot, he forgot to update the document yesterday. |
 Speaker agenda_start brad.
 ChoiceLabel agenda_start: |Move on to the agenda |
 GoToChoice agenda_start slides.
@@ -570,7 +567,7 @@ CharacterTag what_else_transition brad expression nervous.
 
 Content stress: |"The project is great but the pressure is honestly a little high. It can be hard to cope." |
 Speaker stress brad.
-ChoiceLabel stress: |Vocalize stress |
+ChoiceLabel stress: |Mention project stress |
 GoToChoice stress need_success.
 ChoiceCondition stress stress_c: [AvailableCheckpoint agenda]
 ChoiceCondition stress stress_cc: [AvailableCheckpoint agenda]
@@ -826,7 +823,7 @@ Effects end_insecurity:
 Conditions end_insecurity.
 CharacterTag end_insecurity brad expression nervous.
 
-Content irb_intro: |Brad feels like he’s been letting Ned down with the project as of late. If he talks about how well things are going with the project, maybe Ned will finally be proud of Brad and won’t regret his decision of being the advisor for this study. |
+Content irb_intro: |Brad feels like he’s been letting Ned down with the project as of late. If he talks about how well things are going with the project, maybe Ned will finally be proud of Brad and won’t regret his decision of being his advisor. |
 Speaker irb_intro brad.
 ChoiceLabel irb_intro: |Consider bringing up project |
 GoToChoice irb_intro proud_of_me.
@@ -963,6 +960,7 @@ ChoiceCondition when_approval when_approval_c: [AvailableCheckpoint irb]
 ChoiceCondition when_approval when_approval_cc: [AvailableCheckpoint irb]
 Effects when_approval: [set Thread = irb]
 Conditions when_approval: [Not [Member irb ClosedThreads]]
+Reusable when_approval e0001.
 
 Content herb: |“Who is this Herb you keep mentioning, and why do we need his approval?” Brad asks, confused. Who is Herb and why does Ned keep bringing them up? |
 Speaker herb brad.
@@ -973,6 +971,7 @@ ChoiceCondition herb herb_c: [AvailableCheckpoint irb]
 ChoiceCondition herb herb_cc: [AvailableCheckpoint irb]
 Effects herb: [set Thread = irb]
 Conditions herb: [Not [Member irb ClosedThreads]]
+Reusable herb e0001.
 
 Content oregano: 
 	|Come to think of it, Brad did see Ned going ham with the oregano shaker at the local pizzeria in their college town. Maybe that’s what Ned is talking about. |<br><br>
@@ -983,6 +982,7 @@ ChoiceLabel oregano: |Does Ned have a thing for herbs? |
 GoToChoice oregano irb.
 Effects oregano: [set Thread = irb]
 Conditions oregano: [Not [Member irb ClosedThreads]]
+Reusable oregano e0001.
 
 Content irb: 
 	|“Oh, sorry,” Ned half chortles. “I pronounce it as “herb” but I’m actually referring to the IRB. It’s an acronym, I-R-B – it stands for <b>Institutional Review Board</b>.” |<br><br>
@@ -992,18 +992,23 @@ Content irb:
 Speaker irb ned.
 ChoiceLabel irb: |Listen to Ned |
 GoToChoice irb confession_3.
+ChoiceCondition irb irb_c: [AvailableCheckpoint irb]
+ChoiceCondition irb irb_cc: [AvailableCheckpoint irb]
 Effects irb: 
 	[set Thread = irb]
 	[add vulnerable_mentioned Learnings]
+	[OpenCheckpoint irb confession_3]
 [end]
 Conditions irb: [Not [Member irb ClosedThreads]]
+Reusable irb e0001.
 
-Content confession_3: |“Oh the IRB! Right... The thing is, I didn’t get approval yet.” Brad sheepishly looks down at his scuffed-up shoes. |
+Content confession_3: |“Oh the IRB! Right... The thing is, I kind of started the surveys without approval.” Brad sheepishly looks down at his scuffed-up shoes. |
 Speaker confession_3 brad.
-ChoiceLabel confession_3: |Continue |
+ChoiceLabel confession_3: |Confess about starting without approval |
 GoToChoice confession_3 ned_dont_press.
 Effects confession_3: [set Thread = irb]
 Conditions confession_3: [Not [Member irb ClosedThreads]]
+Reusable confession_3 e0001.
 
 Content ned_dont_press: |"No doubt the IRB is a slow process. But, Brad..." Ned takes a sip of coffee and seems to lose himeself in thought. |
 Speaker ned_dont_press ned.
@@ -1011,6 +1016,7 @@ ChoiceLabel ned_dont_press: |Continue |
 GoToChoice ned_dont_press brad_goes_along.
 Effects ned_dont_press: [set Thread = irb]
 Conditions ned_dont_press: [Not [Member irb ClosedThreads]]
+Reusable ned_dont_press e0001.
 
 Content bad_feeling: 
 	|Ned didn’t really make it clear on whether it is okay to keep working on the project or if he should wait. But now that Brad knows what the IRB is, he feels guilty about conducting his survey. |<br><br>
@@ -1023,6 +1029,7 @@ ChoiceCondition bad_feeling bad_feeling_cc: [AvailableCheckpoint irb]
 ChoiceCondition bad_feeling bad_feeling_ccc: [AvailableCheckpoint irb]
 Effects bad_feeling: [set Thread = irb]
 Conditions bad_feeling: [Not [Member irb ClosedThreads]]
+Reusable bad_feeling e0001.
 
 Content brad_goes_along: |Ned didn’t press it, so it must not be a big deal. If Ned isn’t concerned about the IRB approval, then Brad doesn’t need to be either. |
 Speaker brad_goes_along brad.
@@ -1036,6 +1043,7 @@ Effects brad_goes_along:
 	[CloseAllCheckpoints irb]
 [end]
 Conditions brad_goes_along: [Not [Member irb ClosedThreads]]
+Reusable brad_goes_along e0001.
 
 Content principles_intro: |"This white paper," Ned holds it up for emphasis, "is about the core principles of the IRB. Have you read this?" |
 Speaker principles_intro ned.
@@ -1159,7 +1167,7 @@ Conditions brad_confused: [Not [Member beneficence ClosedThreads]]
 Reusable brad_confused e0001.
 
 Content medical_trials: 
-	|Ned scratches his mustache, signalling to Brad that he's deep in thought. |<br><br>
+	|Ned scratches his mustache, furrowing his brows. |<br><br>
 	|"So for example, medical trials have to use the lowest possible dosage when testing new medication. They also have to provide services to ensure the health and safetly of their participants. Does that make sense?" |
 [end]
 Speaker medical_trials ned.
@@ -1207,7 +1215,7 @@ Effects brad_curious: [set Thread = beneficence]
 Conditions brad_curious: [Not [Member beneficence ClosedThreads]]
 Reusable brad_curious e0001.
 
-Content do_u_get_it: |Ned narrows his eyes at Brad."Do you get what I'm trying to say, Brad?" His advisor's tone feels awfully much more stern now. . |
+Content do_u_get_it: |Ned narrows his eyes at Brad."Do you get what I'm trying to say, Brad?" His advisor's tone feels awfully much more stern now. |
 Speaker do_u_get_it ned.
 ChoiceLabel do_u_get_it: |Continue |
 GoToChoice do_u_get_it brad_silent.
@@ -1457,7 +1465,7 @@ Effects why_board: [set Thread = justice]
 Conditions why_board: [Not [Member justice ClosedThreads]]
 Reusable why_board e0001.
 
-Content ned_corrects: |"The historical events behind these principles are very sensitive topics, and should be handled with empathy for the people affected by them. |
+Content ned_corrects: |"The historical events behind these principles are very sensitive topics, and should be handled with empathy for the people affected by them." |
 Speaker ned_corrects ned.
 ChoiceLabel ned_corrects: |Continue |
 GoToChoice ned_corrects brad_apologizes.
@@ -1465,24 +1473,9 @@ GoToChoice ned_corrects just_making_a_joke.
 ChoiceCondition ned_corrects ned_corrects_c: [AvailableCheckpoint justice]
 ChoiceCondition ned_corrects ned_corrects_cc: [AvailableCheckpoint justice]
 ChoiceCondition ned_corrects ned_corrects_ccc: [AvailableCheckpoint justice]
-Effects ned_corrects: 
-	[set Thread = justice]
-	[OpenCheckpoint justice ned_corrects_transition]
-[end]
+Effects ned_corrects: [set Thread = justice]
 Conditions ned_corrects: [Not [Member justice ClosedThreads]]
 Reusable ned_corrects e0001.
-
-Content ned_corrects_transition: |Back to the topic of justice. Brad probably shouldn't have joked about it. |
-Speaker ned_corrects_transition brad.
-ChoiceLabel ned_corrects_transition: |Bring up justice again |
-GoToChoice ned_corrects_transition brad_apologizes.
-GoToChoice ned_corrects_transition just_making_a_joke.
-ChoiceCondition ned_corrects_transition ned_corrects_transition_c: [AvailableCheckpoint justice]
-ChoiceCondition ned_corrects_transition ned_corrects_transition_cc: [AvailableCheckpoint justice]
-ChoiceCondition ned_corrects_transition ned_corrects_transition_ccc: [AvailableCheckpoint justice]
-Effects ned_corrects_transition: [set Thread = justice]
-Conditions ned_corrects_transition: [Not [Member justice ClosedThreads]]
-Reusable ned_corrects_transition e0001.
 
 Content principles_important: |"I understand your confusion, but in the past, violations of the principle of justice has led to negative impacts on the lives of various people. Including substantial harm in some, specifically marginalized, populations." |
 Speaker principles_important ned.
@@ -1517,7 +1510,7 @@ Effects brad_apologizes: [set Thread = justice]
 Conditions brad_apologizes: [Not [Member justice ClosedThreads]]
 Reusable brad_apologizes e0001.
 
-Content dont_take_lightly: |"Ned I understand that you're trying to take this lightly, but this isn't a light topic. In the past, violations of the guidelines have led to catastrophic harm to people, so it's especially important to approach these topics with sensitivity." |
+Content dont_take_lightly: |"Brad, I understand that you're trying to take this lightly, but this isn't a light topic. In the past, violations of the guidelines have led to catastrophic harm to people, so it's especially important to approach these topics with sensitivity." |
 Speaker dont_take_lightly ned.
 ChoiceLabel dont_take_lightly: |Continue |
 GoToChoice dont_take_lightly wym.
@@ -1531,7 +1524,7 @@ Effects dont_take_lightly:
 Conditions dont_take_lightly: [Not [Member justice ClosedThreads]]
 Reusable dont_take_lightly e0001.
 
-Content wym: |"Whole populations were harmed just because people didn't follow these IRB principles?! How?" |
+Content wym: |"Wait, people were harmed? Like who? I think a specific example would help." |
 Speaker wym brad.
 ChoiceLabel wym: |Ask about harmed populations |
 GoToChoice wym syphilis.
@@ -1540,7 +1533,7 @@ Conditions wym: [Not [Member justice ClosedThreads]]
 Reusable wym e0001.
 
 Content syphilis: 
-	|"Take, for instance, the Tuskegee Syphilis Study," begins Ned.|<br><br>
+	|"Yeah, sure. The Tuskegee Syphilis Study was a pretty big example," begins Ned.|<br><br>
 	|"In this study, African American men were not told they had syphilis nor were they offered treatment, even after penicillin became available as a cure in the 1940s. Many participants suffered unnecessarily, and some even died from complications of untreated syphilis. This disregard for ethical guidelines underscores the importance of adhering to IRB principles to prevent harm to research participants." |
 [end]
 Speaker syphilis ned.
