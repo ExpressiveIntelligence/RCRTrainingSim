@@ -1790,7 +1790,7 @@ Effects end_vulnerable_bad:
 	[set Thread = vulnerable]
 	[add vulnerable Learnings]
 	[OpenResolution] 
-	[CloseAllCheckpoints beneficence]
+	[CloseAllCheckpoints vulnerable]
 [end]
 Conditions end_vulnerable_bad: [BradAdmittedStudy e0001][Member consent_def Learnings]
 Reusable end_vulnerable_bad e0001.
@@ -1807,9 +1807,9 @@ ChoiceCondition end_vulnerable_good end_vulnerable_good_cc: [AvailableCheckpoint
 ChoiceCondition end_vulnerable_good end_vulnerable_good_ccc: [AvailableCheckpoint vulnerable]
 Effects end_vulnerable_good: 
 	[set Thread = vulnerable]
-	[add vulnerable Learnings][OpenResolution]
+	[add vulnerable Learnings]
 	[OpenResolution] 
-	[CloseAllCheckpoints beneficence]
+	[CloseAllCheckpoints vulnerable]
 [end]
 Conditions end_vulnerable_good: [Member consent_def Learnings]
 Reusable end_vulnerable_good e0001.
