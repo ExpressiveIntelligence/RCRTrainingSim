@@ -14,7 +14,9 @@ public class SerializedFragment
     public string speakerID;
     public string backgroundPath;
     public Dictionary<string, string> tags;
+    public string timeRendered; //gives time the fragment was rendered
     public string systemMessage; // Error messages, etc.
+    
 
     public override string ToString()
     {

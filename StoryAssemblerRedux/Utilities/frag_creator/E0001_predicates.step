@@ -3,8 +3,17 @@ fluent PleasantriesOver ?scene.
 [function]
 fluent Check ?thread ?frag.
 
-# Scene specific tasks
+# Define the initial state as required by StoryAssembler
+InitialSceneState e0001: 
+    [Not [PleasantriesOver e0001]]
+    [set BradInsecurityToNed = 0]
+    [set Thread = none]
+    [set Learnings = empty]
+    [set ClosedThreads = empty]
+    [now [Not [BradAdmittedStudy e0001]]]
+[end]
 
+# Scene specific tasks
 [predicate]
 BradLearned: [Member justice Learnings] [Member beneficence Learnings] [Member vulnerable Learnings]
 # TODO vulnerable should be switched to [Member respect Learnings] when its done
@@ -33,37 +42,54 @@ MentionAllExtra:
 [end]
 
 
-DoMentionOfExtraThread: Also, this reminds me of [MentionUnmentioned], which we should also talk about.
+DoMentionOfExtraThread: "For instance, we could talk about [MentionUnmentioned]. "
 DoMentionOfExtraThread.
 
 [predicate]
 MentionUnmentioned: [MentionMilgram]
 MentionUnmentioned: [MentionStanford]
 MentionUnmentioned: [MentionVulnerable]
+MentionUnmentioned: [MentionJustice]
+MentionUnmentioned: [MentionBeneficence]
 
 [predicate]
 MentionMilgram:
-    [Not [Member milgram_mentioned Learnings]]
+    [Not [Member milgram ClosedThreads]]
     [add milgram_mentioned Learnings]
     the Milgram syphilis study
 [end]
 
 [predicate]
 MentionStanford:
-    [Not [Member milgram_mentioned Learnings]]
-    [add milgram_mentioned Learnings]
+    [Not [Member stanford ClosedThreads]]
+    [add stanford_mentioned Learnings]
     the Stanford prison experiment
 [end]
 
 [predicate]
 MentionVulnerable:
-    [Not [Member milgram_mentioned Learnings]]
-    [add milgram_mentioned Learnings]
+    [Not [Member vulnerable ClosedThreads]]
+    [add vulnerable_mentioned Learnings]
     the concept of vulnerable populations
+[end]
+
+[predicate]
+MentionJustice:
+    [Not [Member justice ClosedThreads]]
+    [add justice_mentioned Learnings]
+    what the IRB calls Justice
+[end]
+
+[predicate]
+MentionBeneficence:
+    [Not [Member beneficence ClosedThreads]]
+    [add beneficence_mentioned Learnings]
+    beneficence
 [end]
 
 # Open the final thread
 # gets called at the end of each Extra Thread (so you have to visit at least one)
 OpenResolution: 
     [OpenCheckpoint resolution resolution_intro]
+    [DoMentionOfExtraThread] # Open another unopened thread if there is one
 [end]

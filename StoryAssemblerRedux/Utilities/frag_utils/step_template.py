@@ -5,11 +5,8 @@ Scene {scene}.
 # Declare asset paths
 {assets}
 
-# Scene specific predicates
+# Scene specific predicates, fluents, and tasks
 {predicates}
-
-# Define the initial state as required by StoryAssembler
-InitialSceneState {scene}: {initial_state}
 
 # Declare the characters and locations
 {characters}

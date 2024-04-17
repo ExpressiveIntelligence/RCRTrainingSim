@@ -23,7 +23,13 @@ public class GameSession : MonoBehaviour
     public int backgroundCounter = 0; //counts how many choices have passed between backgrounds
     public int backgroundRotation = 3; //indicates how many choices should pass before changing backgrounds
 
+    public int saveCounter = 0;
+    public int saveIncrement = 10;
+
     public GameObject loadingPanel;
+
+    public string participantId = "participant";
+    public GoogleSheetsManager sheetManager;
 
     // Awake is used to instantiate class as singleton
     void Awake()
@@ -67,6 +73,11 @@ public class GameSession : MonoBehaviour
         UpdateVisuals();
     }
 
+    public void SaveFragmentHistory() 
+    {
+        sheetManager.SavePlaythroughData(this.participantId, StepManager.instance.fragmentHistory);
+    }
+
     public void UpdateVisuals()
     {
         var currentSerializedFragment = StepManager.instance.currentFragment;
@@ -103,8 +114,16 @@ public class GameSession : MonoBehaviour
             this.backgroundCounter = 0;
         }
 
+        
+        if(this.saveCounter == this.saveIncrement){
+            this.SaveFragmentHistory();
+            this.saveCounter = 0;
+        }
+        this.saveCounter++;
+
         _dialoguePanel.SetSpeakerName(currentSerializedFragment.speakerID);
         _dialoguePanel.SetTextContent(currentSerializedFragment.content);
         _dialoguePanel.SetChoices(currentSerializedFragment.choices);
+
     }
 }

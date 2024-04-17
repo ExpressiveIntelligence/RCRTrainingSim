@@ -97,7 +97,7 @@ def split_task_call(string_to_split):
     tasks = []
     current_task = ""
     open_brackets = 0
-    for char in string_to_split:
+    for char in string_to_split.strip():
         if char == '[':
             open_brackets += 1
         if char == ']':
@@ -123,7 +123,7 @@ def multi(content):
     return content
 
 def literal(content):
-    content = "|" + content.strip() + "|"
+    content = "|" + content.strip() + " |"
     content = re.sub(r'\n\s*', r'|<br><br>\n|', content)
     content = content.replace("[", "|[").replace("]", "]|")
     return content
@@ -262,14 +262,6 @@ code = fragment_declarations + "\n\n" + fragments
 # read E0001_predicates.step
 predicates = open("E0001_predicates.step", "r").read()
 
-# initial_state = "# No Initial State"
-initial_state = multi("""[Not [PleasantriesOver e0001]]
-[set BradInsecurityToNed = 0]
-[set Thread = none]
-[set Learnings = empty]
-[now [Not [BradAdmittedStudy e0001]]]
-""")
-
 characters = f"""Character brad {scene} |Brad|.
 CharacterAsset brad {scene} |./brad.png|.
 CharacterLocation brad {scene} [c0, 0].
@@ -278,7 +270,9 @@ Character ned {scene} |Ned|.
 CharacterAsset ned {scene} |./ned.png|.
 CharacterLocation ned {scene} [0, 0]."""
 assets = f"BackgroundAsset {scene}: |./scene_name_background.png|."
-wants = f"""Want {scene} entry.
+wants = f"""
+Want {scene} resolution.
+Want {scene} entry.
 Want {scene} entry_2.
 Want {scene} justice.
 Want {scene} beneficence.
@@ -308,7 +302,8 @@ Want {scene} pedagogy_16.
 """
 
 # this should probably be extracted to its own file
-fulfillments = """Fulfilled entry: [Expanded entry CurrentScene]
+fulfillments = """Fulfilled resolution: [Expanded resolution_intro CurrentScene]
+Fulfilled entry: [Expanded entry CurrentScene]
 Fulfilled justice: [Expanded justice_intro CurrentScene]
 Fulfilled beneficence: [Expanded beneficence_intro CurrentScene]
 Fulfilled irb: [Expanded irb_intro CurrentScene]
@@ -339,6 +334,7 @@ code = step_template.format(**locals())
 with open(file_name, "w") as f:
     f.write(code)
     f.close()
+print(f"Successfully wrote to {file_name}")
 
 
 if write_step_to_sheet:
@@ -353,7 +349,6 @@ if write_step_to_sheet:
         update_cell(row.step_row_index, row.step_col_index, frag_code)
     print()
 
-print(f"Successfully wrote to {file_name}")
 
 print("Visualizing the graph...")
 import thread_vis

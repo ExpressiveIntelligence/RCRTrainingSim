@@ -219,6 +219,9 @@ public class StepManager : MonoBehaviour
             // warnings = ExecuteStep("[Warnings ^CurrentScene]"), // Warning messages, etc.
         };
 
+        //save time of rendering of fragment
+        renderedScene.timeRendered = System.DateTime.Now.ToString();
+
         // there is a more elegant way of doing this
         KeyValuePair<string, string>[] tagsArray = ExecuteStep<KeyValuePair<string, string>>("[RenderFragmentTags]");
         renderedScene.tags = tagsArray.ToDictionary(tuple => tuple.Key.ToLower(), tuple => tuple.Value.ToLower());
