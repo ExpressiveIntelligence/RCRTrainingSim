@@ -349,7 +349,7 @@ ChoiceLabel doubt: |Blame the buses |
 GoToChoice doubt remind.
 Effects doubt: [set Thread = entry][set BradInsecurityToNed = BradInsecurityToNed + 1]
 Conditions doubt: [= Thread entry][Not [Member entry ClosedThreads]]
-CharacterTag doubt ned expression netural.
+CharacterTag doubt ned expression neutral.
 CharacterTag doubt brad expression nervous.
 
 Content relief: 
@@ -381,7 +381,7 @@ Conditions remind: [= Thread entry][Not [Member entry ClosedThreads]]
 CharacterTag remind ned expression sad.
 CharacterTag remind brad expression nervous.
 
-Content agenda_start: |Brad met with Ned weekly. They used a shared document to track- Oh shoot, he forgot to update the document yesterday. |
+Content agenda_start: |Brad meets with Ned weekly. They use a shared document to track- Oh shoot, he forgot to update the document yesterday. |
 Speaker agenda_start brad.
 ChoiceLabel agenda_start: |Move on to the agenda |
 GoToChoice agenda_start slides.
@@ -392,6 +392,7 @@ Effects agenda_start:
 [end]
 Conditions agenda_start: [Not [Member agenda ClosedThreads]]
 Reusable agenda_start e0001.
+CharacterTag agenda_start ned expression neutral.
 CharacterTag agenda_start brad expression neutral.
 
 Content slides: |He hadn't prepared, but he could wing it. These meetings always followed the same format... they’d check in on his classes, on graduation, and talk about new happenings in the field. |
@@ -404,15 +405,17 @@ GoToChoice slides admin.
 Effects slides: [set Thread = agenda]
 Conditions slides: [Not [Member agenda ClosedThreads]]
 Reusable slides e0001.
+CharacterTag slides ned expression neutral.
 CharacterTag slides brad expression nervous.
 
-Content phd: |"I feel like I've made good progress on my degree - I can see the finish line! What should focus on next?" Brad asked, feigning confidence. |
+Content phd: |"I feel like I've made good progress on my degree - I can see the finish line! What should focus on next?" Brad asks, feigning confidence. |
 Speaker phd brad.
 ChoiceLabel phd: |Bring up PhD Progress |
 GoToChoice phd phd_r.
 Effects phd: [set Thread = agenda]
 Conditions phd: [Not [Member agenda ClosedThreads]]
 Reusable phd e0001.
+CharacterTag phd ned expression neutral.
 CharacterTag phd brad expression happy.
 
 Content phd_r: 
@@ -425,6 +428,7 @@ GoToChoice phd_r what_else.
 Effects phd_r: [set Thread = agenda]
 Conditions phd_r: [Not [Member agenda ClosedThreads]]
 Reusable phd_r e0001.
+CharacterTag phd_r ned expression confident.
 CharacterTag phd_r brad expression happy.
 
 Content classes: 
@@ -437,11 +441,12 @@ GoToChoice classes classes_r.
 Effects classes: [set Thread = agenda]
 Conditions classes: [Not [Member agenda ClosedThreads]]
 Reusable classes e0001.
-CharacterTag classes brad expression neutral.
+CharacterTag classes ned expression neutral.
+CharacterTag classes brad expression confused.
 
 Content classes_r: 
 	|"Although auditing is a great thing to do, I don’t think it should be your priority right now. Right now, you'll benefit more from diving deeper into your current projects."|<br><br>
-	|Ned was right - Brad already felt overworked and overwhelmed. A new project wasn’t going to help. Time to think of something else. |
+	|Ned is right - Brad already feels overworked and overwhelmed. A new project isn’t going to help. Time to think of something else. |
 [end]
 Speaker classes_r ned.
 ChoiceLabel classes_r: |Listen to Ned’s opinion |
@@ -449,7 +454,8 @@ GoToChoice classes_r what_else.
 Effects classes_r: [set Thread = agenda]
 Conditions classes_r: [Not [Member agenda ClosedThreads]]
 Reusable classes_r e0001.
-CharacterTag classes_r brad expression angry.
+CharacterTag classes_r ned expression confident.
+CharacterTag classes_r brad expression neutral.
 
 Content department: 
 	|"So, the whole department is talking about Katherine and company. Do you know what’s going on?"|<br><br>
@@ -464,6 +470,7 @@ ChoiceCondition department department_ccc: [AvailableCheckpoint agenda]
 Effects department: [set Thread = agenda]
 Conditions department: [Not [Member agenda ClosedThreads]]
 Reusable department e0001.
+CharacterTag department ned expression neutral.
 CharacterTag department brad expression angry.
 
 Content department_r: 
@@ -482,6 +489,7 @@ Effects department_r:
 [end]
 Conditions department_r: [Not [Member agenda ClosedThreads]]
 Reusable department_r e0001.
+CharacterTag department_r ned expression neutral.
 CharacterTag department_r brad expression nervous.
 
 Content admin: 
@@ -497,11 +505,12 @@ ChoiceCondition admin admin_ccc: [AvailableCheckpoint agenda]
 Effects admin: [set Thread = agenda]
 Conditions admin: [Not [Member agenda ClosedThreads]]
 Reusable admin e0001.
+CharacterTag admin ned expression neutral.
 CharacterTag admin brad expression neutral.
 
 Content admin_r: 
 	|"At this point, the deadlines depend on what you want to publish and where. We've got a lot of momentum on our Child Moral Development project; perhaps that's a good place for us to focus this meeting? We have some important admin work to do with the IRB."|<br><br>
-	|Brad was so excited about the project. So excited, in fact, that he had already started to interview parents with the survey he’d developed.|<br><br>
+	|Brad is so excited about the project. So excited, in fact, that he had already started to interview parents with the survey he’d developed.|<br><br>
 	|"How do you feel about it? What do we need to do next?" |
 [end]
 Speaker admin_r ned.
@@ -517,6 +526,7 @@ Effects admin_r:
 [end]
 Conditions admin_r: [Not [Member agenda ClosedThreads]]
 Reusable admin_r e0001.
+CharacterTag admin_r ned expression neutral.
 CharacterTag admin_r brad expression netural.
 
 Content what_else: |"What else is on the agenda for today?" |
@@ -533,6 +543,7 @@ Effects what_else:
 [end]
 Conditions what_else: [Not [Member agenda ClosedThreads]]
 Reusable what_else e0001.
+CharacterTag what_else ned expression neutral.
 CharacterTag what_else brad expression neutral.
 
 Content what_else_top_level: |"What else should we talk about?" asks Ned. |
@@ -549,6 +560,7 @@ Effects what_else_top_level:
 [end]
 Conditions what_else_top_level: [Not [Member agenda ClosedThreads]]
 Reusable what_else_top_level e0001.
+CharacterTag what_else_top_level ned expression neutral.
 CharacterTag what_else_top_level brad expression neutral.
 
 Content what_else_transition: |"We're a bit limited on time for today - let's stay on track." |
@@ -575,6 +587,7 @@ ChoiceCondition stress stress_ccc: [AvailableCheckpoint agenda]
 Effects stress: [set Thread = agenda]
 Conditions stress: [Not [Member agenda ClosedThreads]]
 Reusable stress e0001.
+CharacterTag stress ned expression neutral.
 CharacterTag stress brad expression happy.
 
 Content need_success: |"I get it. It's easy to get overwhelmed, but try to take it one step at a time. For example, we can take one large task and break it down into many smaller tasks.That’ll make things easier! Let's try it. What are you working on right now?" |
@@ -769,7 +782,10 @@ Conditions really_hard.
 CharacterTag really_hard ned expression sad.
 CharacterTag really_hard brad expression sad.
 
-Content apologizes: |Brad anxiously sits across the desk from Ned, his insecurities are overwhelming. Ned glances up from his paperwork with a look of confusion, "Brad, you have been doing an excellent job," he says calmly, "I’m sorry if my judgment was too harsh, but trust me when I say that I can see the amount of time and work you have put into this." |
+Content apologizes: 
+	|Brad anxiously sits across the desk from Ned, his insecurities are overwhelming. Ned glances up from his paperwork with a look of confusion. |<br><br>
+	|"Brad, you have been doing an excellent job," he says calmly, "I’m sorry if my judgment was too harsh, but trust me when I say that I can see the amount of time and work you have put into this." |
+[end]
 Speaker apologizes ned.
 ChoiceLabel apologizes: |Await Ned's response |
 GoToChoice apologizes accept_apology.
@@ -779,6 +795,7 @@ ChoiceCondition apologizes apologizes_cc: [AvailableCheckpoint insecurity]
 ChoiceCondition apologizes apologizes_ccc: [AvailableCheckpoint insecurity]
 Effects apologizes: [set Thread = insecurity]
 Conditions apologizes.
+CharacterTag apologizes ned expression confident.
 CharacterTag apologizes brad expression nervous.
 
 Content accept_apology: |Hearing these words of affirmation relieves some stress of off Brad’s shoulders. Knowing that his work is being, not only recognized, but praised allows him to feel less pressure from judgement. Brad now knows that he is on the right track with his research, and can reference back to his own work to continue forward. |
@@ -790,6 +807,7 @@ ChoiceCondition accept_apology accept_apology_cc: [AvailableCheckpoint insecurit
 ChoiceCondition accept_apology accept_apology_ccc: [AvailableCheckpoint insecurity]
 Effects accept_apology: [set Thread = insecurity]
 Conditions accept_apology.
+CharacterTag accept_apology ned expression confident.
 CharacterTag accept_apology brad expression happy.
 
 Content doubt_apology: |Brad wants to accept Ned's kind remarks, but the voice in the back of his head tells him that Ned is lying. If Ned was honest and said his work was inadequate, Brad would have to spend time fixing it, precious time they did not have. Maybe Ned is just telling him he’s doing a good job so that he doesn’t waste even more time than he already has. |
@@ -801,6 +819,7 @@ ChoiceCondition doubt_apology doubt_apology_cc: [AvailableCheckpoint insecurity]
 ChoiceCondition doubt_apology doubt_apology_ccc: [AvailableCheckpoint insecurity]
 Effects doubt_apology: [set Thread = insecurity]
 Conditions doubt_apology.
+CharacterTag doubt_apology ned expression confident.
 CharacterTag doubt_apology brad expression sad.
 
 Content thanks: |"Thanks," Brad says. There is a moment of silence as they look for what to say next. |
@@ -809,6 +828,7 @@ ChoiceLabel thanks: |Back to business |
 GoToChoice thanks end_insecurity.
 Effects thanks: [set Thread = insecurity]
 Conditions thanks.
+CharacterTag thanks ned expression neutral.
 CharacterTag thanks brad expression nervous.
 
 Content end_insecurity: |Ned continues to look through the paperwork before saying "I'm glad you spoke to me about this, but now let's get back to the task at hand. Tell me, how are the surveys going? " |
@@ -821,6 +841,7 @@ Effects end_insecurity:
 	[add dont_be_insecure Learnings]
 [end]
 Conditions end_insecurity.
+CharacterTag end_insecurity ned expression neutral.
 CharacterTag end_insecurity brad expression nervous.
 
 Content irb_intro: |Brad feels like he’s been letting Ned down with the project as of late. If he talks about how well things are going with the project, maybe Ned will finally be proud of Brad and won’t regret his decision of being his advisor. |
@@ -836,14 +857,18 @@ Effects irb_intro:
 [end]
 Conditions irb_intro: [Not [Member irb ClosedThreads]]
 Reusable irb_intro e0001.
+CharacterTag irb_intro ned expression neutral.
+CharacterTag irb_intro brad expression sad.
 
-Content proud_of_me: |I’ve gotten a lot of good feedback from some of the participants,” Brad informs Ned. |
+Content proud_of_me: |“I’ve gotten a lot of good feedback from some of the participants,” Brad informs Ned. |
 Speaker proud_of_me brad.
 ChoiceLabel proud_of_me: |Talk about how well the project is going |
 GoToChoice proud_of_me ned_shocked.
 Effects proud_of_me: [set Thread = irb]
 Conditions proud_of_me: [Not [Member irb ClosedThreads]]
 Reusable proud_of_me e0001.
+CharacterTag proud_of_me ned expression confused.
+CharacterTag proud_of_me brad expression confident.
 
 Content survey_was_fun: |“Well, I’ve had a lot of fun discussing the survey questions with the parents,” Brad pipes up. |
 Speaker survey_was_fun brad.
@@ -852,6 +877,8 @@ GoToChoice survey_was_fun ned_shocked.
 Effects survey_was_fun: [set Thread = irb]
 Conditions survey_was_fun: [Not [Member irb ClosedThreads]]
 Reusable survey_was_fun e0001.
+CharacterTag survey_was_fun ned expression confused.
+CharacterTag survey_was_fun brad expression confident.
 
 Content get_ahead: 
 	|Knowing that he’s had a reputation for getting stuff done at the last minute, Brad decides to mention his most recent research endeavor to Ned. This’ll definitely help him be in Ned’s favor.|<br><br>
@@ -863,6 +890,8 @@ GoToChoice get_ahead sounds_great.
 Effects get_ahead: [set Thread = irb]
 Conditions get_ahead: [Not [Member irb ClosedThreads]]
 Reusable get_ahead e0001.
+CharacterTag get_ahead ned expression confused.
+CharacterTag get_ahead brad expression nervous.
 
 Content sounds_great: |Brad notices Ned sitting up a little straighter in his chair. He seems a lot more interested in the conversation now. |
 Speaker sounds_great ned.
@@ -871,6 +900,8 @@ GoToChoice sounds_great sounds_great_2.
 Effects sounds_great: [set Thread = irb]
 Conditions sounds_great: [Not [Member irb ClosedThreads]]
 Reusable sounds_great e0001.
+CharacterTag sounds_great ned expression confused.
+CharacterTag sounds_great brad expression nervous.
 
 Content sounds_great_2: |“Wow Brad, that’s really good to hear!" says Ned. "I’d like to know more about what you did.” |
 Speaker sounds_great_2 ned.
@@ -881,6 +912,8 @@ ChoiceCondition sounds_great_2 sounds_great_2_cc: [AvailableCheckpoint irb]
 Effects sounds_great_2.
 Conditions sounds_great_2: [Not [Member irb ClosedThreads]]
 Reusable sounds_great_2 e0001.
+CharacterTag sounds_great_2 ned expression confused.
+CharacterTag sounds_great_2 brad expression nervous.
 
 Content confession_1: |Brad clears his throat, “Well, I kinda handed out a few of the surveys.” |
 Speaker confession_1 brad.
@@ -892,6 +925,8 @@ Effects confession_1:
 [end]
 Conditions confession_1: [Not [Member irb ClosedThreads]]
 Reusable confession_1 e0001.
+CharacterTag confession_1 ned expression sad.
+CharacterTag confession_1 brad expression nervous.
 
 Content ned_shocked: |“I’m sorry?” Ned places both hands on his desk. "What do you mean? Have you been conducting some of the surveys? You were just supposed to write the questions." |
 Speaker ned_shocked ned.
@@ -902,6 +937,8 @@ ChoiceCondition ned_shocked ned_shocked_cc: [AvailableCheckpoint irb]
 Effects ned_shocked: [set Thread = irb]
 Conditions ned_shocked: [Not [Member irb ClosedThreads]]
 Reusable ned_shocked e0001.
+CharacterTag ned_shocked ned expression confused.
+CharacterTag ned_shocked brad expression nervous.
 
 Content brad_panicking: |Is Ned pissed? Ned had mentioned in the past that Brad needed to run the surveys by him before sending them to participants. But Brad had just wanted to get ahead. |
 Speaker brad_panicking brad.
@@ -914,7 +951,7 @@ Effects brad_panicking: [set Thread = irb]
 Conditions brad_panicking: [Not [Member irb ClosedThreads]]
 Reusable brad_panicking e0001.
 CharacterTag brad_panicking ned expression neutral.
-CharacterTag brad_panicking brad expression scared.
+CharacterTag brad_panicking brad expression nervous.
 
 Content confession_2: 
 	|It’s better to own up to his mistake and come clean.|<br><br>
@@ -928,6 +965,8 @@ ChoiceCondition confession_2 confession_2_cc: [AvailableCheckpoint irb]
 Effects confession_2: [set Thread = irb]
 Conditions confession_2: [Not [Member irb ClosedThreads]]
 Reusable confession_2 e0001.
+CharacterTag confession_2 ned expression sad.
+CharacterTag confession_2 brad expression nervous.
 
 Content with_concern: |"Brad, you know you’re not supposed to start conducting the surveys without herb approval, right?" |
 Speaker with_concern ned.
@@ -938,6 +977,8 @@ ChoiceCondition with_concern with_concern_cc: [AvailableCheckpoint irb]
 Effects with_concern: [set Thread = irb]
 Conditions with_concern: [Not [Member irb ClosedThreads]]
 Reusable with_concern e0001.
+CharacterTag with_concern ned expression sad.
+CharacterTag with_concern brad expression nervous.
 
 Content talked_to_parents: |“Don’t worry Ned, I didn’t do anything major. I was just casually talking to some parents and our study coincidentally came up. They seemed interested so I sent out a survey to see who would want to participate in our study.” |
 Speaker talked_to_parents brad.
@@ -948,6 +989,8 @@ ChoiceCondition talked_to_parents talked_to_parents_cc: [AvailableCheckpoint irb
 Effects talked_to_parents: [set Thread = irb]
 Conditions talked_to_parents: [Not [Member irb ClosedThreads]]
 Reusable talked_to_parents e0001.
+CharacterTag talked_to_parents ned expression neutral.
+CharacterTag talked_to_parents brad expression confident.
 
 Content when_approval: 
 	|Ned furrows his eyebrows.|<br><br>
@@ -961,6 +1004,8 @@ ChoiceCondition when_approval when_approval_cc: [AvailableCheckpoint irb]
 Effects when_approval: [set Thread = irb]
 Conditions when_approval: [Not [Member irb ClosedThreads]]
 Reusable when_approval e0001.
+CharacterTag when_approval ned expression sad.
+CharacterTag when_approval brad expression nervous.
 
 Content herb: |“Who is this Herb you keep mentioning, and why do we need his approval?” Brad asks, confused. Who is Herb and why does Ned keep bringing them up? |
 Speaker herb brad.
@@ -972,6 +1017,8 @@ ChoiceCondition herb herb_cc: [AvailableCheckpoint irb]
 Effects herb: [set Thread = irb]
 Conditions herb: [Not [Member irb ClosedThreads]]
 Reusable herb e0001.
+CharacterTag herb ned expression neutral.
+CharacterTag herb brad expression confused.
 
 Content oregano: 
 	|Come to think of it, Brad did see Ned going ham with the oregano shaker at the local pizzeria in their college town. Maybe that’s what Ned is talking about. |<br><br>
@@ -983,6 +1030,8 @@ GoToChoice oregano irb.
 Effects oregano: [set Thread = irb]
 Conditions oregano: [Not [Member irb ClosedThreads]]
 Reusable oregano e0001.
+CharacterTag oregano ned expression confused.
+CharacterTag oregano brad expression confused.
 
 Content irb: 
 	|“Oh, sorry,” Ned half chortles. “I pronounce it as “herb” but I’m actually referring to the IRB. It’s an acronym, I-R-B – it stands for <b>Institutional Review Board</b>.” |<br><br>
@@ -1001,6 +1050,8 @@ Effects irb:
 [end]
 Conditions irb: [Not [Member irb ClosedThreads]]
 Reusable irb e0001.
+CharacterTag irb ned expression confident.
+CharacterTag irb brad expression neutral.
 
 Content confession_3: |“Oh the IRB! Right... The thing is, I kind of started the surveys without approval.” Brad sheepishly looks down at his scuffed-up shoes. |
 Speaker confession_3 brad.
@@ -1009,6 +1060,8 @@ GoToChoice confession_3 ned_dont_press.
 Effects confession_3: [set Thread = irb]
 Conditions confession_3: [Not [Member irb ClosedThreads]]
 Reusable confession_3 e0001.
+CharacterTag confession_3 ned expression neutral.
+CharacterTag confession_3 brad expression nervous.
 
 Content ned_dont_press: |"No doubt the IRB is a slow process. But, Brad..." Ned takes a sip of coffee and seems to lose himeself in thought. |
 Speaker ned_dont_press ned.
@@ -1017,6 +1070,8 @@ GoToChoice ned_dont_press brad_goes_along.
 Effects ned_dont_press: [set Thread = irb]
 Conditions ned_dont_press: [Not [Member irb ClosedThreads]]
 Reusable ned_dont_press e0001.
+CharacterTag ned_dont_press ned expression sad.
+CharacterTag ned_dont_press brad expression neutral.
 
 Content bad_feeling: 
 	|Ned didn’t really make it clear on whether it is okay to keep working on the project or if he should wait. But now that Brad knows what the IRB is, he feels guilty about conducting his survey. |<br><br>
@@ -1030,6 +1085,8 @@ ChoiceCondition bad_feeling bad_feeling_ccc: [AvailableCheckpoint irb]
 Effects bad_feeling: [set Thread = irb]
 Conditions bad_feeling: [Not [Member irb ClosedThreads]]
 Reusable bad_feeling e0001.
+CharacterTag bad_feeling ned expression neutral.
+CharacterTag bad_feeling brad expression sad.
 
 Content brad_goes_along: |Ned didn’t press it, so it must not be a big deal. If Ned isn’t concerned about the IRB approval, then Brad doesn’t need to be either. |
 Speaker brad_goes_along brad.
@@ -1044,6 +1101,8 @@ Effects brad_goes_along:
 [end]
 Conditions brad_goes_along: [Not [Member irb ClosedThreads]]
 Reusable brad_goes_along e0001.
+CharacterTag brad_goes_along ned expression neutral.
+CharacterTag brad_goes_along brad expression confident.
 
 Content principles_intro: |"This white paper," Ned holds it up for emphasis, "is about the core principles of the IRB. Have you read this?" |
 Speaker principles_intro ned.
@@ -1053,6 +1112,8 @@ GoToChoice principles_intro no_info.
 Effects principles_intro: [set Thread = principles]
 Conditions principles_intro: [Not [Member principles ClosedThreads]]
 Reusable principles_intro e0001.
+CharacterTag principles_intro ned expression neutral.
+CharacterTag principles_intro brad expression neutral.
 
 Content yes_info: 
 	|Brad thinks back to the training. <i>I'm pretty sure I've seen this before</i>.|<br><br>
@@ -1064,6 +1125,8 @@ GoToChoice yes_info tenants.
 Effects yes_info: [set Thread = principles]
 Conditions yes_info: [Not [Member principles ClosedThreads]]
 Reusable yes_info e0001.
+CharacterTag yes_info ned expression neutral.
+CharacterTag yes_info brad expression confident.
 
 Content no_info: 
 	|Brad wasn't sure if he was meant to have gone through this during his ethics training. |<br><br>
@@ -1075,6 +1138,8 @@ GoToChoice no_info tenants.
 Effects no_info: [set Thread = principles]
 Conditions no_info: [Not [Member principles ClosedThreads]]
 Reusable no_info e0001.
+CharacterTag no_info ned expression sad.
+CharacterTag no_info brad expression confused.
 
 Content tenants: |Ned sighs. "The IRB has a lot on their plate - they have to ensure <b>beneficence</b>, <b>justice</b>, and <b>respect for persons</b>. We should probably talk about each of these." |
 Speaker tenants ned.
@@ -1090,6 +1155,8 @@ Effects tenants:
 [end]
 Conditions tenants: [Not [Member principles ClosedThreads]]
 Reusable tenants e0001.
+CharacterTag tenants ned expression neutral.
+CharacterTag tenants brad expression neutral.
 
 Content beneficence_intro: |"You mentioned beneficence?" asks Brad. |
 Speaker beneficence_intro brad.
@@ -1101,6 +1168,8 @@ Effects beneficence_intro:
 [end]
 Conditions beneficence_intro: [Not [Member beneficence ClosedThreads]]
 Reusable beneficence_intro e0001.
+CharacterTag beneficence_intro ned expression neutral.
+CharacterTag beneficence_intro brad expression neutral.
 
 Content beneficence_define: |Ned leans back in his ergonomic chair. "Beneficence is the idea that research should not harm participants. Researchers need to keep the greater good and wellbeing of participants in mind when choosing the next course of action." |
 Speaker beneficence_define ned.
@@ -1113,6 +1182,8 @@ ChoiceCondition beneficence_define beneficence_define_ccc: [AvailableCheckpoint 
 Effects beneficence_define: [set Thread = beneficence]
 Conditions beneficence_define: [Not [Member beneficence ClosedThreads]]
 Reusable beneficence_define e0001.
+CharacterTag beneficence_define ned expression neutral.
+CharacterTag beneficence_define brad expression neutral.
 
 Content research_good_thing: |Brad scratches his head. "By conducting research, isn't that already good enough? It should be a beneficial thing in and of itself. How exactly would it harm participants?" |
 Speaker research_good_thing brad.
@@ -1121,6 +1192,8 @@ GoToChoice research_good_thing not_enough.
 Effects research_good_thing: [set Thread = beneficence]
 Conditions research_good_thing: [Not [Member beneficence ClosedThreads]]
 Reusable research_good_thing e0001.
+CharacterTag research_good_thing ned expression neutral.
+CharacterTag research_good_thing brad expression confused.
 
 Content not_enough: |"Well, yes, research is usually for the greater good. But that's not enough; the benefit of conducting the research must outweigh any potential negative harm to the participants." |
 Speaker not_enough ned.
@@ -1135,14 +1208,18 @@ Effects not_enough:
 [end]
 Conditions not_enough: [Not [Member beneficence ClosedThreads]]
 Reusable not_enough e0001.
+CharacterTag not_enough ned expression neutral.
+CharacterTag not_enough brad expression confused.
 
-Content research_is_beneficial: |Well, that's a given. Brad feels as though he's already planned out his surveys and study in a considerate manner. He confidently nods in response. "There's no need to worry, Ned. My research is beneficial!" |
+Content research_is_beneficial: |Well, that's a given. Brad feels as though he's already planned out his surveys and study in a considerate manner. He nods in response. "There's no need to worry, Ned. My research is beneficial!" |
 Speaker research_is_beneficial brad.
 ChoiceLabel research_is_beneficial: |Affirm that their research is beneficial |
 GoToChoice research_is_beneficial everyone_thinks_research_good.
 Effects research_is_beneficial: [set Thread = beneficence]
 Conditions research_is_beneficial: [Not [Member beneficence ClosedThreads]]
 Reusable research_is_beneficial e0001.
+CharacterTag research_is_beneficial ned expression neutral.
+CharacterTag research_is_beneficial brad expression confident.
 
 Content everyone_thinks_research_good: |Ned sighs. "You see Brad, everyone thinks that their research is good. But research has just as much potential to cause great harm." |
 Speaker everyone_thinks_research_good ned.
@@ -1157,14 +1234,18 @@ Effects everyone_thinks_research_good:
 [end]
 Conditions everyone_thinks_research_good: [Not [Member beneficence ClosedThreads]]
 Reusable everyone_thinks_research_good e0001.
+CharacterTag everyone_thinks_research_good ned expression sad.
+CharacterTag everyone_thinks_research_good brad expression confused.
 
-Content brad_confused: |Brad gives Ned a quizzical look. "I'm not quite sure I understand beneficence. Could you provide an example?" Why must his advisor be so vague? |
+Content brad_confused: |"I'm not quite sure I understand beneficence. Could you provide an example?" Why must his advisor be so vague? |
 Speaker brad_confused brad.
 ChoiceLabel brad_confused: |Ask Ned to clarify beneficence |
 GoToChoice brad_confused medical_trials.
 Effects brad_confused: [set Thread = beneficence]
 Conditions brad_confused: [Not [Member beneficence ClosedThreads]]
 Reusable brad_confused e0001.
+CharacterTag brad_confused ned expression neutral.
+CharacterTag brad_confused brad expression confused.
 
 Content medical_trials: 
 	|Ned scratches his mustache, furrowing his brows. |<br><br>
@@ -1181,6 +1262,8 @@ ChoiceCondition medical_trials medical_trials_ccc: [AvailableCheckpoint benefice
 Effects medical_trials: [set Thread = beneficence]
 Conditions medical_trials: [Not [Member beneficence ClosedThreads]]
 Reusable medical_trials e0001.
+CharacterTag medical_trials ned expression neutral.
+CharacterTag medical_trials brad expression confused.
 
 Content brad_unsure: 
 	|That...still makes no sense. Kinda like how Brad couldn't understand polypeptide structures from the required CHEM 1 series. As to why he needed to take chemistry courses as a psych researcher was beyond him. |<br><br>
@@ -1195,6 +1278,8 @@ Effects brad_unsure:
 [end]
 Conditions brad_unsure: [Not [Member beneficence ClosedThreads]]
 Reusable brad_unsure e0001.
+CharacterTag brad_unsure ned expression neutral.
+CharacterTag brad_unsure brad expression confused.
 
 Content brad_cocky: |No duh, Brad thinks to himself. Did Ned really have to provide such a given? Besides, there's no harm in just asking survey questions. "Well of course, but I'm just asking questions to participants. It's not like I'm dealing drugs." |
 Speaker brad_cocky brad.
@@ -1206,6 +1291,8 @@ ChoiceCondition brad_cocky brad_cocky_ccc: [AvailableCheckpoint beneficence]
 Effects brad_cocky: [set Thread = beneficence]
 Conditions brad_cocky: [Not [Member beneficence ClosedThreads]]
 Reusable brad_cocky e0001.
+CharacterTag brad_cocky ned expression neutral.
+CharacterTag brad_cocky brad expression confident.
 
 Content brad_curious: |"Thanks for explaining, but how is this related to our situation?" Brad asks. |
 Speaker brad_curious brad.
@@ -1214,6 +1301,8 @@ GoToChoice brad_curious side_effects.
 Effects brad_curious: [set Thread = beneficence]
 Conditions brad_curious: [Not [Member beneficence ClosedThreads]]
 Reusable brad_curious e0001.
+CharacterTag brad_curious ned expression neutral.
+CharacterTag brad_curious brad expression confused.
 
 Content do_u_get_it: |Ned narrows his eyes at Brad."Do you get what I'm trying to say, Brad?" His advisor's tone feels awfully much more stern now. |
 Speaker do_u_get_it ned.
@@ -1223,6 +1312,8 @@ ChoiceCondition do_u_get_it do_u_get_it_c: [AvailableCheckpoint beneficence]
 Effects do_u_get_it: [set Thread = beneficence]
 Conditions do_u_get_it: [Not [Member beneficence ClosedThreads]]
 Reusable do_u_get_it e0001.
+CharacterTag do_u_get_it ned expression neutral.
+CharacterTag do_u_get_it brad expression nervous.
 
 Content brad_silent: |Feeling the immense pressure to response, Brad sits in silence, unsure of how to answer this question. |
 Speaker brad_silent brad.
@@ -1231,6 +1322,8 @@ GoToChoice brad_silent brad_notices.
 Effects brad_silent: [set Thread = beneficence]
 Conditions brad_silent: [Not [Member beneficence ClosedThreads]]
 Reusable brad_silent e0001.
+CharacterTag brad_silent ned expression neutral.
+CharacterTag brad_silent brad expression nervous.
 
 Content brad_notices: |Brad begins to notice Ned's unrelenting, eagle-eyed stare. Perhaps his advisor had sensed his fear. |
 Speaker brad_notices brad.
@@ -1239,6 +1332,8 @@ GoToChoice brad_notices u_dont_understand.
 Effects brad_notices: [set Thread = beneficence]
 Conditions brad_notices: [Not [Member beneficence ClosedThreads]]
 Reusable brad_notices e0001.
+CharacterTag brad_notices ned expression confident.
+CharacterTag brad_notices brad expression nervous.
 
 Content u_dont_understand: |Ned softens his expression, since Brad is clearly unresponsive."I get the feeling that you don't get what I'm trying to say here, so what if I frame it like this?" |
 Speaker u_dont_understand ned.
@@ -1247,6 +1342,8 @@ GoToChoice u_dont_understand side_effects.
 Effects u_dont_understand: [set Thread = beneficence]
 Conditions u_dont_understand: [Not [Member beneficence ClosedThreads]]
 Reusable u_dont_understand e0001.
+CharacterTag u_dont_understand ned expression neutral.
+CharacterTag u_dont_understand brad expression confused.
 
 Content side_effects: |"I know that we aren't dealing any drugs here, but it's still important that you understand this principle, Brad. With any type of research, even just asking questions in a survey, there are a lot of unknowns. Those unknowns can accidentally cause harm to your participants, regardless of your field of study." |
 Speaker side_effects ned.
@@ -1262,6 +1359,8 @@ Effects side_effects:
 [end]
 Conditions side_effects: [Not [Member beneficence ClosedThreads]]
 Reusable side_effects e0001.
+CharacterTag side_effects ned expression confident.
+CharacterTag side_effects brad expression neutral.
 
 Content side_effects_transition: 
 	|"Can we talk a little more about beneficence?" asks Brad. |<br><br>
@@ -1274,6 +1373,8 @@ GoToChoice side_effects_transition apply_principle.
 Effects side_effects_transition: [set Thread = beneficence]
 Conditions side_effects_transition: [Not [Member beneficence ClosedThreads]]
 Reusable side_effects_transition e0001.
+CharacterTag side_effects_transition ned expression neutral.
+CharacterTag side_effects_transition brad expression confused.
 
 Content avoid_harm: |"Okay, I get that research should avoid harm. But how is it even possible to conduct research and know for sure that you won't harm any participants?" |
 Speaker avoid_harm brad.
@@ -1283,6 +1384,8 @@ ChoiceCondition avoid_harm avoid_harm_c: [AvailableCheckpoint beneficence]
 Effects avoid_harm: [set Thread = beneficence]
 Conditions avoid_harm: [Not [Member beneficence ClosedThreads]]
 Reusable avoid_harm e0001.
+CharacterTag avoid_harm ned expression neutral.
+CharacterTag avoid_harm brad expression confused.
 
 Content apply_principle: |"So, in practice, how do you actually apply this principle?" |
 Speaker apply_principle brad.
@@ -1291,6 +1394,8 @@ GoToChoice apply_principle figuring_out.
 Effects apply_principle: [set Thread = beneficence]
 Conditions apply_principle: [Not [Member beneficence ClosedThreads]]
 Reusable apply_principle e0001.
+CharacterTag apply_principle ned expression neutral.
+CharacterTag apply_principle brad expression confused.
 
 Content figuring_out: |"Great question! Essentially, to the best of your ability, you need to minimize any potential harm and maximize the benefits of your research, beyond what you are obligated to. It's more of a guiding philosophy than an actual rule." |
 Speaker figuring_out ned.
@@ -1306,6 +1411,8 @@ Effects figuring_out:
 [end]
 Conditions figuring_out: [Not [Member beneficence ClosedThreads]]
 Reusable figuring_out e0001.
+CharacterTag figuring_out ned expression confident.
+CharacterTag figuring_out brad expression neutral.
 
 Content resolution_intro: |"So about the surveys I conducted," begins Brad. "We didn't break any laws but I see now that I really messed up." |
 Speaker resolution_intro brad.
@@ -1317,6 +1424,8 @@ Effects resolution_intro:
 [end]
 Conditions resolution_intro.
 Reusable resolution_intro e0001.
+CharacterTag resolution_intro ned expression neutral.
+CharacterTag resolution_intro brad expression sad.
 
 Content what_is_plan: |"I just want to know that you understand the seriousness of what you've done," says Ned. "What is our plan for proceeding with the project?" |
 Speaker what_is_plan ned.
@@ -1327,6 +1436,8 @@ GoToChoice what_is_plan brad_not_ready.
 Effects what_is_plan: [set Thread = resolution]
 Conditions what_is_plan.
 Reusable what_is_plan e0001.
+CharacterTag what_is_plan ned expression neutral.
+CharacterTag what_is_plan brad expression sad.
 
 Content brad_thinks_ready: |"I understand, Ned, the IRB seems pretty important based on what you're saying. I messed up." |
 Speaker brad_thinks_ready brad.
@@ -1335,6 +1446,8 @@ GoToChoice brad_thinks_ready try_again.
 Effects brad_thinks_ready: [set Thread = resolution]
 Conditions brad_thinks_ready: [Not [BradLearned]][= Thread resolution]
 Reusable brad_thinks_ready e0001.
+CharacterTag brad_thinks_ready ned expression neutral.
+CharacterTag brad_thinks_ready brad expression sad.
 
 Content brad_not_ready: |"This conversation has been useful, but I still have some more questions about the IRB," says Brad. |
 Speaker brad_not_ready brad.
@@ -1343,6 +1456,8 @@ GoToChoice brad_not_ready try_again.
 Effects brad_not_ready: [set Thread = resolution]
 Conditions brad_not_ready: [= Thread resolution]
 Reusable brad_not_ready e0001.
+CharacterTag brad_not_ready ned expression neutral.
+CharacterTag brad_not_ready brad expression confused.
 
 Content try_again: 
 	|"I think we still have more to discuss"|<br><br>
@@ -1356,12 +1471,12 @@ ChoiceCondition try_again try_again_ccc: [AvailableCheckpoint agenda]
 Effects try_again: [set Thread = resolution]
 Conditions try_again: [= Thread resolution]
 Reusable try_again e0001.
+CharacterTag try_again ned expression neutral.
+CharacterTag try_again brad expression neutral.
 
 Content resolution_complete: 
-	|Brad starts "Well, it's important that an outside entity, the IRB, has approved that our study is complying with informed consent practices such that it maintains respect for persons, beneficence, and justice."|<br><br>
-	|"Did I get that right?" he continues, looking confident.|<br><br>
-	|"We should immediately stop the survey, get rid of any data I already collected, and inform the IRB that I made this mistake."|<br><br>
-	|"It's going to set us back." |
+	|"Well, it's important that an outside entity, the IRB, has approved that our study is complying with informed consent practices such that it maintains respect for persons, beneficence, and justice. Did I get that right?" Brad asks.|<br><br>
+	|"We should immediately stop the survey, get rid of any data I already collected, and inform the IRB that I made this mistake." |
 [end]
 Speaker resolution_complete brad.
 ChoiceLabel resolution_complete: |Show that he has learned |
@@ -1369,6 +1484,8 @@ GoToChoice resolution_complete end.
 Effects resolution_complete: [set Thread = resolution]
 Conditions resolution_complete: [BradLearned][= Thread resolution]
 Reusable resolution_complete e0001.
+CharacterTag resolution_complete ned expression neutral.
+CharacterTag resolution_complete brad expression confident.
 
 Content end: 
 	|"That sounds right to me, I'm glad you listened today Brad." |<br><br>
@@ -1379,6 +1496,8 @@ ChoiceLabel end: |Fin |
 Effects end: [set Thread = resolution]
 Conditions end: [= Thread resolution]
 Reusable end e0001.
+CharacterTag end ned expression happy.
+CharacterTag end brad expression happy.
 
 Content bus: |Brad hesitates outside of the door. He is already late. The bus had taken an extra thirty minutes to get to campus this morning, and now he doesn’t have enough time to prepare as much as he would have liked. |
 Speaker bus brad.
@@ -1448,6 +1567,8 @@ Effects justice_intro:
 [end]
 Conditions justice_intro: [Not [Member justice ClosedThreads]]
 Reusable justice_intro e0001.
+CharacterTag justice_intro ned expression neutral.
+CharacterTag justice_intro brad expression confused.
 
 Content brad_jokes: |"I mean, sure it sucks that they were part of a bad experiment, but hey! It's not like our data isn't being harvested all the time anyway! At least they're getting paid." |
 Speaker brad_jokes brad.
@@ -1456,6 +1577,8 @@ GoToChoice brad_jokes ned_corrects.
 Effects brad_jokes: [set Thread = justice]
 Conditions brad_jokes: [Not [Member justice ClosedThreads]]
 Reusable brad_jokes e0001.
+CharacterTag brad_jokes ned expression neutral.
+CharacterTag brad_jokes brad expression happy.
 
 Content why_board: |"It seems like the worst thing that can happen with bad ethical practices is that people are just made uncomfortable. Why would this need a whole board to overview it?" |
 Speaker why_board brad.
@@ -1464,6 +1587,8 @@ GoToChoice why_board principles_important.
 Effects why_board: [set Thread = justice]
 Conditions why_board: [Not [Member justice ClosedThreads]]
 Reusable why_board e0001.
+CharacterTag why_board ned expression neutral.
+CharacterTag why_board brad expression confused.
 
 Content ned_corrects: |"The historical events behind these principles are very sensitive topics, and should be handled with empathy for the people affected by them." |
 Speaker ned_corrects ned.
@@ -1476,6 +1601,8 @@ ChoiceCondition ned_corrects ned_corrects_ccc: [AvailableCheckpoint justice]
 Effects ned_corrects: [set Thread = justice]
 Conditions ned_corrects: [Not [Member justice ClosedThreads]]
 Reusable ned_corrects e0001.
+CharacterTag ned_corrects ned expression confident.
+CharacterTag ned_corrects brad expression neutral.
 
 Content principles_important: |"I understand your confusion, but in the past, violations of the principle of justice has led to negative impacts on the lives of various people. Including substantial harm in some, specifically marginalized, populations." |
 Speaker principles_important ned.
@@ -1490,6 +1617,8 @@ Effects principles_important:
 [end]
 Conditions principles_important: [Not [Member justice ClosedThreads]]
 Reusable principles_important e0001.
+CharacterTag principles_important ned expression confident.
+CharacterTag principles_important brad expression neutral.
 
 Content just_making_a_joke: |"I was just trying to make a joke. Didn't know this was so serious." |
 Speaker just_making_a_joke brad.
@@ -1501,6 +1630,8 @@ ChoiceCondition just_making_a_joke just_making_a_joke_ccc: [AvailableCheckpoint 
 Effects just_making_a_joke: [set Thread = justice]
 Conditions just_making_a_joke: [Not [Member justice ClosedThreads]]
 Reusable just_making_a_joke e0001.
+CharacterTag just_making_a_joke ned expression neutral.
+CharacterTag just_making_a_joke brad expression sad.
 
 Content brad_apologizes: |"I'm sorry for my insensitivity, but I'm just wondering why this is so serious?" |
 Speaker brad_apologizes brad.
@@ -1509,6 +1640,8 @@ GoToChoice brad_apologizes principles_important.
 Effects brad_apologizes: [set Thread = justice]
 Conditions brad_apologizes: [Not [Member justice ClosedThreads]]
 Reusable brad_apologizes e0001.
+CharacterTag brad_apologizes ned expression neutral.
+CharacterTag brad_apologizes brad expression confused.
 
 Content dont_take_lightly: |"Brad, I understand that you're trying to take this lightly, but this isn't a light topic. In the past, violations of the guidelines have led to catastrophic harm to people, so it's especially important to approach these topics with sensitivity." |
 Speaker dont_take_lightly ned.
@@ -1523,6 +1656,8 @@ Effects dont_take_lightly:
 [end]
 Conditions dont_take_lightly: [Not [Member justice ClosedThreads]]
 Reusable dont_take_lightly e0001.
+CharacterTag dont_take_lightly ned expression sad.
+CharacterTag dont_take_lightly brad expression neutral.
 
 Content wym: |"Wait, people were harmed? Like who? I think a specific example would help." |
 Speaker wym brad.
@@ -1531,6 +1666,8 @@ GoToChoice wym syphilis.
 Effects wym: [set Thread = justice]
 Conditions wym: [Not [Member justice ClosedThreads]]
 Reusable wym e0001.
+CharacterTag wym ned expression neutral.
+CharacterTag wym brad expression confused.
 
 Content syphilis: 
 	|"Yeah, sure. The Tuskegee Syphilis Study was a pretty big example," begins Ned.|<br><br>
@@ -1546,6 +1683,8 @@ ChoiceCondition syphilis syphilis_ccc: [AvailableCheckpoint justice]
 Effects syphilis: [set Thread = justice]
 Conditions syphilis: [Not [Member justice ClosedThreads]]
 Reusable syphilis e0001.
+CharacterTag syphilis ned expression sad.
+CharacterTag syphilis brad expression sad.
 
 Content violation_of_ben: |"So, did they violate beneficence?" |
 Speaker violation_of_ben brad.
@@ -1554,6 +1693,8 @@ GoToChoice violation_of_ben yes_beneficence.
 Effects violation_of_ben: [set Thread = justice]
 Conditions violation_of_ben: [Not [Member justice ClosedThreads]]
 Reusable violation_of_ben e0001.
+CharacterTag violation_of_ben ned expression neutral.
+CharacterTag violation_of_ben brad expression confused.
 
 Content yes_beneficence: |"Sort of. While, yes, the study did not protect them from harm, it can be better categorized as a violation of Justice." |
 Speaker yes_beneficence ned.
@@ -1562,6 +1703,8 @@ GoToChoice yes_beneficence violation_of_justice.
 Effects yes_beneficence: [set Thread = justice]
 Conditions yes_beneficence: [Not [Member justice ClosedThreads]]
 Reusable yes_beneficence e0001.
+CharacterTag yes_beneficence ned expression sad.
+CharacterTag yes_beneficence brad expression neutral.
 
 Content violation_of_something: |"So, what principle was violated in the syphilus study then?" |
 Speaker violation_of_something brad.
@@ -1570,6 +1713,8 @@ GoToChoice violation_of_something violation_of_justice.
 Effects violation_of_something: [set Thread = justice]
 Conditions violation_of_something: [Not [Member justice ClosedThreads]]
 Reusable violation_of_something e0001.
+CharacterTag violation_of_something ned expression neutral.
+CharacterTag violation_of_something brad expression confused.
 
 Content violation_of_justice: |"This study was a violation of Justice, which means that the people were denied a benefit without a good reason or a burden was imposed onto them." |
 Speaker violation_of_justice ned.
@@ -1584,6 +1729,8 @@ Effects violation_of_justice:
 [end]
 Conditions violation_of_justice: [Not [Member justice ClosedThreads]]
 Reusable violation_of_justice e0001.
+CharacterTag violation_of_justice ned expression sad.
+CharacterTag violation_of_justice brad expression sad.
 
 Content you_remember: 
 	|"Like the Milgram study?" Asks Brad.|<br><br>
@@ -1723,6 +1870,8 @@ Conditions vulnerable_intro:
 	[Not [Member vulnerable ClosedThreads]]
 [end]
 Reusable vulnerable_intro e0001.
+CharacterTag vulnerable_intro ned expression neutral.
+CharacterTag vulnerable_intro brad expression neutral.
 
 Content ned_vulnerable_intro: |"IRBs have a federal requirement to protect particularly vulverable populations. That includes those who may not be able to make informed decisions for themselves. People who can't fully consent, as well as populations that are simply convienent and readily available." |
 Speaker ned_vulnerable_intro ned.
@@ -1738,8 +1887,10 @@ Effects ned_vulnerable_intro:
 	[OpenCheckpoint vulnerable full_consent]
 [end]
 Conditions ned_vulnerable_intro: [Not [Member vulnerable ClosedThreads]]
+CharacterTag ned_vulnerable_intro ned expression confident.
+CharacterTag ned_vulnerable_intro brad expression neutral.
 
-Content vulnerable_specific: |Ned responds. "These are pregnant woman, prisoners, individuals with mental disabilities, and others. It also includes the socially disadvantaged, racial and ethnic minorities, and children. I hope that makes sense" |
+Content vulnerable_specific: |Ned responds. "These are pregnant woman, prisoners, individuals with mental disabilities, and others. It also includes the socially disadvantaged, racial and ethnic minorities, and children. I hope that makes sense." |
 Speaker vulnerable_specific ned.
 ChoiceLabel vulnerable_specific: |Ask "Which populations?" |
 GoToChoice vulnerable_specific full_consent.
@@ -1748,8 +1899,10 @@ ChoiceCondition vulnerable_specific vulnerable_specific_cc: [AvailableCheckpoint
 ChoiceCondition vulnerable_specific vulnerable_specific_ccc: [AvailableCheckpoint vulnerable]
 Effects vulnerable_specific: [set Thread = vulnerable]
 Conditions vulnerable_specific: [Not [Member vulnerable ClosedThreads]]
+CharacterTag vulnerable_specific ned expression confident.
+CharacterTag vulnerable_specific brad expression confident.
 
-Content full_consent: |"Full informed consent is when we ensure full comprehension of the nature of research and the subject's participation. We give them a clear, voluntary choice to participate in the study and tell them they can back out at any time. We should present it at the 8th grade reading level." Ned pauses and continues with emphasis "and some groups, like children, cannot fully consent." |
+Content full_consent: |"Full informed consent is when we ensure full comprehension of the nature of research and the subject's participation. We give them a clear, voluntary choice to participate in the study and tell them they can back out at any time. We should present it at the 8th grade reading level." Ned pauses and continues with emphasis, "and some groups, like children, cannot fully consent." |
 Speaker full_consent ned.
 ChoiceLabel full_consent: |Ask about full consent |
 GoToChoice full_consent what_is_consent.
@@ -1758,6 +1911,8 @@ GoToChoice full_consent end_vulnerable_good.
 Effects full_consent: [set Thread = vulnerable]
 Conditions full_consent: [Not [Member vulnerable ClosedThreads]]
 Reusable full_consent e0001.
+CharacterTag full_consent ned expression confident.
+CharacterTag full_consent brad expression neutral.
 
 Content what_is_consent: |"Okay, but how do we actually provide consent?" asks Brad. |
 Speaker what_is_consent brad.
@@ -1766,6 +1921,8 @@ GoToChoice what_is_consent consent_definition.
 Effects what_is_consent: [set Thread = vulnerable]
 Conditions what_is_consent: [Not [Member vulnerable ClosedThreads]]
 Reusable what_is_consent e0001.
+CharacterTag what_is_consent ned expression neutral.
+CharacterTag what_is_consent brad expression confused.
 
 Content consent_definition: |"There are a bunch of facets to that question, Brad," says Ned. He seems like he's enjoying this now. "The main things you need to remember are that you need to provide a clear statement of the research, its intents, benefits, and disclosure of procedures or provided treatments. You can look up the rest, but you usually need to get written consent." |
 Speaker consent_definition ned.
@@ -1776,9 +1933,11 @@ GoToChoice consent_definition full_consent.
 Effects consent_definition: [set Thread = vulnerable][add consent_def Learnings]
 Conditions consent_definition: [Not [Member vulnerable ClosedThreads]]
 Reusable consent_definition e0001.
+CharacterTag consent_definition ned expression happy.
+CharacterTag consent_definition brad expression confused.
 
 Content end_vulnerable_bad: 
-	|"Well, Ned I did ask the parents if I could interview their kids," Brad says sheepishly. |<br><br>
+	|"Well, I did ask the parents if I could interview their kids," Brad says sheepishly. |<br><br>
 	|Ned looks at him with a nonbelieving stare. |
 [end]
 Speaker end_vulnerable_bad brad.
@@ -1794,6 +1953,8 @@ Effects end_vulnerable_bad:
 [end]
 Conditions end_vulnerable_bad: [BradAdmittedStudy e0001][Member consent_def Learnings]
 Reusable end_vulnerable_bad e0001.
+CharacterTag end_vulnerable_bad ned expression neutral.
+CharacterTag end_vulnerable_bad brad expression nervous.
 
 Content end_vulnerable_good: 
 	|"Okay I think I understand this a lot better now, Ned. Do I have your consent to change the subject?" |<br><br>
@@ -1813,6 +1974,8 @@ Effects end_vulnerable_good:
 [end]
 Conditions end_vulnerable_good: [Member consent_def Learnings]
 Reusable end_vulnerable_good e0001.
+CharacterTag end_vulnerable_good ned expression sad.
+CharacterTag end_vulnerable_good brad expression nervous.
 
 Content stanford_intro: |“Oh, so like the Stanford prison experiment, right?” Brad suggests. |
 Speaker stanford_intro brad.
