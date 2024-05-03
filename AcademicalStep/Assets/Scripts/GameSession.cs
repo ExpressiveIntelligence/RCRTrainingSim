@@ -55,7 +55,7 @@ public class GameSession : MonoBehaviour
 
         //Initializes Step Interpreter and render the first fragment
         StepManager.instance.InitializeStepStoryAssembler();
-        this.SaveFragmentHistory();
+        //this.SaveFragmentHistory();
     }
 
     private void HandleChoiceSelected(string choiceID)

@@ -20,4 +20,8 @@ public class ParticipantInfoPanel : MonoBehaviour
     {
         GameSession.instance.participantId = value;
     }
+
+    public void HandleSubmitParticipantId(){
+        GameSession.instance.SaveFragmentHistory();
+    }
 }
