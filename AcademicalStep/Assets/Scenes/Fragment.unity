@@ -4158,6 +4158,8 @@ MonoBehaviour:
   background: {fileID: 835319684}
   backgroundCounter: 0
   backgroundRotation: 3
+  saveCounter: 0
+  saveIncrement: 10
   loadingPanel: {fileID: 0}
   participantId: participant1
   sheetManager: {fileID: 1373240088}
@@ -4285,7 +4287,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08eef610511cf2049bd4df10c8636f17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  credentials: {fileID: 4900000, guid: f5a87131ecf258c40a7ebaf05504f87a, type: 3}
+  credentials: {fileID: 4900000, guid: bc695b428cf76364fb0d523ab4e749e8, type: 3}
 --- !u!4 &1373240089
 Transform:
   m_ObjectHideFlags: 0
