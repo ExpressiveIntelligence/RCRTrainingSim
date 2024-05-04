@@ -55,7 +55,6 @@ public class GameSession : MonoBehaviour
 
         //Initializes Step Interpreter and render the first fragment
         StepManager.instance.InitializeStepStoryAssembler();
-        //this.SaveFragmentHistory();
     }
 
     private void HandleChoiceSelected(string choiceID)
@@ -115,12 +114,17 @@ public class GameSession : MonoBehaviour
             this.backgroundCounter = 0;
         }
 
-        
+        //save according to increment
         if(this.saveCounter == this.saveIncrement){
             this.SaveFragmentHistory();
             this.saveCounter = 0;
         }
         this.saveCounter++;
+
+        //save if last fragment is hit
+        if(currentSerializedFragment.fragmentID == "end"){
+            this.SaveFragmentHistory();
+        }
 
         _dialoguePanel.SetSpeakerName(currentSerializedFragment.speakerID);
         _dialoguePanel.SetTextContent(currentSerializedFragment.content);
